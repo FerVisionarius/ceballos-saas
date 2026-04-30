@@ -58,6 +58,11 @@ export default function LoginPage() {
             <button type="submit" disabled={loading} className="btn-primary w-full py-2.5 mt-2">
               {loading ? <><Loader2 className="w-4 h-4 animate-spin" /> Entrando...</> : 'Entrar'}
             </button>
+            <div className="text-center mt-2">
+              <a href="/reset-password" className="text-xs text-slate-500 hover:text-brand-600">
+                ¿Olvidaste tu contraseña?
+              </a>
+            </div>
           </form>
         </div>
         <p className="text-center text-xs text-slate-400 mt-6">Acceso restringido a personal autorizado</p>
