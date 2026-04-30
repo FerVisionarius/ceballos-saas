@@ -39,6 +39,10 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/dashboard', request.url))
   }
 
+  if (!user && !pathname.startsWith('/login') && !pathname.startsWith('/api/auth') && !pathname.startsWith('/reset-password')) {
+    return NextResponse.redirect(new URL('/login', request.url))
+  }
+
   return response
 }
 
