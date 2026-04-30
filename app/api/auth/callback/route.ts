@@ -16,6 +16,10 @@ export async function GET(request: NextRequest) {
       token_hash,
     })
     if (!error) {
+      // recovery y invite van a actualizar-password
+      if (type === 'recovery' || type === 'invite') {
+        return NextResponse.redirect(`${origin}/actualizar-password`)
+      }
       return NextResponse.redirect(`${origin}${next}`)
     }
   }
@@ -23,7 +27,7 @@ export async function GET(request: NextRequest) {
   if (code) {
     const { error } = await supabase.auth.exchangeCodeForSession(code)
     if (!error) {
-      return NextResponse.redirect(`${origin}${next}`)
+      return NextResponse.redirect(`${origin}/actualizar-password`)
     }
   }
 
