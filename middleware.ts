@@ -31,16 +31,15 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL(user ? '/dashboard' : '/login', request.url))
   }
 
-  if (!user && !pathname.startsWith('/login') && !pathname.startsWith('/api/auth')) {
+  const rutasPublicas = ['/login', '/reset-password', '/actualizar-password', '/api/auth']
+  const esPublica = rutasPublicas.some(r => pathname.startsWith(r))
+
+  if (!user && !esPublica) {
     return NextResponse.redirect(new URL('/login', request.url))
   }
 
   if (user && pathname.startsWith('/login')) {
     return NextResponse.redirect(new URL('/dashboard', request.url))
-  }
-
-  if (!user && !pathname.startsWith('/login') && !pathname.startsWith('/api/auth') && !pathname.startsWith('/reset-password')) {
-    return NextResponse.redirect(new URL('/login', request.url))
   }
 
   return response
