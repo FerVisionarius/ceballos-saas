@@ -4,14 +4,37 @@ import Link from 'next/link'
 import { FileText, Search } from 'lucide-react'
 import { EliminarDocumentoBtn } from './EliminarDocumentoBtn'
 
+const SUBTIPO_LABELS: Record<string, string> = {
+  nota_encargo_exclusiva: 'Nota encargo exclusiva',
+  nota_encargo_sin_exclusiva: 'Nota encargo sin exclusiva',
+  conformidad_arras_confirmatorias: 'Conformidad arras confirmatorias',
+  conformidad_arras_penitenciales: 'Conformidad arras penitenciales',
+  senal_arrendamiento: 'Señal arrendamiento',
+  senal_compraventa_confirmatoria: 'Señal compraventa confirmatoria',
+  senal_compraventa_confirmatoria_banco: 'Señal compraventa confirmatoria (banco)',
+  senal_compraventa_penitencial_banco: 'Señal compraventa penitencial (banco)',
+  senal_compraventa_penitencial: 'Señal compraventa penitencial',
+  senal_oferta: 'Señal / Oferta',
+  contrato_arras_penitencial: 'Contrato arras penitencial',
+  contrato_arras_confirmatoria: 'Contrato arras confirmatoria',
+  reconocimiento_honorarios: 'Reconocimiento de honorarios',
+  contrato_arrendamiento: 'Contrato de arrendamiento',
+  contrato_arrendamiento_rescision: 'Rescisión de arrendamiento',
+}
+
+function getInmueble(datos: any): string {
+  const municipio = datos?.municipioinmueble ?? ''
+  const calle = datos?.calleinmueble ?? ''
+  if (!municipio && !calle) return '—'
+  return [municipio, calle].filter(Boolean).join(', ')
+}
+
 interface Props {
   documentos: any[]
   subtiposUnicos: string[]
-  subtipoLabels: Record<string, string>
-  getInmueble: (datos: any) => string
 }
 
-export function FiltroDocumentos({ documentos, subtiposUnicos, subtipoLabels, getInmueble }: Props) {
+export function FiltroDocumentos({ documentos, subtiposUnicos }: Props) {
   const [filtro, setFiltro] = useState('')
   const [busqueda, setBusqueda] = useState('')
 
@@ -20,14 +43,13 @@ export function FiltroDocumentos({ documentos, subtiposUnicos, subtipoLabels, ge
     const inmueble = getInmueble(doc.datos)
     const matchBusqueda = !busqueda ||
       inmueble.toLowerCase().includes(busqueda.toLowerCase()) ||
-      (subtipoLabels[doc.subtipo] ?? doc.subtipo).toLowerCase().includes(busqueda.toLowerCase())
+      (SUBTIPO_LABELS[doc.subtipo] ?? doc.subtipo).toLowerCase().includes(busqueda.toLowerCase())
     return matchFiltro && matchBusqueda
   })
 
   return (
     <div className="space-y-4">
-      {/* Filtros */}
-      <div className="flex gap-3 flex-wrap">
+      <div className="flex gap-3 flex-wrap items-center">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
           <input
@@ -45,7 +67,7 @@ export function FiltroDocumentos({ documentos, subtiposUnicos, subtipoLabels, ge
         >
           <option value="">Todos los tipos</option>
           {subtiposUnicos.map((s: string) => (
-            <option key={s} value={s}>{subtipoLabels[s] ?? s}</option>
+            <option key={s} value={s}>{SUBTIPO_LABELS[s] ?? s}</option>
           ))}
         </select>
         {(filtro || busqueda) && (
@@ -56,12 +78,11 @@ export function FiltroDocumentos({ documentos, subtiposUnicos, subtipoLabels, ge
             Limpiar
           </button>
         )}
-        <span className="flex items-center text-xs text-slate-400 ml-auto">
+        <span className="text-xs text-slate-400 ml-auto">
           {filtrados.length} de {documentos.length}
         </span>
       </div>
 
-      {/* Tabla */}
       <div className="card overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
@@ -88,7 +109,7 @@ export function FiltroDocumentos({ documentos, subtiposUnicos, subtipoLabels, ge
                       <div className="flex items-center gap-2">
                         <FileText className="w-4 h-4 text-slate-400 shrink-0" />
                         <span className="font-medium text-slate-800">
-                          {subtipoLabels[doc.subtipo] ?? doc.subtipo}
+                          {SUBTIPO_LABELS[doc.subtipo] ?? doc.subtipo}
                         </span>
                       </div>
                     </td>

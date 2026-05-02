@@ -1,7 +1,6 @@
 import Link from 'next/link'
 import { FileText, Plus } from 'lucide-react'
 import { createAdminClient } from '@/lib/supabase/server'
-import { EliminarDocumentoBtn } from './EliminarDocumentoBtn'
 import { FiltroDocumentos } from './FiltroDocumentos'
 
 async function getDocumentos() {
@@ -18,34 +17,9 @@ async function getDocumentos() {
   }
 }
 
-const SUBTIPO_LABELS: Record<string, string> = {
-  nota_encargo_exclusiva: 'Nota encargo exclusiva',
-  nota_encargo_sin_exclusiva: 'Nota encargo sin exclusiva',
-  conformidad_arras_confirmatorias: 'Conformidad arras confirmatorias',
-  conformidad_arras_penitenciales: 'Conformidad arras penitenciales',
-  senal_arrendamiento: 'Señal arrendamiento',
-  senal_compraventa_confirmatoria: 'Señal compraventa confirmatoria',
-  senal_compraventa_confirmatoria_banco: 'Señal compraventa confirmatoria (banco)',
-  senal_compraventa_penitencial_banco: 'Señal compraventa penitencial (banco)',
-  senal_compraventa_penitencial: 'Señal compraventa penitencial',
-  senal_oferta: 'Señal / Oferta',
-  contrato_arras_penitencial: 'Contrato arras penitencial',
-  contrato_arras_confirmatoria: 'Contrato arras confirmatoria',
-  reconocimiento_honorarios: 'Reconocimiento de honorarios',
-  contrato_arrendamiento: 'Contrato de arrendamiento',
-  contrato_arrendamiento_rescision: 'Rescisión de arrendamiento',
-}
-
-function getInmuebleFromDatos(datos: any): string {
-  const municipio = datos?.municipioinmueble ?? ''
-  const calle = datos?.calleinmueble ?? ''
-  if (!municipio && !calle) return '—'
-  return [municipio, calle].filter(Boolean).join(', ')
-}
-
 export default async function DocumentosPage() {
   const documentos = await getDocumentos()
-  const subtiposUnicos = Array.from(new Set(documentos.map((d: any) => d.subtipo as string)))
+  const subtiposUnicos: string[] = Array.from(new Set(documentos.map((d: any) => d.subtipo as string)))
 
   return (
     <div className="space-y-6">
@@ -66,7 +40,7 @@ export default async function DocumentosPage() {
             <FileText className="w-7 h-7 text-slate-400" />
           </div>
           <h3 className="text-base font-semibold text-slate-700 mb-1">Sin documentos todavía</h3>
-          <p className="text-sm text-slate-500 mb-6">Genera tu primer documento seleccionando tipo y rellenando los datos.</p>
+          <p className="text-sm text-slate-500 mb-6">Genera tu primer documento.</p>
           <Link href="/documentos/nuevo" className="btn-primary">
             <Plus className="w-4 h-4" />
             Crear primer documento
@@ -75,9 +49,7 @@ export default async function DocumentosPage() {
       ) : (
         <FiltroDocumentos
           documentos={documentos}
-          subtiposUnicos={subtiposUnicos as string[]}
-          subtipoLabels={SUBTIPO_LABELS}
-          getInmueble={getInmuebleFromDatos}
+          subtiposUnicos={subtiposUnicos}
         />
       )}
     </div>
