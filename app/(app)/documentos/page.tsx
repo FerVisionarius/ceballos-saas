@@ -45,7 +45,7 @@ function getInmuebleFromDatos(datos: any): string {
 
 export default async function DocumentosPage() {
   const documentos = await getDocumentos()
-  const subtiposUnicos = [...new Set(documentos.map((d: any) => d.subtipo))]
+  const subtiposUnicos = Array.from(new Set(documentos.map((d: any) => d.subtipo as string)))
 
   return (
     <div className="space-y-6">
