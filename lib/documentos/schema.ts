@@ -1,118 +1,8 @@
-// ============================================================
-// SCHEMA COMPLETO DE DOCUMENTOS - Inmobiliaria Ceballos
-// Define los campos de cada uno de los 15 tipos de documento
-// ============================================================
-
 import type {
   DefinicionDocumento,
   GrupoTipoDocumento,
   SeccionFormulario,
 } from '@/types'
-
-// ── Secciones reutilizables ──────────────────────────────────
-
-const SECCION_VENDEDOR: SeccionFormulario = {
-  id: 'vendedor',
-  titulo: 'Datos del vendedor / propietario',
-  campos: [
-    { id: 'vendedor_nombre', label: 'Nombre completo', tipo: 'text', obligatorio: true, ancho: 'half' },
-    { id: 'vendedor_nif', label: 'NIF / NIE', tipo: 'nif', obligatorio: true, ancho: 'half' },
-    { id: 'vendedor_municipio', label: 'Municipio', tipo: 'text', obligatorio: true, ancho: 'half' },
-    { id: 'vendedor_calle', label: 'Calle y número', tipo: 'text', obligatorio: true, ancho: 'half' },
-    { id: 'vendedor_telefono', label: 'Teléfono', tipo: 'phone', obligatorio: true, ancho: 'half' },
-    { id: 'vendedor_email', label: 'Email', tipo: 'email', obligatorio: false, ancho: 'half' },
-  ],
-}
-
-const SECCION_COMPRADOR: SeccionFormulario = {
-  id: 'comprador',
-  titulo: 'Datos del comprador',
-  campos: [
-    { id: 'comprador_nombre', label: 'Nombre completo', tipo: 'text', obligatorio: true, ancho: 'half' },
-    { id: 'comprador_nif', label: 'NIF / NIE', tipo: 'nif', obligatorio: true, ancho: 'half' },
-    { id: 'comprador_telefono', label: 'Teléfono', tipo: 'phone', obligatorio: true, ancho: 'half' },
-    { id: 'comprador_email', label: 'Email', tipo: 'email', obligatorio: false, ancho: 'half' },
-    { id: 'comprador_direccion', label: 'Dirección', tipo: 'text', obligatorio: false, ancho: 'full' },
-  ],
-}
-
-const SECCION_ARRENDADOR: SeccionFormulario = {
-  id: 'arrendador',
-  titulo: 'Datos del arrendador (propietario)',
-  campos: [
-    { id: 'arrendador_nombre', label: 'Nombre completo', tipo: 'text', obligatorio: true, ancho: 'half' },
-    { id: 'arrendador_nif', label: 'NIF / NIE', tipo: 'nif', obligatorio: true, ancho: 'half' },
-    { id: 'arrendador_telefono', label: 'Teléfono', tipo: 'phone', obligatorio: true, ancho: 'half' },
-    { id: 'arrendador_email', label: 'Email', tipo: 'email', obligatorio: false, ancho: 'half' },
-  ],
-}
-
-const SECCION_ARRENDATARIO: SeccionFormulario = {
-  id: 'arrendatario',
-  titulo: 'Datos del arrendatario (inquilino)',
-  campos: [
-    { id: 'arrendatario_nombre', label: 'Nombre completo', tipo: 'text', obligatorio: true, ancho: 'half' },
-    { id: 'arrendatario_nif', label: 'NIF / NIE', tipo: 'nif', obligatorio: true, ancho: 'half' },
-    { id: 'arrendatario_telefono', label: 'Teléfono', tipo: 'phone', obligatorio: true, ancho: 'half' },
-    { id: 'arrendatario_email', label: 'Email', tipo: 'email', obligatorio: false, ancho: 'half' },
-  ],
-}
-
-const SECCION_INMUEBLE_COMPRAVENTA: SeccionFormulario = {
-  id: 'inmueble',
-  titulo: 'Datos del inmueble',
-  campos: [
-    { id: 'inmueble_direccion', label: 'Dirección completa', tipo: 'text', obligatorio: true, ancho: 'full' },
-    { id: 'inmueble_ciudad', label: 'Ciudad / Municipio', tipo: 'text', obligatorio: true, ancho: 'half' },
-    { id: 'inmueble_cp', label: 'Código postal', tipo: 'text', obligatorio: true, ancho: 'half' },
-    { id: 'inmueble_referencia_catastral', label: 'Referencia catastral', tipo: 'text', obligatorio: false, ancho: 'half' },
-    { id: 'inmueble_registro', label: 'Datos registro de la propiedad', tipo: 'text', obligatorio: false, ancho: 'half', ayuda: 'Tomo, libro, folio, finca...' },
-    {
-      id: 'inmueble_tipo',
-      label: 'Tipo de inmueble',
-      tipo: 'select',
-      obligatorio: true,
-      ancho: 'third',
-      opciones: [
-        { value: 'piso', label: 'Piso / Apartamento' },
-        { value: 'casa', label: 'Casa / Chalet' },
-        { value: 'local', label: 'Local comercial' },
-        { value: 'garaje', label: 'Garaje / Plaza' },
-        { value: 'solar', label: 'Solar / Terreno' },
-        { value: 'otro', label: 'Otro' },
-      ],
-    },
-    { id: 'inmueble_metros', label: 'Metros cuadrados', tipo: 'number', obligatorio: false, ancho: 'third', sufijo: 'm²' },
-    { id: 'inmueble_cargas', label: 'Cargas o gravámenes', tipo: 'textarea', obligatorio: false, ancho: 'full', ayuda: 'Hipotecas, embargos, servidumbres... Dejar en blanco si está libre de cargas.' },
-  ],
-}
-
-const SECCION_INMUEBLE_ALQUILER: SeccionFormulario = {
-  id: 'inmueble',
-  titulo: 'Datos del inmueble en alquiler',
-  campos: [
-    { id: 'inmueble_direccion', label: 'Dirección completa', tipo: 'text', obligatorio: true, ancho: 'full' },
-    { id: 'inmueble_ciudad', label: 'Ciudad / Municipio', tipo: 'text', obligatorio: true, ancho: 'half' },
-    { id: 'inmueble_cp', label: 'Código postal', tipo: 'text', obligatorio: true, ancho: 'half' },
-    {
-      id: 'inmueble_tipo',
-      label: 'Tipo de inmueble',
-      tipo: 'select',
-      obligatorio: true,
-      ancho: 'half',
-      opciones: [
-        { value: 'vivienda', label: 'Vivienda habitual' },
-        { value: 'temporal', label: 'Uso temporal' },
-        { value: 'local', label: 'Local comercial' },
-        { value: 'otro', label: 'Otro' },
-      ],
-    },
-    { id: 'inmueble_metros', label: 'Metros cuadrados', tipo: 'number', obligatorio: false, ancho: 'half', sufijo: 'm²' },
-    { id: 'inmueble_habitaciones', label: 'Habitaciones', tipo: 'number', obligatorio: false, ancho: 'third' },
-    { id: 'inmueble_banos', label: 'Baños', tipo: 'number', obligatorio: false, ancho: 'third' },
-    { id: 'inmueble_extras', label: 'Extras incluidos', tipo: 'textarea', obligatorio: false, ancho: 'full', ayuda: 'Garaje, trastero, muebles...' },
-  ],
-}
 
 const SECCION_AGENCIA: SeccionFormulario = {
   id: 'agencia',
@@ -122,523 +12,753 @@ const SECCION_AGENCIA: SeccionFormulario = {
     { id: 'agencia_cif', label: 'CIF', tipo: 'text', obligatorio: true, ancho: 'half' },
     { id: 'agencia_agente', label: 'Nombre del agente', tipo: 'text', obligatorio: true, ancho: 'half' },
     { id: 'agencia_telefono', label: 'Teléfono', tipo: 'phone', obligatorio: true, ancho: 'half' },
-    { id: 'agencia_email', label: 'Email', tipo: 'email', obligatorio: false, ancho: 'half' },
-    { id: 'agencia_api', label: 'Nº API / Registro', tipo: 'text', obligatorio: false, ancho: 'half' },
   ],
 }
 
-// ── Definiciones de los 15 documentos ───────────────────────
-
 export const SCHEMA_DOCUMENTOS: DefinicionDocumento[] = [
 
-// 1. NOTA DE ENCARGO EXCLUSIVA
-{
-  tipo: 'nota_encargo',
-  subtipo: 'nota_encargo_exclusiva',
-  titulo: 'Nota de Encargo en Exclusiva',
-  descripcion: 'Encargo exclusivo de venta o alquiler a la agencia',
-  secciones: [
-    SECCION_VENDEDOR,
-    {
-      id: 'inmueble',
-      titulo: 'Datos del inmueble',
-      campos: [
-        { id: 'inmueble_direccion', label: 'Calle del inmueble', tipo: 'text', obligatorio: true, ancho: 'full' },
-        { id: 'inmueble_garaje', label: 'Nº garaje', tipo: 'text', obligatorio: false, ancho: 'third' },
-        { id: 'inmueble_trastero', label: 'Nº trastero', tipo: 'text', obligatorio: false, ancho: 'third' },
-        { id: 'inmueble_ciudad', label: 'Ciudad', tipo: 'text', obligatorio: true, ancho: 'third' },
-        { id: 'inmueble_registro_lugar', label: 'Registro de la Propiedad (lugar)', tipo: 'text', obligatorio: false, ancho: 'half' },
-        { id: 'inmueble_registro_tomo', label: 'Tomo', tipo: 'text', obligatorio: false, ancho: 'third' },
-        { id: 'inmueble_registro_libro', label: 'Libro', tipo: 'text', obligatorio: false, ancho: 'third' },
-        { id: 'inmueble_registro_folio', label: 'Folio', tipo: 'text', obligatorio: false, ancho: 'third' },
-        { id: 'inmueble_registro_finca', label: 'Finca', tipo: 'text', obligatorio: false, ancho: 'third' },
-        { id: 'hipoteca_pendiente', label: 'Hipoteca pendiente (€)', tipo: 'currency', obligatorio: false, ancho: 'half', prefijo: '€', ayuda: 'Dejar vacío si está libre de cargas' },
-      ],
-    },
-    {
-      id: 'condiciones',
-      titulo: 'Condiciones del encargo',
-      campos: [
-        { id: 'precio_venta', label: 'Precio de venta (número)', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
-        { id: 'precio_venta_letra', label: 'Precio de venta (en letra)', tipo: 'text', obligatorio: true, ancho: 'half', placeholder: 'Doscientos cincuenta mil' },
-        { id: 'duracion_meses', label: 'Duración del encargo (meses)', tipo: 'number', obligatorio: true, ancho: 'third' },
-        { id: 'honorarios_porcentaje', label: 'Comisión (%)', tipo: 'percentage', obligatorio: true, ancho: 'third', sufijo: '%' },
-        { id: 'honorarios_minimo', label: 'Mínimo honorarios (€)', tipo: 'currency', obligatorio: true, ancho: 'third', prefijo: '€' },
-        { id: 'condiciones_especiales', label: 'Condiciones especiales', tipo: 'textarea', obligatorio: false, ancho: 'full' },
-      ],
-    },
-    SECCION_AGENCIA,
-  ],
-},
+  // 1. NotaEncargoExclusiva
+  {
+    tipo: 'nota_encargo',
+    subtipo: 'nota_encargo_exclusiva',
+    titulo: 'NotaEncargoExclusiva',
+    descripcion: 'Nota de encargo en exclusiva',
+    secciones: [
+      {
+        id: 'vendedor',
+        titulo: 'Datos del cliente / propietario',
+        campos: [
+          { id: 'nombrecliente', label: 'Nombre completo', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'dnicliente', label: 'DNI / NIE', tipo: 'nif', obligatorio: true, ancho: 'half' },
+          { id: 'municipiocliente', label: 'Municipio', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'callecliente', label: 'Calle y número', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'telefonocliente', label: 'Teléfono', tipo: 'phone', obligatorio: true, ancho: 'half' },
+          { id: 'mailcliente', label: 'Email', tipo: 'email', obligatorio: false, ancho: 'half' },
+        ],
+      },
+      {
+        id: 'inmueble',
+        titulo: 'Datos del inmueble',
+        campos: [
+          { id: 'municipioinmueble', label: 'Municipio del inmueble', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'calleinmueble', label: 'Calle del inmueble', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'garajeinmueble', label: 'Nº garaje', tipo: 'text', obligatorio: false, ancho: 'third' },
+          { id: 'trasteroinmueble', label: 'Nº trastero', tipo: 'text', obligatorio: false, ancho: 'third' },
+          { id: 'registrolugar', label: 'Registro — Lugar', tipo: 'text', obligatorio: false, ancho: 'third' },
+          { id: 'registrotomo', label: 'Tomo', tipo: 'text', obligatorio: false, ancho: 'third' },
+          { id: 'registrolibro', label: 'Libro', tipo: 'text', obligatorio: false, ancho: 'third' },
+          { id: 'registrofolio', label: 'Folio', tipo: 'text', obligatorio: false, ancho: 'third' },
+          { id: 'registrofinca', label: 'Finca', tipo: 'text', obligatorio: false, ancho: 'third' },
+        ],
+      },
+      {
+        id: 'condiciones',
+        titulo: 'Condiciones del encargo',
+        campos: [
+          { id: 'precioventaletra', label: 'Precio de venta (en letra)', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'precioventanumero', label: 'Precio de venta (€)', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
+          { id: 'hipotecapendiente', label: 'Hipoteca pendiente (€)', tipo: 'currency', obligatorio: false, ancho: 'half', prefijo: '€' },
+          { id: 'tiempomeses', label: 'Plazo del encargo (meses)', tipo: 'number', obligatorio: true, ancho: 'third' },
+          { id: 'minimonumero', label: 'Mínimo honorarios (€)', tipo: 'currency', obligatorio: true, ancho: 'third', prefijo: '€' },
+          { id: 'fechaactual', label: 'Fecha', tipo: 'date', obligatorio: true, ancho: 'third' },
+        ],
+      },
+    ],
+  },
 
-// 2. NOTA DE ENCARGO SIN EXCLUSIVA
-{
-  tipo: 'nota_encargo',
-  subtipo: 'nota_encargo_sin_exclusiva',
-  titulo: 'Nota de Encargo sin Exclusiva',
-  descripcion: 'Encargo de venta o alquiler sin exclusividad',
-  secciones: [
-    SECCION_VENDEDOR,
-    {
-      id: 'inmueble',
-      titulo: 'Datos del inmueble',
-      campos: [
-        { id: 'inmueble_direccion', label: 'Calle del inmueble', tipo: 'text', obligatorio: true, ancho: 'full' },
-        { id: 'inmueble_garaje', label: 'Nº garaje', tipo: 'text', obligatorio: false, ancho: 'third' },
-        { id: 'inmueble_trastero', label: 'Nº trastero', tipo: 'text', obligatorio: false, ancho: 'third' },
-        { id: 'inmueble_ciudad', label: 'Ciudad / Municipio', tipo: 'text', obligatorio: true, ancho: 'third' },
-        { id: 'hipoteca_pendiente', label: 'Hipoteca pendiente (€)', tipo: 'currency', obligatorio: false, ancho: 'half', prefijo: '€', ayuda: 'Dejar vacío si está libre de cargas' },
-      ],
-    },
-    {
-      id: 'condiciones',
-      titulo: 'Condiciones del encargo',
-      campos: [
-        { id: 'precio_venta', label: 'Precio de venta (número)', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
-        { id: 'precio_venta_letra', label: 'Precio de venta (en letra)', tipo: 'text', obligatorio: true, ancho: 'half', placeholder: 'Doscientos cincuenta mil' },
-        { id: 'duracion_meses', label: 'Duración del encargo (meses)', tipo: 'number', obligatorio: true, ancho: 'third' },
-        { id: 'honorarios_porcentaje', label: 'Comisión (%)', tipo: 'percentage', obligatorio: true, ancho: 'third', sufijo: '%' },
-        { id: 'honorarios_minimo', label: 'Mínimo honorarios (número)', tipo: 'currency', obligatorio: true, ancho: 'third', prefijo: '€' },
-        { id: 'honorarios_minimo_letra', label: 'Mínimo honorarios (en letra)', tipo: 'text', obligatorio: true, ancho: 'half', placeholder: 'Tres mil' },
-        { id: 'observaciones', label: 'Observaciones', tipo: 'textarea', obligatorio: false, ancho: 'full' },
-      ],
-    },
-    SECCION_AGENCIA,
-  ],
-},
+  // 2. NotaEncargoSinExclusiva
+  {
+    tipo: 'nota_encargo',
+    subtipo: 'nota_encargo_sin_exclusiva',
+    titulo: 'NotaEncargoSinExclusiva',
+    descripcion: 'Nota de encargo sin exclusiva',
+    secciones: [
+      {
+        id: 'vendedor',
+        titulo: 'Datos del cliente / propietario',
+        campos: [
+          { id: 'nombrecliente', label: 'Nombre completo', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'dnicliente', label: 'DNI / NIE', tipo: 'nif', obligatorio: true, ancho: 'half' },
+          { id: 'municipiocliente', label: 'Municipio', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'callecliente', label: 'Calle y número', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'telefonocliente', label: 'Teléfono', tipo: 'phone', obligatorio: true, ancho: 'half' },
+          { id: 'mailcliente', label: 'Email', tipo: 'email', obligatorio: false, ancho: 'half' },
+        ],
+      },
+      {
+        id: 'inmueble',
+        titulo: 'Datos del inmueble',
+        campos: [
+          { id: 'municipioinmueble', label: 'Municipio del inmueble', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'calleinmueble', label: 'Calle del inmueble', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'garajeinmueble', label: 'Nº garaje', tipo: 'text', obligatorio: false, ancho: 'half' },
+          { id: 'trasteroinmueble', label: 'Nº trastero', tipo: 'text', obligatorio: false, ancho: 'half' },
+        ],
+      },
+      {
+        id: 'condiciones',
+        titulo: 'Condiciones del encargo',
+        campos: [
+          { id: 'precioventaletra', label: 'Precio de venta (en letra)', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'precioventanumero', label: 'Precio de venta (€)', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
+          { id: 'hipotecapendiente', label: 'Hipoteca pendiente (€)', tipo: 'currency', obligatorio: false, ancho: 'half', prefijo: '€' },
+          { id: 'tiempomeses', label: 'Plazo del encargo (meses)', tipo: 'number', obligatorio: true, ancho: 'third' },
+          { id: 'minimoletra', label: 'Mínimo honorarios (en letra)', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'minimonumero', label: 'Mínimo honorarios (€)', tipo: 'currency', obligatorio: true, ancho: 'third', prefijo: '€' },
+          { id: 'observacionesmuebles', label: 'Observaciones', tipo: 'textarea', obligatorio: false, ancho: 'full' },
+          { id: 'fechaactual', label: 'Fecha', tipo: 'date', obligatorio: true, ancho: 'half' },
+        ],
+      },
+    ],
+  },
 
-  // 3. CONFORMIDAD ARRAS CONFIRMATORIAS
+  // 3. DocumentoConformidadArrasConfimatorias
   {
     tipo: 'documento_conformidad',
     subtipo: 'conformidad_arras_confirmatorias',
-    titulo: 'Conformidad de Arras Confirmatorias',
-    descripcion: 'Documento de conformidad previo a contrato de arras confirmatorias',
-    secciones: [
-      SECCION_VENDEDOR,
-      SECCION_COMPRADOR,
-      SECCION_INMUEBLE_COMPRAVENTA,
-      {
-        id: 'condiciones_compraventa',
-        titulo: 'Condiciones de la compraventa',
-        campos: [
-          { id: 'precio_total', label: 'Precio total de compraventa', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
-          { id: 'importe_arras', label: 'Importe de arras', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
-          { id: 'fecha_firma_prevista', label: 'Fecha prevista de firma notarial', tipo: 'date', obligatorio: true, ancho: 'half' },
-          { id: 'notario', label: 'Notario / Notaría prevista', tipo: 'text', obligatorio: false, ancho: 'half' },
-          { id: 'forma_pago', label: 'Forma de pago', tipo: 'textarea', obligatorio: true, ancho: 'full', ayuda: 'Describir: entrega inicial, hipoteca, resto en escritura...' },
-          { id: 'condiciones_especiales', label: 'Condiciones especiales / Observaciones', tipo: 'textarea', obligatorio: false, ancho: 'full' },
-        ],
-      },
-      SECCION_AGENCIA,
-    ],
-  },
-
-  // 4. CONFORMIDAD ARRAS PENITENCIALES
-  {
-    tipo: 'documento_conformidad',
-    subtipo: 'conformidad_arras_penitenciales',
-    titulo: 'Conformidad de Arras Penitenciales',
-    descripcion: 'Documento de conformidad previo a contrato de arras penitenciales',
-    secciones: [
-      SECCION_VENDEDOR,
-      SECCION_COMPRADOR,
-      SECCION_INMUEBLE_COMPRAVENTA,
-      {
-        id: 'condiciones_compraventa',
-        titulo: 'Condiciones de la compraventa',
-        campos: [
-          { id: 'precio_total', label: 'Precio total de compraventa', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
-          { id: 'importe_arras', label: 'Importe de arras (señal)', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
-          { id: 'fecha_firma_prevista', label: 'Fecha prevista de firma notarial', tipo: 'date', obligatorio: true, ancho: 'half' },
-          { id: 'plazo_dias', label: 'Plazo en días para escritura', tipo: 'number', obligatorio: true, ancho: 'half' },
-          { id: 'penalizacion_comprador', label: 'Penalización si desiste el comprador', tipo: 'textarea', obligatorio: false, ancho: 'full', ayuda: 'Por defecto: pierde las arras entregadas' },
-          { id: 'penalizacion_vendedor', label: 'Penalización si desiste el vendedor', tipo: 'textarea', obligatorio: false, ancho: 'full', ayuda: 'Por defecto: devuelve el doble de las arras' },
-          { id: 'forma_pago', label: 'Forma de pago', tipo: 'textarea', obligatorio: true, ancho: 'full' },
-          { id: 'condiciones_especiales', label: 'Condiciones especiales', tipo: 'textarea', obligatorio: false, ancho: 'full' },
-        ],
-      },
-      SECCION_AGENCIA,
-    ],
-  },
-
-  // 5. SEÑAL ARRENDAMIENTO
-  {
-    tipo: 'documento_senal',
-    subtipo: 'senal_arrendamiento',
-    titulo: 'Documento de Señal para Arrendamiento',
-    descripcion: 'Reserva mediante señal para contrato de alquiler',
-    secciones: [
-      SECCION_ARRENDADOR,
-      SECCION_ARRENDATARIO,
-      SECCION_INMUEBLE_ALQUILER,
-      {
-        id: 'condiciones_senal',
-        titulo: 'Condiciones de la señal',
-        campos: [
-          { id: 'importe_senal', label: 'Importe de la señal', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
-          { id: 'renta_mensual', label: 'Renta mensual acordada', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
-          { id: 'fecha_inicio_contrato', label: 'Fecha prevista inicio contrato', tipo: 'date', obligatorio: true, ancho: 'half' },
-          { id: 'duracion_contrato', label: 'Duración del contrato', tipo: 'text', obligatorio: true, ancho: 'half', placeholder: 'Ej: 1 año, 5 años...' },
-          { id: 'fianza', label: 'Fianza (mensualidades)', tipo: 'number', obligatorio: true, ancho: 'third' },
-          { id: 'forma_pago_senal', label: 'Forma de pago señal', tipo: 'select', obligatorio: true, ancho: 'third', opciones: [
-            { value: 'efectivo', label: 'Efectivo' },
-            { value: 'transferencia', label: 'Transferencia bancaria' },
-            { value: 'cheque', label: 'Cheque' },
-          ]},
-          { id: 'observaciones', label: 'Observaciones', tipo: 'textarea', obligatorio: false, ancho: 'full' },
-        ],
-      },
-      SECCION_AGENCIA,
-    ],
-  },
-
-  // 6. SEÑAL COMPRAVENTA CONFIRMATORIA
-  {
-    tipo: 'documento_senal',
-    subtipo: 'senal_compraventa_confirmatoria',
-    titulo: 'Señal Compraventa Confirmatoria',
-    descripcion: 'Entrega de señal en compraventa con arras confirmatorias',
-    secciones: [
-      SECCION_VENDEDOR,
-      SECCION_COMPRADOR,
-      SECCION_INMUEBLE_COMPRAVENTA,
-      {
-        id: 'condiciones',
-        titulo: 'Condiciones económicas',
-        campos: [
-          { id: 'precio_total', label: 'Precio total de compraventa', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
-          { id: 'importe_senal', label: 'Importe de la señal entregada', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
-          { id: 'fecha_entrega', label: 'Fecha de entrega de la señal', tipo: 'date', obligatorio: true, ancho: 'half' },
-          { id: 'forma_pago', label: 'Forma de pago señal', tipo: 'select', obligatorio: true, ancho: 'half', opciones: [
-            { value: 'efectivo', label: 'Efectivo' },
-            { value: 'transferencia', label: 'Transferencia bancaria' },
-            { value: 'cheque', label: 'Cheque bancario' },
-          ]},
-          { id: 'fecha_firma_notarial', label: 'Fecha prevista escritura', tipo: 'date', obligatorio: true, ancho: 'half' },
-          { id: 'resto_precio', label: 'Resto a pagar en escritura', tipo: 'currency', obligatorio: false, ancho: 'half', prefijo: '€' },
-          { id: 'observaciones', label: 'Observaciones', tipo: 'textarea', obligatorio: false, ancho: 'full' },
-        ],
-      },
-      SECCION_AGENCIA,
-    ],
-  },
-
-  // 7. SEÑAL COMPRAVENTA CONFIRMATORIA INGRESO BANCO
-  {
-    tipo: 'documento_senal',
-    subtipo: 'senal_compraventa_confirmatoria_banco',
-    titulo: 'Señal Compraventa Confirmatoria — Ingreso Banco',
-    descripcion: 'Señal confirmatoria con ingreso en cuenta bancaria de la agencia',
-    secciones: [
-      SECCION_VENDEDOR,
-      SECCION_COMPRADOR,
-      SECCION_INMUEBLE_COMPRAVENTA,
-      {
-        id: 'condiciones',
-        titulo: 'Condiciones económicas',
-        campos: [
-          { id: 'precio_total', label: 'Precio total de compraventa', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
-          { id: 'importe_senal', label: 'Importe de la señal', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
-          { id: 'cuenta_bancaria_iban', label: 'IBAN cuenta de ingreso', tipo: 'text', obligatorio: true, ancho: 'full', placeholder: 'ES00 0000 0000 0000 0000 0000' },
-          { id: 'titular_cuenta', label: 'Titular de la cuenta', tipo: 'text', obligatorio: true, ancho: 'half' },
-          { id: 'fecha_limite_ingreso', label: 'Fecha límite de ingreso', tipo: 'date', obligatorio: true, ancho: 'half' },
-          { id: 'fecha_firma_notarial', label: 'Fecha prevista escritura', tipo: 'date', obligatorio: true, ancho: 'half' },
-          { id: 'observaciones', label: 'Observaciones', tipo: 'textarea', obligatorio: false, ancho: 'full' },
-        ],
-      },
-      SECCION_AGENCIA,
-    ],
-  },
-
-  // 8. SEÑAL COMPRAVENTA PENITENCIAL INGRESO BANCO
-  {
-    tipo: 'documento_senal',
-    subtipo: 'senal_compraventa_penitencial_banco',
-    titulo: 'Señal Compraventa Penitencial — Ingreso Banco',
-    descripcion: 'Señal penitencial con ingreso en cuenta bancaria de la agencia',
-    secciones: [
-      SECCION_VENDEDOR,
-      SECCION_COMPRADOR,
-      SECCION_INMUEBLE_COMPRAVENTA,
-      {
-        id: 'condiciones',
-        titulo: 'Condiciones económicas y penalizaciones',
-        campos: [
-          { id: 'precio_total', label: 'Precio total de compraventa', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
-          { id: 'importe_senal', label: 'Importe de la señal', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
-          { id: 'cuenta_bancaria_iban', label: 'IBAN cuenta de ingreso', tipo: 'text', obligatorio: true, ancho: 'full', placeholder: 'ES00 0000 0000 0000 0000 0000' },
-          { id: 'titular_cuenta', label: 'Titular de la cuenta', tipo: 'text', obligatorio: true, ancho: 'half' },
-          { id: 'fecha_limite_ingreso', label: 'Fecha límite de ingreso', tipo: 'date', obligatorio: true, ancho: 'half' },
-          { id: 'plazo_firma_dias', label: 'Plazo para firma (días)', tipo: 'number', obligatorio: true, ancho: 'half' },
-          { id: 'penalizacion_info', label: 'Cláusula de penalización', tipo: 'textarea', obligatorio: false, ancho: 'full', ayuda: 'Comprador pierde señal / Vendedor devuelve el doble' },
-          { id: 'observaciones', label: 'Observaciones', tipo: 'textarea', obligatorio: false, ancho: 'full' },
-        ],
-      },
-      SECCION_AGENCIA,
-    ],
-  },
-
-  // 9. SEÑAL COMPRAVENTA PENITENCIAL
-  {
-    tipo: 'documento_senal',
-    subtipo: 'senal_compraventa_penitencial',
-    titulo: 'Señal Compraventa Penitencial',
-    descripcion: 'Entrega de señal en compraventa con carácter penitencial',
-    secciones: [
-      SECCION_VENDEDOR,
-      SECCION_COMPRADOR,
-      SECCION_INMUEBLE_COMPRAVENTA,
-      {
-        id: 'condiciones',
-        titulo: 'Condiciones y penalizaciones',
-        campos: [
-          { id: 'precio_total', label: 'Precio total de compraventa', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
-          { id: 'importe_senal', label: 'Importe de la señal', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
-          { id: 'forma_pago', label: 'Forma de pago', tipo: 'select', obligatorio: true, ancho: 'half', opciones: [
-            { value: 'efectivo', label: 'Efectivo' },
-            { value: 'transferencia', label: 'Transferencia bancaria' },
-            { value: 'cheque', label: 'Cheque bancario' },
-          ]},
-          { id: 'fecha_entrega', label: 'Fecha de entrega', tipo: 'date', obligatorio: true, ancho: 'half' },
-          { id: 'plazo_firma_dias', label: 'Plazo para firma escritura (días)', tipo: 'number', obligatorio: true, ancho: 'half' },
-          { id: 'fecha_firma_limite', label: 'Fecha límite escritura', tipo: 'date', obligatorio: false, ancho: 'half' },
-          { id: 'observaciones', label: 'Observaciones', tipo: 'textarea', obligatorio: false, ancho: 'full' },
-        ],
-      },
-      SECCION_AGENCIA,
-    ],
-  },
-
-  // 10. SEÑAL OFERTA
-  {
-    tipo: 'documento_senal',
-    subtipo: 'senal_oferta',
-    titulo: 'Documento de Señal / Oferta',
-    descripcion: 'Formalización de oferta de compra con entrega de señal',
-    secciones: [
-      SECCION_COMPRADOR,
-      SECCION_INMUEBLE_COMPRAVENTA,
-      {
-        id: 'oferta',
-        titulo: 'Condiciones de la oferta',
-        campos: [
-          { id: 'precio_oferta', label: 'Precio ofertado', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
-          { id: 'importe_senal', label: 'Importe señal entregada', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
-          { id: 'forma_pago_senal', label: 'Forma de pago señal', tipo: 'select', obligatorio: true, ancho: 'half', opciones: [
-            { value: 'efectivo', label: 'Efectivo' },
-            { value: 'transferencia', label: 'Transferencia bancaria' },
-            { value: 'cheque', label: 'Cheque bancario' },
-          ]},
-          { id: 'validez_oferta_dias', label: 'Validez de la oferta (días)', tipo: 'number', obligatorio: true, ancho: 'half' },
-          { id: 'condiciones_oferta', label: 'Condiciones específicas de la oferta', tipo: 'textarea', obligatorio: false, ancho: 'full', ayuda: 'Condiciones suspensivas, hipoteca, reforma...' },
-          { id: 'observaciones', label: 'Observaciones', tipo: 'textarea', obligatorio: false, ancho: 'full' },
-        ],
-      },
-      SECCION_AGENCIA,
-    ],
-  },
-
-  // 11. CONTRATO DE ARRAS PENITENCIAL
-  {
-    tipo: 'contrato_arras',
-    subtipo: 'contrato_arras_penitencial',
-    titulo: 'Contrato de Arras Penitenciales',
-    descripcion: 'Contrato de arras con carácter penitencial (art. 1454 CC)',
-    secciones: [
-      SECCION_VENDEDOR,
-      SECCION_COMPRADOR,
-      SECCION_INMUEBLE_COMPRAVENTA,
-      {
-        id: 'condiciones_arras',
-        titulo: 'Condiciones económicas',
-        campos: [
-          { id: 'precio_total', label: 'Precio total de compraventa', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
-          { id: 'importe_arras', label: 'Importe de las arras', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
-          { id: 'forma_pago_arras', label: 'Forma de pago arras', tipo: 'select', obligatorio: true, ancho: 'half', opciones: [
-            { value: 'efectivo', label: 'Efectivo' },
-            { value: 'transferencia', label: 'Transferencia bancaria' },
-            { value: 'cheque', label: 'Cheque bancario' },
-          ]},
-          { id: 'plazo_escritura_dias', label: 'Plazo para escritura (días)', tipo: 'number', obligatorio: true, ancho: 'half' },
-          { id: 'fecha_escritura_limite', label: 'Fecha límite escritura', tipo: 'date', obligatorio: true, ancho: 'half' },
-          { id: 'notario', label: 'Notaría designada', tipo: 'text', obligatorio: false, ancho: 'half' },
-          { id: 'resto_precio_detalle', label: 'Detalle del resto del precio', tipo: 'textarea', obligatorio: true, ancho: 'full', ayuda: 'Cómo se pagará el resto: efectivo, hipoteca, subrogación...' },
-          { id: 'cargas_estado', label: 'Estado de cargas del inmueble', tipo: 'textarea', obligatorio: true, ancho: 'full' },
-          { id: 'clausulas_adicionales', label: 'Cláusulas adicionales', tipo: 'textarea', obligatorio: false, ancho: 'full' },
-        ],
-      },
-      SECCION_AGENCIA,
-    ],
-  },
-
-  // 12. CONTRATO DE ARRAS CONFIRMATORIA
-  {
-    tipo: 'contrato_arras',
-    subtipo: 'contrato_arras_confirmatoria',
-    titulo: 'Contrato de Arras Confirmatorias',
-    descripcion: 'Contrato de arras con carácter confirmatorio',
-    secciones: [
-      SECCION_VENDEDOR,
-      SECCION_COMPRADOR,
-      SECCION_INMUEBLE_COMPRAVENTA,
-      {
-        id: 'condiciones_arras',
-        titulo: 'Condiciones económicas',
-        campos: [
-          { id: 'precio_total', label: 'Precio total de compraventa', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
-          { id: 'importe_arras', label: 'Importe de las arras confirmatorias', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
-          { id: 'forma_pago_arras', label: 'Forma de pago', tipo: 'select', obligatorio: true, ancho: 'half', opciones: [
-            { value: 'efectivo', label: 'Efectivo' },
-            { value: 'transferencia', label: 'Transferencia bancaria' },
-            { value: 'cheque', label: 'Cheque bancario' },
-          ]},
-          { id: 'fecha_escritura', label: 'Fecha escritura pública', tipo: 'date', obligatorio: true, ancho: 'half' },
-          { id: 'notario', label: 'Notaría', tipo: 'text', obligatorio: false, ancho: 'full' },
-          { id: 'resto_precio_detalle', label: 'Forma de pago del resto', tipo: 'textarea', obligatorio: true, ancho: 'full' },
-          { id: 'clausulas_adicionales', label: 'Cláusulas adicionales', tipo: 'textarea', obligatorio: false, ancho: 'full' },
-        ],
-      },
-      SECCION_AGENCIA,
-    ],
-  },
-
-  // 13. RECONOCIMIENTO DE HONORARIOS
-  {
-    tipo: 'reconocimiento_honorarios',
-    subtipo: 'reconocimiento_honorarios',
-    titulo: 'Reconocimiento de Honorarios',
-    descripcion: 'Documento de reconocimiento y aceptación de honorarios de agencia',
+    titulo: 'DocumentoConformidadArrasConfimatorias',
+    descripcion: 'Documento de conformidad de arras confirmatorias',
     secciones: [
       {
         id: 'cliente',
         titulo: 'Datos del cliente',
         campos: [
-          { id: 'cliente_nombre', label: 'Nombre completo', tipo: 'text', obligatorio: true, ancho: 'half' },
-          { id: 'cliente_nif', label: 'NIF / NIE', tipo: 'nif', obligatorio: true, ancho: 'half' },
-          { id: 'cliente_telefono', label: 'Teléfono', tipo: 'phone', obligatorio: true, ancho: 'half' },
-          { id: 'cliente_email', label: 'Email', tipo: 'email', obligatorio: false, ancho: 'half' },
-          { id: 'cliente_tipo', label: 'Tipo de cliente', tipo: 'select', obligatorio: true, ancho: 'half', opciones: [
-            { value: 'comprador', label: 'Comprador' },
-            { value: 'vendedor', label: 'Vendedor' },
-            { value: 'arrendatario', label: 'Arrendatario' },
-            { value: 'arrendador', label: 'Arrendador' },
-          ]},
+          { id: 'nombrecliente', label: 'Nombre completo', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'municipiocliente', label: 'Municipio', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'callecliente', label: 'Calle y número', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'dnicliente', label: 'DNI / NIE', tipo: 'nif', obligatorio: true, ancho: 'half' },
         ],
       },
-      SECCION_INMUEBLE_COMPRAVENTA,
       {
-        id: 'honorarios',
-        titulo: 'Honorarios de la agencia',
+        id: 'inmueble',
+        titulo: 'Datos del inmueble',
         campos: [
-          { id: 'importe_honorarios', label: 'Importe honorarios', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
-          { id: 'porcentaje_honorarios', label: 'Porcentaje sobre precio', tipo: 'percentage', obligatorio: false, ancho: 'half', sufijo: '%' },
-          { id: 'iva_incluido', label: '¿IVA incluido?', tipo: 'select', obligatorio: true, ancho: 'half', opciones: [
-            { value: 'si', label: 'Sí, IVA incluido' },
-            { value: 'no', label: 'No, IVA aparte (21%)' },
-          ]},
-          { id: 'momento_pago', label: 'Momento de pago', tipo: 'select', obligatorio: true, ancho: 'half', opciones: [
-            { value: 'firma_arras', label: 'En firma de arras' },
-            { value: 'firma_escritura', label: 'En firma de escritura' },
-            { value: 'otro', label: 'Otro (especificar)' },
-          ]},
-          { id: 'detalle_pago', label: 'Detalle del pago', tipo: 'textarea', obligatorio: false, ancho: 'full' },
+          { id: 'municipioinmueble', label: 'Municipio del inmueble', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'calleinmueble', label: 'Calle del inmueble', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'garajeinmueble', label: 'Nº garaje', tipo: 'text', obligatorio: false, ancho: 'half' },
+          { id: 'trasteroinmueble', label: 'Nº trastero', tipo: 'text', obligatorio: false, ancho: 'half' },
         ],
       },
-      SECCION_AGENCIA,
+      {
+        id: 'condiciones',
+        titulo: 'Condiciones económicas',
+        campos: [
+          { id: 'precioventaletra', label: 'Precio venta (en letra)', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'precioventanumero', label: 'Precio venta (€)', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
+          { id: 'precioseñalletra', label: 'Precio señal (en letra)', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'precioseñalnumero', label: 'Precio señal (€)', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
+          { id: 'plazofirmacontrato', label: 'Plazo firma contrato', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'precioarrasletra', label: 'Precio arras (en letra)', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'precioarrasnumero', label: 'Precio arras (€)', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
+          { id: 'plazomaximodias', label: 'Plazo máximo (días)', tipo: 'number', obligatorio: true, ancho: 'half' },
+          { id: 'comisionporcentaje', label: 'Comisión (%)', tipo: 'percentage', obligatorio: true, ancho: 'third', sufijo: '%' },
+          { id: 'comisionimporteletra', label: 'Comisión (en letra)', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'comisionimportenumero', label: 'Comisión (€)', tipo: 'currency', obligatorio: true, ancho: 'third', prefijo: '€' },
+          { id: 'fechaactual', label: 'Fecha', tipo: 'date', obligatorio: true, ancho: 'half' },
+        ],
+      },
     ],
   },
 
-  // 14. CONTRATO DE ARRENDAMIENTO
+  // 4. DocumentoConformidadArrasPenitenciales
+  {
+    tipo: 'documento_conformidad',
+    subtipo: 'conformidad_arras_penitenciales',
+    titulo: 'DocumentoConformidadArrasPenitenciales',
+    descripcion: 'Documento de conformidad de arras penitenciales',
+    secciones: [
+      {
+        id: 'cliente',
+        titulo: 'Datos del cliente',
+        campos: [
+          { id: 'nombrecliente', label: 'Nombre completo', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'municipiocliente', label: 'Municipio', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'callecliente', label: 'Calle y número', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'numerocallecliente', label: 'Número', tipo: 'text', obligatorio: false, ancho: 'half' },
+          { id: 'dnicliente', label: 'DNI / NIE', tipo: 'nif', obligatorio: true, ancho: 'half' },
+        ],
+      },
+      {
+        id: 'inmueble',
+        titulo: 'Datos del inmueble',
+        campos: [
+          { id: 'municipioinmueble', label: 'Municipio del inmueble', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'calleinmueble', label: 'Calle del inmueble', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'numerocalleinmueble', label: 'Número', tipo: 'text', obligatorio: false, ancho: 'half' },
+          { id: 'garajeinmueble', label: 'Nº garaje', tipo: 'text', obligatorio: false, ancho: 'half' },
+          { id: 'trasteroinmueble', label: 'Nº trastero', tipo: 'text', obligatorio: false, ancho: 'half' },
+        ],
+      },
+      {
+        id: 'condiciones',
+        titulo: 'Condiciones económicas',
+        campos: [
+          { id: 'precioventaletra', label: 'Precio venta (en letra)', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'precioventanumero', label: 'Precio venta (€)', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
+          { id: 'precioseñalletra', label: 'Precio señal (en letra)', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'precioseñalnumero', label: 'Precio señal (€)', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
+          { id: 'plazomaximodias', label: 'Plazo máximo (días)', tipo: 'number', obligatorio: true, ancho: 'half' },
+          { id: 'precioarrasletra', label: 'Precio arras (en letra)', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'precioarrasnumero', label: 'Precio arras (€)', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
+          { id: 'plazofirmacontrato', label: 'Plazo firma contrato (días hábiles)', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'comisionporcentaje', label: 'Comisión (%)', tipo: 'percentage', obligatorio: true, ancho: 'third', sufijo: '%' },
+          { id: 'comisionimporteletra', label: 'Comisión (en letra)', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'comisionimportenumero', label: 'Comisión (€)', tipo: 'currency', obligatorio: true, ancho: 'third', prefijo: '€' },
+          { id: 'fechaactual', label: 'Fecha', tipo: 'date', obligatorio: true, ancho: 'half' },
+        ],
+      },
+    ],
+  },
+
+  // 5. DocumentoSeñalArrendamiento
+  {
+    tipo: 'documento_senal',
+    subtipo: 'senal_arrendamiento',
+    titulo: 'DocumentoSeñalArrendamiento',
+    descripcion: 'Documento de señal para arrendamiento',
+    secciones: [
+      {
+        id: 'cliente',
+        titulo: 'Datos del cliente',
+        campos: [
+          { id: 'nombrecliente', label: 'Nombre completo', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'municipiocliente', label: 'Municipio', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'callecliente', label: 'Calle y número', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'numerocallecliente', label: 'Número', tipo: 'text', obligatorio: false, ancho: 'half' },
+          { id: 'dnicliente', label: 'DNI / NIE', tipo: 'nif', obligatorio: true, ancho: 'half' },
+          { id: 'telefonocliente', label: 'Teléfono', tipo: 'phone', obligatorio: true, ancho: 'half' },
+        ],
+      },
+      {
+        id: 'inmueble',
+        titulo: 'Datos del inmueble',
+        campos: [
+          { id: 'municipioinmueble', label: 'Municipio del inmueble', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'calleinmueble', label: 'Calle del inmueble', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'garajeinmueble', label: 'Nº garaje', tipo: 'text', obligatorio: false, ancho: 'half' },
+          { id: 'trasteroinmueble', label: 'Nº trastero', tipo: 'text', obligatorio: false, ancho: 'half' },
+        ],
+      },
+      {
+        id: 'condiciones',
+        titulo: 'Condiciones del arrendamiento',
+        campos: [
+          { id: 'precioseñalletra', label: 'Precio señal (en letra)', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'fechaarrendamiento', label: 'Fecha inicio arrendamiento', tipo: 'date', obligatorio: true, ancho: 'half' },
+          { id: 'duracionarrendamiento', label: 'Duración arrendamiento', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'rentaarrendamiento', label: 'Renta mensual (€)', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
+          { id: 'fechaactual', label: 'Fecha del documento', tipo: 'date', obligatorio: true, ancho: 'half' },
+        ],
+      },
+    ],
+  },
+
+  // 6. DocumentoSeñalCompraventaConfirmatoria
+  {
+    tipo: 'documento_senal',
+    subtipo: 'senal_compraventa_confirmatoria',
+    titulo: 'DocumentoSeñalCompraventaConfirmatoria',
+    descripcion: 'Documento de señal compraventa confirmatoria',
+    secciones: [
+      {
+        id: 'comprador',
+        titulo: 'Datos del comprador',
+        campos: [
+          { id: 'nombrecliente', label: 'Nombre comprador', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'municipiocliente', label: 'Municipio', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'callecliente', label: 'Calle', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'numerocallecliente', label: 'Número', tipo: 'text', obligatorio: false, ancho: 'half' },
+          { id: 'dnicliente', label: 'DNI / NIE', tipo: 'nif', obligatorio: true, ancho: 'half' },
+          { id: 'telefonocliente', label: 'Teléfono', tipo: 'phone', obligatorio: true, ancho: 'half' },
+        ],
+      },
+      {
+        id: 'inmueble',
+        titulo: 'Datos del inmueble',
+        campos: [
+          { id: 'municipioinmueble', label: 'Municipio del inmueble', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'calleinmueble', label: 'Calle del inmueble', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'numeroinmueble', label: 'Número', tipo: 'text', obligatorio: false, ancho: 'third' },
+          { id: 'garajeinmueble', label: 'Nº garaje', tipo: 'text', obligatorio: false, ancho: 'third' },
+          { id: 'trasteroinmueble', label: 'Nº trastero', tipo: 'text', obligatorio: false, ancho: 'third' },
+        ],
+      },
+      {
+        id: 'condiciones',
+        titulo: 'Condiciones económicas',
+        campos: [
+          { id: 'precioseñalletra', label: 'Precio señal (en letra)', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'precioseñalnumero', label: 'Precio señal (€)', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
+          { id: 'precioventaletra', label: 'Precio venta (en letra, MAYÚS)', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'precioventanumero', label: 'Precio venta (€)', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
+          { id: 'nombrepropietario', label: 'Nombre propietario (MAYÚS)', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'plazomaximodias', label: 'Plazo máximo (días)', tipo: 'number', obligatorio: true, ancho: 'half' },
+          { id: 'fechaactual', label: 'Fecha', tipo: 'date', obligatorio: true, ancho: 'half' },
+        ],
+      },
+    ],
+  },
+
+  // 7. DocumentoSeñalCompraventaConfirmatoriaIngresoBanco
+  {
+    tipo: 'documento_senal',
+    subtipo: 'senal_compraventa_confirmatoria_banco',
+    titulo: 'DocumentoSeñalCompraventaConfirmatoriaIngresoBanco',
+    descripcion: 'Señal compraventa confirmatoria con ingreso en banco',
+    secciones: [
+      {
+        id: 'comprador',
+        titulo: 'Datos del comprador',
+        campos: [
+          { id: 'nombrecliente', label: 'Nombre comprador', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'municipiocliente', label: 'Municipio', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'callecliente', label: 'Calle', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'numerocallecliente', label: 'Número', tipo: 'text', obligatorio: false, ancho: 'half' },
+          { id: 'dnicliente', label: 'DNI / NIE', tipo: 'nif', obligatorio: true, ancho: 'half' },
+          { id: 'telefonocliente', label: 'Teléfono', tipo: 'phone', obligatorio: true, ancho: 'half' },
+        ],
+      },
+      {
+        id: 'inmueble',
+        titulo: 'Datos del inmueble',
+        campos: [
+          { id: 'municipioinmueble', label: 'Municipio del inmueble', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'calleinmueble', label: 'Calle del inmueble', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'numeroinmueble', label: 'Número', tipo: 'text', obligatorio: false, ancho: 'third' },
+          { id: 'garajeinmueble', label: 'Nº garaje', tipo: 'text', obligatorio: false, ancho: 'third' },
+          { id: 'trasteroinmueble', label: 'Nº trastero', tipo: 'text', obligatorio: false, ancho: 'third' },
+        ],
+      },
+      {
+        id: 'condiciones',
+        titulo: 'Condiciones económicas',
+        campos: [
+          { id: 'precioseñalletra', label: 'Precio señal (en letra)', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'precioseñalnumero', label: 'Precio señal (€)', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
+          { id: 'precioventaletra', label: 'Precio venta (en letra, MAYÚS)', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'precioventanumero', label: 'Precio venta (€)', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
+          { id: 'nombrepropietario', label: 'Nombre propietario (MAYÚS)', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'plazomaximodias', label: 'Plazo máximo (días)', tipo: 'number', obligatorio: true, ancho: 'half' },
+          { id: 'fechaactual', label: 'Fecha', tipo: 'date', obligatorio: true, ancho: 'half' },
+        ],
+      },
+    ],
+  },
+
+  // 8. DocumentoSeñalCompraventaPenitencialIngresoBanco
+  {
+    tipo: 'documento_senal',
+    subtipo: 'senal_compraventa_penitencial_banco',
+    titulo: 'DocumentoSeñalCompraventaPenitencialIngresoBanco',
+    descripcion: 'Señal compraventa penitencial con ingreso en banco',
+    secciones: [
+      {
+        id: 'comprador',
+        titulo: 'Datos del comprador',
+        campos: [
+          { id: 'nombrecliente', label: 'Nombre comprador', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'municipiocliente', label: 'Municipio', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'callecliente', label: 'Calle', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'numerocallecliente', label: 'Número', tipo: 'text', obligatorio: false, ancho: 'half' },
+          { id: 'dnicliente', label: 'DNI / NIE', tipo: 'nif', obligatorio: true, ancho: 'half' },
+          { id: 'telefonocliente', label: 'Teléfono', tipo: 'phone', obligatorio: true, ancho: 'half' },
+        ],
+      },
+      {
+        id: 'inmueble',
+        titulo: 'Datos del inmueble',
+        campos: [
+          { id: 'municipioinmueble', label: 'Municipio del inmueble', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'calleinmueble', label: 'Calle del inmueble', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'numeroinmueble', label: 'Número', tipo: 'text', obligatorio: false, ancho: 'third' },
+          { id: 'garajeinmueble', label: 'Nº garaje', tipo: 'text', obligatorio: false, ancho: 'third' },
+          { id: 'trasteroinmueble', label: 'Nº trastero', tipo: 'text', obligatorio: false, ancho: 'third' },
+        ],
+      },
+      {
+        id: 'condiciones',
+        titulo: 'Condiciones económicas',
+        campos: [
+          { id: 'precioseñalletra', label: 'Precio señal (en letra)', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'precioseñalnumero', label: 'Precio señal (€)', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
+          { id: 'precioventaletra', label: 'Precio venta (en letra, MAYÚS)', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'precioventanumero', label: 'Precio venta (€)', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
+          { id: 'nombrepropietario', label: 'Nombre propietario (MAYÚS)', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'plazomaximodias', label: 'Plazo máximo (días)', tipo: 'number', obligatorio: true, ancho: 'half' },
+          { id: 'fechaactual', label: 'Fecha', tipo: 'date', obligatorio: true, ancho: 'half' },
+        ],
+      },
+    ],
+  },
+
+  // 9. DocumentoSeñalCompraventaPenitencial
+  {
+    tipo: 'documento_senal',
+    subtipo: 'senal_compraventa_penitencial',
+    titulo: 'DocumentoSeñalCompraventaPenitencial',
+    descripcion: 'Señal compraventa penitencial',
+    secciones: [
+      {
+        id: 'comprador',
+        titulo: 'Datos del comprador',
+        campos: [
+          { id: 'nombrecliente', label: 'Nombre comprador', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'municipiocliente', label: 'Municipio', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'callecliente', label: 'Calle', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'numerocallecliente', label: 'Número', tipo: 'text', obligatorio: false, ancho: 'half' },
+          { id: 'dnicliente', label: 'DNI / NIE', tipo: 'nif', obligatorio: true, ancho: 'half' },
+          { id: 'telefonocliente', label: 'Teléfono', tipo: 'phone', obligatorio: true, ancho: 'half' },
+        ],
+      },
+      {
+        id: 'inmueble',
+        titulo: 'Datos del inmueble',
+        campos: [
+          { id: 'municipioinmueble', label: 'Municipio del inmueble', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'calleinmueble', label: 'Calle del inmueble', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'numeroinmueble', label: 'Número', tipo: 'text', obligatorio: false, ancho: 'third' },
+          { id: 'garajeinmueble', label: 'Nº garaje', tipo: 'text', obligatorio: false, ancho: 'third' },
+          { id: 'trasteroinmueble', label: 'Nº trastero', tipo: 'text', obligatorio: false, ancho: 'third' },
+        ],
+      },
+      {
+        id: 'condiciones',
+        titulo: 'Condiciones económicas',
+        campos: [
+          { id: 'precioseñalletra', label: 'Precio señal (en letra)', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'precioseñalnumero', label: 'Precio señal (€)', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
+          { id: 'precioventaletra', label: 'Precio venta (en letra, MAYÚS)', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'precioventanumero', label: 'Precio venta (€)', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
+          { id: 'nombrepropietario', label: 'Nombre propietario (MAYÚS)', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'plazomaximodias', label: 'Plazo máximo (días)', tipo: 'number', obligatorio: true, ancho: 'half' },
+          { id: 'fechaactual', label: 'Fecha', tipo: 'date', obligatorio: true, ancho: 'half' },
+        ],
+      },
+    ],
+  },
+
+  // 10. DocumentoSeñalOferta
+  {
+    tipo: 'documento_senal',
+    subtipo: 'senal_oferta',
+    titulo: 'DocumentoSeñalOferta',
+    descripcion: 'Documento de señal y oferta de compra',
+    secciones: [
+      {
+        id: 'comprador',
+        titulo: 'Datos del comprador',
+        campos: [
+          { id: 'nombrecliente', label: 'Nombre comprador', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'municipiocliente', label: 'Municipio', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'callecliente', label: 'Calle', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'numerocallecliente', label: 'Número', tipo: 'text', obligatorio: false, ancho: 'half' },
+          { id: 'dnicliente', label: 'DNI / NIE', tipo: 'nif', obligatorio: true, ancho: 'half' },
+          { id: 'telefonocliente', label: 'Teléfono', tipo: 'phone', obligatorio: true, ancho: 'half' },
+        ],
+      },
+      {
+        id: 'inmueble',
+        titulo: 'Datos del inmueble (MAYÚS)',
+        campos: [
+          { id: 'municipioinmueble', label: 'Municipio (MAYÚS)', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'calleinmueble', label: 'Calle (MAYÚS)', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'numeroinmueble', label: 'Número (MAYÚS)', tipo: 'text', obligatorio: false, ancho: 'third' },
+          { id: 'garajeinmueble', label: 'Nº garaje (MAYÚS)', tipo: 'text', obligatorio: false, ancho: 'third' },
+          { id: 'trasteroinmueble', label: 'Nº trastero (MAYÚS)', tipo: 'text', obligatorio: false, ancho: 'third' },
+        ],
+      },
+      {
+        id: 'condiciones',
+        titulo: 'Condiciones económicas',
+        campos: [
+          { id: 'precioventanumero', label: 'Precio venta (MAYÚS)', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
+          { id: 'nombrepropietario', label: 'Nombre propietario (MAYÚS)', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'precioofertanumero', label: 'Precio oferta (MAYÚS)', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
+          { id: 'depositooferta', label: 'Depósito de oferta (€)', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
+          { id: 'fechaactual', label: 'Fecha', tipo: 'date', obligatorio: true, ancho: 'half' },
+        ],
+      },
+    ],
+  },
+
+  // 11. ContratoArrasPenitancial
+  {
+    tipo: 'contrato_arras',
+    subtipo: 'contrato_arras_penitencial',
+    titulo: 'ContratoArrasPenitancial',
+    descripcion: 'Contrato de arras penitencial',
+    secciones: [
+      {
+        id: 'comprador',
+        titulo: 'Datos del comprador',
+        campos: [
+          { id: 'nombrecomprador', label: 'Nombre comprador', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'callecomprador', label: 'Calle y número', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'dnicomprador', label: 'DNI / NIE', tipo: 'nif', obligatorio: true, ancho: 'half' },
+        ],
+      },
+      {
+        id: 'vendedor',
+        titulo: 'Datos del vendedor',
+        campos: [
+          { id: 'nombrevendedor', label: 'Nombre vendedor', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'callevendedor', label: 'Calle y número', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'dnivendedor', label: 'DNI / NIE', tipo: 'nif', obligatorio: true, ancho: 'half' },
+        ],
+      },
+      {
+        id: 'inmueble',
+        titulo: 'Datos del inmueble',
+        campos: [
+          { id: 'municipioinmueble', label: 'Municipio del inmueble', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'calleinmueble', label: 'Calle del inmueble', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'numeroinmueble', label: 'Número', tipo: 'text', obligatorio: false, ancho: 'third' },
+          { id: 'registronumero', label: 'Nº registro', tipo: 'text', obligatorio: false, ancho: 'third' },
+          { id: 'registrolugar', label: 'Registro — Lugar', tipo: 'text', obligatorio: false, ancho: 'third' },
+          { id: 'registrotomo', label: 'Tomo', tipo: 'text', obligatorio: false, ancho: 'third' },
+          { id: 'registrolibro', label: 'Libro', tipo: 'text', obligatorio: false, ancho: 'third' },
+          { id: 'registrofolio', label: 'Folio', tipo: 'text', obligatorio: false, ancho: 'third' },
+          { id: 'registrofinca', label: 'Finca', tipo: 'text', obligatorio: false, ancho: 'third' },
+        ],
+      },
+      {
+        id: 'condiciones',
+        titulo: 'Condiciones económicas',
+        campos: [
+          { id: 'precioventaletra', label: 'Precio venta (en letra, MAYÚS)', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'precioventanumero', label: 'Precio venta (€)', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
+          { id: 'cuentabancovendedor', label: 'Cuenta banco vendedor', tipo: 'text', obligatorio: true, ancho: 'full' },
+          { id: 'cantidadrestanteletra', label: 'Cantidad restante (en letra)', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'cantidadrestantenumero', label: 'Cantidad restante (€)', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
+          { id: 'cantidadretenidaletra', label: 'Cantidad retenida (en letra)', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'cantidadretenidanumero', label: 'Cantidad retenida (€)', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
+          { id: 'fechalimite', label: 'Fecha límite', tipo: 'date', obligatorio: true, ancho: 'half' },
+          { id: 'cantidadindemnizaciónletra', label: 'Indemnización (en letra, MAYÚS)', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'cantidadindemnizaciónnumero', label: 'Indemnización (€)', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
+          { id: 'fechaactual', label: 'Fecha', tipo: 'date', obligatorio: true, ancho: 'half' },
+        ],
+      },
+    ],
+  },
+
+  // 12. ContratoArrasConfirmatoria
+  {
+    tipo: 'contrato_arras',
+    subtipo: 'contrato_arras_confirmatoria',
+    titulo: 'ContratoArrasConfirmatoria',
+    descripcion: 'Contrato de arras confirmatoria',
+    secciones: [
+      {
+        id: 'comprador',
+        titulo: 'Datos del comprador',
+        campos: [
+          { id: 'nombrecomprador', label: 'Nombre comprador', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'callecomprador', label: 'Calle y número', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'dnicomprador', label: 'DNI / NIE', tipo: 'nif', obligatorio: true, ancho: 'half' },
+        ],
+      },
+      {
+        id: 'vendedor',
+        titulo: 'Datos del vendedor',
+        campos: [
+          { id: 'nombrevendedor', label: 'Nombre vendedor', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'callevendedor', label: 'Calle y número', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'dnivendedor', label: 'DNI / NIE', tipo: 'nif', obligatorio: true, ancho: 'half' },
+        ],
+      },
+      {
+        id: 'inmueble',
+        titulo: 'Datos del inmueble',
+        campos: [
+          { id: 'municipioinmueble', label: 'Municipio del inmueble', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'calleinmueble', label: 'Calle del inmueble', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'numeroinmueble', label: 'Número', tipo: 'text', obligatorio: false, ancho: 'third' },
+          { id: 'registronumero', label: 'Nº registro', tipo: 'text', obligatorio: false, ancho: 'third' },
+          { id: 'registrolugar', label: 'Registro — Lugar', tipo: 'text', obligatorio: false, ancho: 'third' },
+          { id: 'registrotomo', label: 'Tomo', tipo: 'text', obligatorio: false, ancho: 'third' },
+          { id: 'registrolibro', label: 'Libro', tipo: 'text', obligatorio: false, ancho: 'third' },
+          { id: 'registrofolio', label: 'Folio', tipo: 'text', obligatorio: false, ancho: 'third' },
+          { id: 'registrofinca', label: 'Finca', tipo: 'text', obligatorio: false, ancho: 'third' },
+        ],
+      },
+      {
+        id: 'condiciones',
+        titulo: 'Condiciones económicas',
+        campos: [
+          { id: 'precioventaletra', label: 'Precio venta (en letra, MAYÚS)', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'precioventanumero', label: 'Precio venta (€)', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
+          { id: 'entregaporbancoletra', label: 'Entrega por banco (en letra)', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'entregaporbanconumero', label: 'Entrega por banco (€)', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
+          { id: 'cuentabancovendedor', label: 'Cuenta banco vendedor', tipo: 'text', obligatorio: true, ancho: 'full' },
+          { id: 'cantidadrestanteletra', label: 'Cantidad restante (en letra)', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'cantidadrestantenumero', label: 'Cantidad restante (€)', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
+          { id: 'cantidadretenidaletra', label: 'Cantidad retenida (en letra)', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'cantidadretenidanumero', label: 'Cantidad retenida (€)', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
+          { id: 'fechalimite', label: 'Fecha límite', tipo: 'date', obligatorio: true, ancho: 'half' },
+          { id: 'cantidadindemnizaciónletra', label: 'Indemnización (en letra, MAYÚS)', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'cantidadindemnizaciónnumero', label: 'Indemnización (€)', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
+          { id: 'fechaactual', label: 'Fecha', tipo: 'date', obligatorio: true, ancho: 'half' },
+        ],
+      },
+    ],
+  },
+
+  // 13. ReconocimientoHonorarios
+  {
+    tipo: 'reconocimiento_honorarios',
+    subtipo: 'reconocimiento_honorarios',
+    titulo: 'ReconocimientoHonorarios',
+    descripcion: 'Reconocimiento de honorarios',
+    secciones: [
+      {
+        id: 'cliente',
+        titulo: 'Datos del cliente',
+        campos: [
+          { id: 'nombrecliente', label: 'Nombre completo', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'municipiocliente', label: 'Municipio', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'callecliente', label: 'Calle', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'numerocallecliente', label: 'Número', tipo: 'text', obligatorio: false, ancho: 'half' },
+          { id: 'dnicliente', label: 'DNI / NIE', tipo: 'nif', obligatorio: true, ancho: 'half' },
+        ],
+      },
+      {
+        id: 'inmueble',
+        titulo: 'Datos del inmueble',
+        campos: [
+          { id: 'municipioinmueble', label: 'Municipio del inmueble', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'calleinmueble', label: 'Calle del inmueble', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'numeroinmueble', label: 'Número', tipo: 'text', obligatorio: false, ancho: 'half' },
+        ],
+      },
+      {
+        id: 'honorarios',
+        titulo: 'Honorarios',
+        campos: [
+          { id: 'fechalimite', label: 'Fecha límite', tipo: 'date', obligatorio: true, ancho: 'half' },
+          { id: 'honorariosletra', label: 'Honorarios (en letra, MAYÚS)', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'honorariosnumero', label: 'Honorarios (€)', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
+          { id: 'fechaactual', label: 'Fecha', tipo: 'date', obligatorio: true, ancho: 'half' },
+        ],
+      },
+    ],
+  },
+
+  // 14. ContratoArrendamiento
   {
     tipo: 'contrato_arrendamiento',
     subtipo: 'contrato_arrendamiento',
-    titulo: 'Contrato de Arrendamiento',
-    descripcion: 'Contrato de arrendamiento de inmueble (LAU)',
+    titulo: 'ContratoArrendamiento',
+    descripcion: 'Contrato de arrendamiento',
     secciones: [
-      SECCION_ARRENDADOR,
-      SECCION_ARRENDATARIO,
-      SECCION_INMUEBLE_ALQUILER,
       {
-        id: 'condiciones_arrendamiento',
-        titulo: 'Condiciones del arrendamiento',
+        id: 'arrendador',
+        titulo: 'Datos del arrendador',
         campos: [
-          { id: 'fecha_inicio', label: 'Fecha de inicio del contrato', tipo: 'date', obligatorio: true, ancho: 'half' },
-          { id: 'duracion', label: 'Duración inicial', tipo: 'text', obligatorio: true, ancho: 'half', placeholder: 'Ej: 1 año, 5 años...' },
-          { id: 'renta_mensual', label: 'Renta mensual', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
-          { id: 'dia_pago', label: 'Día de pago mensual', tipo: 'number', obligatorio: true, ancho: 'half', placeholder: 'Ej: 1, 5, 10...' },
-          { id: 'forma_pago', label: 'Forma de pago', tipo: 'select', obligatorio: true, ancho: 'half', opciones: [
-            { value: 'transferencia', label: 'Transferencia bancaria' },
-            { value: 'domiciliacion', label: 'Domiciliación bancaria' },
-            { value: 'efectivo', label: 'Efectivo' },
-          ]},
-          { id: 'iban_pago', label: 'IBAN para el pago', tipo: 'text', obligatorio: false, ancho: 'half' },
-          { id: 'fianza_mensualidades', label: 'Fianza (nº mensualidades)', tipo: 'number', obligatorio: true, ancho: 'half' },
-          { id: 'fianza_importe', label: 'Importe fianza', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
-          { id: 'garantia_adicional', label: 'Garantía adicional', tipo: 'currency', obligatorio: false, ancho: 'half', prefijo: '€', ayuda: 'Aval bancario, seguro de impago, etc.' },
-          { id: 'actualizacion_renta', label: 'Actualización de renta', tipo: 'select', obligatorio: true, ancho: 'half', opciones: [
-            { value: 'ipc', label: 'Según IPC' },
-            { value: 'indice_garantia', label: 'Índice de garantía competitividad' },
-            { value: 'porcentaje_fijo', label: 'Porcentaje fijo' },
-            { value: 'no_actualizacion', label: 'Sin actualización' },
-          ]},
-          { id: 'suministros', label: 'Suministros a cargo del inquilino', tipo: 'textarea', obligatorio: false, ancho: 'full', ayuda: 'Agua, luz, gas, comunidad...' },
-          { id: 'obras_permitidas', label: 'Obras y mejoras', tipo: 'textarea', obligatorio: false, ancho: 'full' },
-          { id: 'mascotas', label: '¿Se permiten mascotas?', tipo: 'select', obligatorio: false, ancho: 'half', opciones: [
-            { value: 'si', label: 'Sí' },
-            { value: 'no', label: 'No' },
-            { value: 'previa_autorizacion', label: 'Previa autorización' },
-          ]},
-          { id: 'clausulas_adicionales', label: 'Cláusulas adicionales', tipo: 'textarea', obligatorio: false, ancho: 'full' },
+          { id: 'nombrearrendador', label: 'Nombre arrendador', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'municipioarrendador', label: 'Municipio', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'callearrendador', label: 'Calle y número', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'dniarrendador', label: 'DNI / NIE', tipo: 'nif', obligatorio: true, ancho: 'half' },
+          { id: 'mailarrendador', label: 'Email', tipo: 'email', obligatorio: false, ancho: 'half' },
+          { id: 'telefonoarrendador', label: 'Teléfono', tipo: 'phone', obligatorio: true, ancho: 'half' },
         ],
       },
-      SECCION_AGENCIA,
+      {
+        id: 'arrendatario',
+        titulo: 'Datos del arrendatario',
+        campos: [
+          { id: 'nombrearrendatario', label: 'Nombre arrendatario', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'municipioarrendatario', label: 'Municipio', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'callearrendatario', label: 'Calle y número', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'dniarrendatario', label: 'DNI / NIE', tipo: 'nif', obligatorio: true, ancho: 'half' },
+          { id: 'mailarrendatario', label: 'Email', tipo: 'email', obligatorio: false, ancho: 'half' },
+          { id: 'telefonoarrendatario', label: 'Teléfono', tipo: 'phone', obligatorio: true, ancho: 'half' },
+        ],
+      },
+      {
+        id: 'inmueble',
+        titulo: 'Datos del inmueble',
+        campos: [
+          { id: 'municipioinmueble', label: 'Municipio del inmueble', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'calleinmueble', label: 'Calle del inmueble', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'numeroinmueble', label: 'Número', tipo: 'text', obligatorio: false, ancho: 'third' },
+          { id: 'pisoletrainmueble', label: 'Piso / Letra', tipo: 'text', obligatorio: false, ancho: 'third' },
+          { id: 'referenciacatastralinmueble', label: 'Referencia catastral', tipo: 'text', obligatorio: false, ancho: 'third' },
+          { id: 'certificadoeficienciaenergetica', label: 'Certificado eficiencia energética', tipo: 'text', obligatorio: false, ancho: 'half' },
+        ],
+      },
+      {
+        id: 'condiciones',
+        titulo: 'Condiciones del arrendamiento',
+        campos: [
+          { id: 'fechainicioalquiler', label: 'Fecha inicio alquiler', tipo: 'date', obligatorio: true, ancho: 'half' },
+          { id: 'importerentainicial', label: 'Importe renta inicial (€)', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
+          { id: 'cuentabancoarrendador', label: 'Cuenta banco arrendador', tipo: 'text', obligatorio: true, ancho: 'full' },
+          { id: 'garantiaadicionalletra', label: 'Garantía adicional (en letra)', tipo: 'text', obligatorio: false, ancho: 'half' },
+          { id: 'garantiaadicionalnumero', label: 'Garantía adicional (€)', tipo: 'currency', obligatorio: false, ancho: 'half', prefijo: '€' },
+          { id: 'cantidadfianzaletra', label: 'Fianza (en letra)', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'cantidadfianzanumero', label: 'Fianza (€)', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
+          { id: 'fechaactual', label: 'Fecha', tipo: 'date', obligatorio: true, ancho: 'half' },
+        ],
+      },
     ],
   },
 
-  // 15. CONTRATO DE ARRENDAMIENTO — RESCISIÓN
+  // 15. ContratoArrendamientoRescisión
   {
     tipo: 'contrato_arrendamiento',
     subtipo: 'contrato_arrendamiento_rescision',
-    titulo: 'Rescisión de Contrato de Arrendamiento',
-    descripcion: 'Documento de rescisión / resolución anticipada del contrato de alquiler',
+    titulo: 'ContratoArrendamientoRescisión',
+    descripcion: 'Rescisión de contrato de arrendamiento',
     secciones: [
-      SECCION_ARRENDADOR,
-      SECCION_ARRENDATARIO,
-      SECCION_INMUEBLE_ALQUILER,
       {
-        id: 'datos_contrato_original',
-        titulo: 'Datos del contrato a rescindir',
+        id: 'arrendador',
+        titulo: 'Datos del arrendador',
         campos: [
-          { id: 'fecha_contrato_original', label: 'Fecha del contrato original', tipo: 'date', obligatorio: true, ancho: 'half' },
-          { id: 'fecha_fin_prevista', label: 'Fecha de fin prevista en contrato', tipo: 'date', obligatorio: true, ancho: 'half' },
-          { id: 'renta_mensual_vigente', label: 'Renta mensual vigente', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
+          { id: 'nombrearrendador', label: 'Nombre arrendador', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'municipioarrendador', label: 'Municipio', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'callearrendador', label: 'Calle y número', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'dniarrendador', label: 'DNI / NIE', tipo: 'nif', obligatorio: true, ancho: 'half' },
         ],
       },
       {
-        id: 'condiciones_rescision',
+        id: 'arrendatario',
+        titulo: 'Datos del arrendatario',
+        campos: [
+          { id: 'nombrearrendatario', label: 'Nombre arrendatario', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'dniarrendatario', label: 'DNI / NIE', tipo: 'nif', obligatorio: true, ancho: 'half' },
+          { id: 'nombrearrendatario2', label: 'Nombre arrendatario 2 (si aplica)', tipo: 'text', obligatorio: false, ancho: 'half' },
+          { id: 'dniarrendatario2', label: 'DNI / NIE arrendatario 2', tipo: 'nif', obligatorio: false, ancho: 'half' },
+          { id: 'municipioarrendatario', label: 'Municipio', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'callearrendatario', label: 'Calle y número', tipo: 'text', obligatorio: true, ancho: 'half' },
+        ],
+      },
+      {
+        id: 'inmueble',
+        titulo: 'Datos del inmueble',
+        campos: [
+          { id: 'pisoletrainmueble', label: 'Piso / Letra', tipo: 'text', obligatorio: false, ancho: 'half' },
+          { id: 'fechainicioalquiler', label: 'Fecha inicio alquiler', tipo: 'date', obligatorio: true, ancho: 'half' },
+          { id: 'municipioinmueble', label: 'Municipio del inmueble', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'calleinmueble', label: 'Calle del inmueble', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'numeroinmueble', label: 'Número', tipo: 'text', obligatorio: false, ancho: 'third' },
+          { id: 'garajeinmueble', label: 'Nº garaje', tipo: 'text', obligatorio: false, ancho: 'third' },
+          { id: 'trasteroinmueble', label: 'Nº trastero', tipo: 'text', obligatorio: false, ancho: 'third' },
+        ],
+      },
+      {
+        id: 'condiciones',
         titulo: 'Condiciones de la rescisión',
         campos: [
-          { id: 'fecha_rescision', label: 'Fecha efectiva de rescisión', tipo: 'date', obligatorio: true, ancho: 'half' },
-          { id: 'motivo_rescision', label: 'Motivo de la rescisión', tipo: 'select', obligatorio: true, ancho: 'half', opciones: [
-            { value: 'acuerdo_mutuo', label: 'Acuerdo mutuo' },
-            { value: 'voluntad_arrendatario', label: 'Voluntad del arrendatario' },
-            { value: 'incumplimiento', label: 'Incumplimiento contractual' },
-            { value: 'otro', label: 'Otro' },
-          ]},
-          { id: 'fianza_devolucion', label: 'Fianza a devolver', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
-          { id: 'descuentos_fianza', label: 'Descuentos sobre fianza', tipo: 'currency', obligatorio: false, ancho: 'half', prefijo: '€', ayuda: 'Daños, impagos, gastos...' },
-          { id: 'penalizacion_rescision', label: 'Penalización por rescisión anticipada', tipo: 'currency', obligatorio: false, ancho: 'half', prefijo: '€' },
-          { id: 'estado_inmueble', label: 'Estado del inmueble en entrega', tipo: 'textarea', obligatorio: true, ancho: 'full' },
-          { id: 'lectura_contadores', label: 'Lectura de contadores', tipo: 'textarea', obligatorio: false, ancho: 'full', ayuda: 'Agua, luz, gas — lecturas en fecha de rescisión' },
-          { id: 'acuerdos_adicionales', label: 'Acuerdos adicionales', tipo: 'textarea', obligatorio: false, ancho: 'full' },
+          { id: 'fechafirmacontratoalquiler', label: 'Fecha firma contrato alquiler', tipo: 'date', obligatorio: true, ancho: 'half' },
+          { id: 'fechafincontratoalquiler', label: 'Fecha fin contrato alquiler', tipo: 'date', obligatorio: true, ancho: 'half' },
+          { id: 'cantidadfianzaletra', label: 'Fianza (en letra)', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'cantidadfianzanumero', label: 'Fianza (€)', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
+          { id: 'fechaactual', label: 'Fecha', tipo: 'date', obligatorio: true, ancho: 'half' },
         ],
       },
-      SECCION_AGENCIA,
     ],
   },
 ]
-
-// ── Helpers ──────────────────────────────────────────────────
 
 export function getDefinicionDocumento(subtipo: string): DefinicionDocumento | undefined {
   return SCHEMA_DOCUMENTOS.find(d => d.subtipo === subtipo)
@@ -648,7 +768,7 @@ export const GRUPOS_DOCUMENTOS: GrupoTipoDocumento[] = [
   {
     tipo: 'nota_encargo',
     label: 'Nota de encargo',
-    descripcion: 'Encargos de venta o alquiler a la agencia',
+    descripcion: 'Encargos de venta a la agencia',
     icono: 'FileSignature',
     subtipos: [
       { subtipo: 'nota_encargo_exclusiva', label: 'En exclusiva' },
