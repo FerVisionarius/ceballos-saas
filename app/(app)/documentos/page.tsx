@@ -2,15 +2,16 @@ import Link from 'next/link'
 import { FileText, Plus } from 'lucide-react'
 import { createAdminClient } from '@/lib/supabase/server'
 import { EliminarDocumentoBtn } from './EliminarDocumentoBtn'
+import { FiltroDocumentos } from './FiltroDocumentos'
 
 async function getDocumentos() {
   try {
     const admin = createAdminClient()
     const { data } = await admin
       .from('documentos')
-      .select('*, clientes(nombre, apellidos), usuarios(nombre, apellidos)')
+      .select('*, usuarios(nombre, apellidos)')
       .order('created_at', { ascending: false })
-      .limit(50)
+      .limit(100)
     return data ?? []
   } catch {
     return []
@@ -35,8 +36,16 @@ const SUBTIPO_LABELS: Record<string, string> = {
   contrato_arrendamiento_rescision: 'Rescisión de arrendamiento',
 }
 
+function getInmuebleFromDatos(datos: any): string {
+  const municipio = datos?.municipioinmueble ?? ''
+  const calle = datos?.calleinmueble ?? ''
+  if (!municipio && !calle) return '—'
+  return [municipio, calle].filter(Boolean).join(', ')
+}
+
 export default async function DocumentosPage() {
   const documentos = await getDocumentos()
+  const subtiposUnicos = [...new Set(documentos.map((d: any) => d.subtipo))]
 
   return (
     <div className="space-y-6">
@@ -64,52 +73,12 @@ export default async function DocumentosPage() {
           </Link>
         </div>
       ) : (
-        <div className="card overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-slate-100 bg-slate-50">
-                  <th className="text-left px-4 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">Documento</th>
-                  <th className="text-left px-4 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">Cliente</th>
-                  <th className="text-left px-4 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">Generado por</th>
-                  <th className="text-left px-4 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">Fecha</th>
-                  <th className="px-4 py-3"></th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {documentos.map((doc: any) => (
-                  <tr key={doc.id} className="hover:bg-slate-50 transition-colors">
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-2">
-                        <FileText className="w-4 h-4 text-slate-400 shrink-0" />
-                        <span className="font-medium text-slate-800">
-                          {SUBTIPO_LABELS[doc.subtipo] ?? doc.subtipo}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="px-4 py-3 text-slate-600">
-                      {doc.clientes ? `${doc.clientes.nombre} ${doc.clientes.apellidos}` : '—'}
-                    </td>
-                    <td className="px-4 py-3 text-slate-500">
-                      {doc.usuarios ? `${doc.usuarios.nombre} ${doc.usuarios.apellidos}` : '—'}
-                    </td>
-                    <td className="px-4 py-3 text-slate-500">
-                      {new Date(doc.created_at).toLocaleDateString('es-ES')}
-                    </td>
-                    <td className="px-4 py-3 text-right">
-                      <div className="flex items-center justify-end gap-2">
-                        <Link href={`/documentos/${doc.id}`} className="text-xs text-brand-600 hover:underline font-medium">
-                          Ver
-                        </Link>
-                        <EliminarDocumentoBtn id={doc.id} />
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
+        <FiltroDocumentos
+          documentos={documentos}
+          subtiposUnicos={subtiposUnicos as string[]}
+          subtipoLabels={SUBTIPO_LABELS}
+          getInmueble={getInmuebleFromDatos}
+        />
       )}
     </div>
   )
