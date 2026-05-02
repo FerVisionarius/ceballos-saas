@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient, createAdminClient } from '@/lib/supabase/server'
+import { SCHEMA_DOCUMENTOS } from '@/lib/documentos/schema'
 
 export async function POST(req: NextRequest) {
   try {
@@ -15,6 +16,10 @@ export async function POST(req: NextRequest) {
     }
 
     const admin = createAdminClient()
+
+    // Obtener el título del documento para enviarlo a n8n
+    const def = SCHEMA_DOCUMENTOS.find(d => d.subtipo === subtipo)
+    const tituloDocumento = def?.titulo ?? subtipo
 
     // Obtener perfil del usuario para incluirlo en el webhook
     const { data: perfil } = await admin
@@ -38,7 +43,7 @@ export async function POST(req: NextRequest) {
 
     if (error) return NextResponse.json({ error: 'Error al guardar el documento' }, { status: 500 })
 
-    // Enviar webhook a n8n (sin bloquear la respuesta)
+    // Enviar webhook a n8n
     if (process.env.N8N_WEBHOOK_URL) {
       fetch(process.env.N8N_WEBHOOK_URL, {
         method: 'POST',
@@ -47,7 +52,7 @@ export async function POST(req: NextRequest) {
           evento: 'documento_generado',
           documento_id: documento.id,
           tipo,
-          subtipo,
+          subtipo: tituloDocumento,
           datos,
           usuario: {
             id: user.id,
