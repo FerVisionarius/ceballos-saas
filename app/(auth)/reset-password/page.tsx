@@ -1,25 +1,35 @@
 'use client'
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
 import { Building2, Loader2 } from 'lucide-react'
 
 export default function ResetPasswordPage() {
-  const router = useRouter()
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
   const [enviado, setEnviado] = useState(false)
+  const [error, setError] = useState('')
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setLoading(true)
-    const res = await fetch('/api/auth/reset-password', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email }),
-    })
-    setEnviado(true)
-    setLoading(false)
+    setError('')
+
+    try {
+      const res = await fetch('/api/auth/reset-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        setError(data.error ?? 'Error al enviar el email')
+      } else {
+        setEnviado(true)
+      }
+    } catch {
+      setError('Error de conexión')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -46,6 +56,9 @@ export default function ResetPasswordPage() {
                   <input type="email" value={email} onChange={e => setEmail(e.target.value)}
                     className="input-field" placeholder="tu@email.com" required />
                 </div>
+                {error && (
+                  <div className="bg-red-50 border border-red-200 text-red-700 text-sm px-3 py-2 rounded-lg">{error}</div>
+                )}
                 <button type="submit" disabled={loading} className="btn-primary w-full py-2.5">
                   {loading ? <><Loader2 className="w-4 h-4 animate-spin" /> Enviando...</> : 'Enviar enlace'}
                 </button>
