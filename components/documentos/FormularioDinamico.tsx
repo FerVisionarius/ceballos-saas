@@ -248,11 +248,11 @@ export function FormularioDinamico({ tipo, subtipo }: FormularioDinamicoProps) {
                                 {campo.label}{campo.obligatorio && <span className="text-red-500 ml-1">*</span>}
                               </label>
                               <div className="flex gap-2">
-                                <select
-                                  value={tratamientos[campo.id] ?? ''}
-                                  onChange={e => setTratamientos(prev => ({ ...prev, [campo.id]: e.target.value }))}
-                                  className="px-2 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 bg-white shrink-0"
-                                >
+                              <select
+                                value={tratamientos[campo.id] ?? ''}
+                                onChange={e => setTratamientos(prev => ({ ...prev, [campo.id]: e.target.value }))}
+                                className="w-20 px-2 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 bg-white shrink-0"
+                                  >
                                   <option value="">—</option>
                                   <option value="Don">Don</option>
                                   <option value="Doña">Doña</option>
