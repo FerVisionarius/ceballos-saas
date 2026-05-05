@@ -1,7 +1,8 @@
-import { createAdminClient } from '@/lib/supabase/server'
+import { createAdminClient, createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft, Home } from 'lucide-react'
+import { EditarInmuebleForm } from './EditarInmuebleForm'
 
 async function getInmueble(id: string) {
   const admin = createAdminClient()
@@ -36,6 +37,12 @@ export default async function InmuebleDetallePage({ params }: { params: { id: st
   const inmueble = await getInmueble(params.id)
   if (!inmueble) notFound()
 
+  const supabase = createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  const admin = createAdminClient()
+  const { data: perfilUsuario } = await admin.from('usuarios').select('rol').eq('id', user!.id).single()
+  const esSuperadmin = perfilUsuario?.rol === 'superadmin'
+
   return (
     <div className="space-y-6">
       <div>
@@ -48,14 +55,17 @@ export default async function InmuebleDetallePage({ params }: { params: { id: st
             <h1 className="text-2xl font-semibold text-slate-900">{inmueble.direccion}</h1>
             <p className="text-slate-500 mt-1">{inmueble.ciudad}{inmueble.codigo_postal ? ` · ${inmueble.codigo_postal}` : ''}</p>
           </div>
-          <span className={`text-sm px-3 py-1 rounded-full font-medium ${ESTADO_COLORS[inmueble.estado]}`}>
-            {ESTADO_LABELS[inmueble.estado]}
-          </span>
+          <div className="flex items-center gap-3">
+            <span className={`text-sm px-3 py-1 rounded-full font-medium ${ESTADO_COLORS[inmueble.estado]}`}>
+              {ESTADO_LABELS[inmueble.estado]}
+            </span>
+          </div>
         </div>
       </div>
 
+      {esSuperadmin && <EditarInmuebleForm inmueble={inmueble} />}
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Info principal */}
         <div className="lg:col-span-2 space-y-4">
           <div className="card p-5">
             <h2 className="font-semibold text-slate-800 mb-4 flex items-center gap-2">
@@ -108,9 +118,7 @@ export default async function InmuebleDetallePage({ params }: { params: { id: st
           )}
         </div>
 
-        {/* Sidebar */}
         <div className="space-y-4">
-          {/* Precios */}
           <div className="card p-5">
             <h2 className="font-semibold text-slate-800 mb-4">Precios</h2>
             <div className="space-y-3">
@@ -133,7 +141,6 @@ export default async function InmuebleDetallePage({ params }: { params: { id: st
             </div>
           </div>
 
-          {/* Propietario */}
           {inmueble.clientes && (
             <div className="card p-5">
               <h2 className="font-semibold text-slate-800 mb-3">Propietario</h2>
