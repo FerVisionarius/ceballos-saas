@@ -232,7 +232,7 @@ export function FormularioDinamico({ tipo, subtipo }: FormularioDinamicoProps) {
                     </div>
                   )}
 
-                  {/* Persona 1 — campos principales */}
+                  {/* Persona 1 */}
                   <div className="grid grid-cols-12 gap-4 mt-4">
                     {seccion.campos.map(campo => {
                       const ancho = campo.ancho === 'third' ? 'col-span-12 sm:col-span-4'
@@ -247,17 +247,19 @@ export function FormularioDinamico({ tipo, subtipo }: FormularioDinamicoProps) {
                               <label className="block text-sm font-medium text-slate-700 mb-1">
                                 {campo.label}{campo.obligatorio && <span className="text-red-500 ml-1">*</span>}
                               </label>
-                              <div className="flex gap-2">
-                              <select
-                                value={tratamientos[campo.id] ?? ''}
-                                onChange={e => setTratamientos(prev => ({ ...prev, [campo.id]: e.target.value }))}
-                                className="w-20 px-2 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 bg-white shrink-0"
-                                  >
+                              <div className="flex gap-2 items-start">
+                                <select
+                                  value={tratamientos[campo.id] ?? ''}
+                                  onChange={e => setTratamientos(prev => ({ ...prev, [campo.id]: e.target.value }))}
+                                  className="w-20 shrink-0 px-2 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 bg-white"
+                                >
                                   <option value="">—</option>
                                   <option value="Don">Don</option>
                                   <option value="Doña">Doña</option>
                                 </select>
-                                <CampoInput campo={{ ...campo, label: '' }} register={register} error={errors[campo.id] as any} setValue={setValue} watch={watch} />
+                                <div className="flex-1 min-w-0">
+                                  <CampoInput campo={{ ...campo, label: '' }} register={register} error={errors[campo.id] as any} setValue={setValue} watch={watch} />
+                                </div>
                               </div>
                               {errors[campo.id] && (
                                 <p className="text-xs text-red-600 mt-1">{(errors[campo.id] as any)?.message}</p>
@@ -288,17 +290,19 @@ export function FormularioDinamico({ tipo, subtipo }: FormularioDinamicoProps) {
                                 {esCampoNombre ? (
                                   <div>
                                     <label className="block text-sm font-medium text-slate-700 mb-1">{campo.label}</label>
-                                    <div className="flex gap-2">
+                                    <div className="flex gap-2 items-start">
                                       <select
                                         value={tratamientos[campo.id] ?? ''}
                                         onChange={e => setTratamientos(prev => ({ ...prev, [campo.id]: e.target.value }))}
-                                        className="px-2 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 bg-white shrink-0"
+                                        className="w-20 shrink-0 px-2 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 bg-white"
                                       >
                                         <option value="">—</option>
                                         <option value="Don">Don</option>
                                         <option value="Doña">Doña</option>
                                       </select>
-                                      <CampoInput campo={{ ...campo, label: '' }} register={register} error={undefined} setValue={setValue} watch={watch} />
+                                      <div className="flex-1 min-w-0">
+                                        <CampoInput campo={{ ...campo, label: '' }} register={register} error={undefined} setValue={setValue} watch={watch} />
+                                      </div>
                                     </div>
                                   </div>
                                 ) : (
