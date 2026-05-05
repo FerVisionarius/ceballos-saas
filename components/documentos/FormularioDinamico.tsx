@@ -37,7 +37,6 @@ const MAPEO_INMUEBLE: Record<string, string> = {
 const SECCIONES_CLIENTE = ['vendedor', 'comprador', 'arrendador', 'arrendatario', 'cliente']
 const SECCIONES_INMUEBLE = ['inmueble']
 
-// Campos que llevan tratamiento Don/Doña
 const CAMPOS_NOMBRE = [
   'nombrecliente', 'nombrecomprador', 'nombrevendedor',
   'nombrearrendador', 'nombrearrendatario',
@@ -55,9 +54,7 @@ export function FormularioDinamico({ tipo, subtipo }: FormularioDinamicoProps) {
   })
   const [modalCliente, setModalCliente] = useState<string | null>(null)
   const [modalInmueble, setModalInmueble] = useState<string | null>(null)
-  // nPersonas por sección cliente
   const [nPersonas, setNPersonas] = useState<Record<string, number>>({})
-  // tratamiento Don/Doña por campo
   const [tratamientos, setTratamientos] = useState<Record<string, string>>({})
 
   const schemaFields: Record<string, z.ZodTypeAny> = {}
@@ -106,12 +103,10 @@ export function FormularioDinamico({ tipo, subtipo }: FormularioDinamicoProps) {
   }
 
   async function onSubmit(data: Record<string, unknown>) {
-    // Añadir tratamientos a los datos
     const datosConTratamientos = { ...data }
     Object.entries(tratamientos).forEach(([campo, trato]) => {
       if (trato) datosConTratamientos[`tratamiento_${campo}`] = trato
     })
-
     setLoading(true)
     try {
       const res = await fetch('/api/documentos', {
@@ -137,17 +132,13 @@ export function FormularioDinamico({ tipo, subtipo }: FormularioDinamicoProps) {
     return seccion.campos.filter(c => errors[c.id]).length
   }
 
-  // Genera sufijos para campos extra de personas adicionales
   function getCamposPersonaExtra(seccion: SeccionFormulario, personaIdx: number) {
-    // Duplica los campos de nombre y nif para persona adicional
-    return seccion.campos
-      .filter(c => ['nombrecliente','nombrecomprador','nombrevendedor','nombrearrendador','nombrearrendatario','dnicliente','dnicomprador','dnivendedor','dniarrendador','dniarrendatario'].includes(c.id))
-      .map(c => ({
-        ...c,
-        id: `${c.id}_p${personaIdx}`,
-        label: `${c.label} (persona ${personaIdx + 1})`,
-        obligatorio: false,
-      }))
+    return seccion.campos.map(c => ({
+      ...c,
+      id: `${c.id}_p${personaIdx}`,
+      label: `${c.label}`,
+      obligatorio: false,
+    }))
   }
 
   if (exito) {
@@ -203,7 +194,9 @@ export function FormularioDinamico({ tipo, subtipo }: FormularioDinamicoProps) {
                       {nErrores} {nErrores === 1 ? 'error' : 'errores'}
                     </div>
                   )}
-                  {abierta ? <ChevronUp className="w-4 h-4 text-slate-400 shrink-0" /> : <ChevronDown className="w-4 h-4 text-slate-400 shrink-0" />}
+                  {abierta
+                    ? <ChevronUp className="w-4 h-4 text-slate-400 shrink-0" />
+                    : <ChevronDown className="w-4 h-4 text-slate-400 shrink-0" />}
                 </button>
 
                 {abierta && esSeccionCliente && (
@@ -224,7 +217,6 @@ export function FormularioDinamico({ tipo, subtipo }: FormularioDinamicoProps) {
 
               {abierta && (
                 <div className="px-5 pb-5">
-                  {/* Selector nº personas solo en secciones de cliente */}
                   {esSeccionCliente && (
                     <div className="flex items-center gap-3 mt-4 mb-2 pb-3 border-b border-slate-100">
                       <label className="text-sm font-medium text-slate-600">Nº de personas</label>
@@ -240,13 +232,12 @@ export function FormularioDinamico({ tipo, subtipo }: FormularioDinamicoProps) {
                     </div>
                   )}
 
-                  {/* Campos de la primera persona */}
+                  {/* Persona 1 — campos principales */}
                   <div className="grid grid-cols-12 gap-4 mt-4">
                     {seccion.campos.map(campo => {
                       const ancho = campo.ancho === 'third' ? 'col-span-12 sm:col-span-4'
                         : campo.ancho === 'half' ? 'col-span-12 sm:col-span-6'
                         : 'col-span-12'
-
                       const esCampoNombre = CAMPOS_NOMBRE.includes(campo.id)
 
                       return (
@@ -280,7 +271,7 @@ export function FormularioDinamico({ tipo, subtipo }: FormularioDinamicoProps) {
                     })}
                   </div>
 
-                  {/* Campos de personas adicionales */}
+                  {/* Personas adicionales */}
                   {esSeccionCliente && personas > 1 && Array.from({ length: personas - 1 }, (_, i) => i + 1).map(idx => {
                     const camposExtra = getCamposPersonaExtra(seccion, idx)
                     return (
@@ -288,9 +279,12 @@ export function FormularioDinamico({ tipo, subtipo }: FormularioDinamicoProps) {
                         <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Persona {idx + 1}</p>
                         <div className="grid grid-cols-12 gap-4">
                           {camposExtra.map(campo => {
+                            const ancho = campo.ancho === 'third' ? 'col-span-12 sm:col-span-4'
+                              : campo.ancho === 'half' ? 'col-span-12 sm:col-span-6'
+                              : 'col-span-12'
                             const esCampoNombre = CAMPOS_NOMBRE.some(n => campo.id.startsWith(n))
                             return (
-                              <div key={campo.id} className="col-span-12 sm:col-span-6">
+                              <div key={campo.id} className={ancho}>
                                 {esCampoNombre ? (
                                   <div>
                                     <label className="block text-sm font-medium text-slate-700 mb-1">{campo.label}</label>
@@ -304,24 +298,11 @@ export function FormularioDinamico({ tipo, subtipo }: FormularioDinamicoProps) {
                                         <option value="Don">Don</option>
                                         <option value="Doña">Doña</option>
                                       </select>
-                                      <input
-                                        {...register(campo.id as any)}
-                                        type="text"
-                                        className="w-full px-3 py-2 text-sm bg-white border border-slate-200 rounded-lg placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500"
-                                        placeholder={campo.label}
-                                      />
+                                      <CampoInput campo={{ ...campo, label: '' }} register={register} error={undefined} setValue={setValue} watch={watch} />
                                     </div>
                                   </div>
                                 ) : (
-                                  <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-1">{campo.label}</label>
-                                    <input
-                                      {...register(campo.id as any)}
-                                      type="text"
-                                      className="w-full px-3 py-2 text-sm bg-white border border-slate-200 rounded-lg placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500"
-                                      placeholder={campo.label}
-                                    />
-                                  </div>
+                                  <CampoInput campo={campo} register={register} error={undefined} setValue={setValue} watch={watch} />
                                 )}
                               </div>
                             )
