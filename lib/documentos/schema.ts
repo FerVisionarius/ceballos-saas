@@ -104,6 +104,7 @@ export const SCHEMA_DOCUMENTOS: DefinicionDocumento[] = [
           { id: 'precioventanumero', label: 'Precio de venta (€)', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
           { id: 'hipotecapendiente', label: 'Hipoteca pendiente (€)', tipo: 'currency', obligatorio: false, ancho: 'half', prefijo: '€' },
           { id: 'tiempomeses', label: 'Plazo del encargo (meses)', tipo: 'number', obligatorio: true, ancho: 'third' },
+          { id: 'comisionporcentaje', label: 'Comisión (%)', tipo: 'percentage', obligatorio: true, ancho: 'third', sufijo: '%' },
           { id: 'minimoletra', label: 'Mínimo honorarios (en letra)', tipo: 'text', obligatorio: true, ancho: 'half' },
           { id: 'minimonumero', label: 'Mínimo honorarios (€)', tipo: 'currency', obligatorio: true, ancho: 'third', prefijo: '€' },
           { id: 'observacionesmuebles', label: 'Observaciones', tipo: 'textarea', obligatorio: false, ancho: 'full' },
