@@ -59,6 +59,26 @@ function procesarDatosPersonas(datos: Record<string, any>): Record<string, any> 
     }
   }
 
+  // Construir texto del bloque {{clientes}}
+  const lineasClientes: string[] = []
+  for (let n = 1; n <= nPersonas; n++) {
+    const tratamiento = resultado[`tratamiento_nombrecliente${n}`] ?? resultado[`tratamiento_nombrevendedor${n}`] ?? resultado[`tratamiento_nombrecomprador${n}`] ?? ''
+    const nombre = resultado[`nombrecliente${n}`] ?? resultado[`nombrevendedor${n}`] ?? resultado[`nombrecomprador${n}`] ?? ''
+    const municipio = resultado[`municipiocliente${n}`] ?? ''
+    const calle = resultado[`callecliente${n}`] ?? ''
+    const dni = resultado[`dnicliente${n}`] ?? resultado[`dnivendedor${n}`] ?? resultado[`dnicomprador${n}`] ?? ''
+    const telefono = resultado[`telefonocliente${n}`] ?? ''
+    const mail = resultado[`mailcliente${n}`] ?? ''
+
+    if (nombre) {
+      const parteEmail = mail ? ` y correo electrónico ${mail}` : ''
+      lineasClientes.push(
+        `${tratamiento} ${nombre}, con domicilio en ${municipio}, C/ ${calle} y provisto/a de D.N.I. nº ${dni}, con teléfono ${telefono}${parteEmail}`
+      )
+    }
+  }
+  resultado['clientes'] = lineasClientes.join(' y ')
+
   return resultado
 }
 
