@@ -16,31 +16,12 @@ interface FormularioDinamicoProps {
   subtipo: SubtipoDocumento
 }
 
-const MAPEO_CLIENTE: Record<string, Record<string, string>> = {
-  vendedor:     { nombre: 'vendedor_nombre',     nif_nie: 'vendedor_nif',     telefono: 'vendedor_telefono',     email: 'vendedor_email',     direccion: 'vendedor_direccion' },
-  comprador:    { nombre: 'comprador_nombre',    nif_nie: 'comprador_nif',    telefono: 'comprador_telefono',    email: 'comprador_email',    direccion: 'comprador_direccion' },
-  arrendador:   { nombre: 'arrendador_nombre',   nif_nie: 'arrendador_nif',   telefono: 'arrendador_telefono',   email: 'arrendador_email' },
-  arrendatario: { nombre: 'arrendatario_nombre', nif_nie: 'arrendatario_nif', telefono: 'arrendatario_telefono', email: 'arrendatario_email' },
-  cliente:      { nombre: 'cliente_nombre',      nif_nie: 'cliente_nif',      telefono: 'cliente_telefono',      email: 'cliente_email' },
-}
-
-const MAPEO_INMUEBLE: Record<string, string> = {
-  inmueble_direccion:            'direccion',
-  inmueble_ciudad:               'ciudad',
-  inmueble_cp:                   'codigo_postal',
-  inmueble_referencia_catastral: 'referencia_catastral',
-  inmueble_metros:               'metros_cuadrados',
-  inmueble_garaje:               'garaje',
-  inmueble_trastero:             'trastero',
-}
-
 const SECCIONES_CLIENTE = ['vendedor', 'comprador', 'arrendador', 'arrendatario', 'cliente']
 const SECCIONES_INMUEBLE = ['inmueble']
 
 const CAMPOS_NOMBRE = [
   'nombrecliente', 'nombrecomprador', 'nombrevendedor',
   'nombrearrendador', 'nombrearrendatario',
-  'vendedor_nombre', 'comprador_nombre', 'arrendador_nombre', 'arrendatario_nombre', 'cliente_nombre'
 ]
 
 export function FormularioDinamico({ tipo, subtipo }: FormularioDinamicoProps) {
@@ -65,15 +46,21 @@ export function FormularioDinamico({ tipo, subtipo }: FormularioDinamicoProps) {
       } else {
         schemaFields[campo.id] = z.string().optional()
       }
+      for (let i = 1; i <= 4; i++) {
+        schemaFields[`${campo.id}_p${i}`] = z.string().optional()
+      }
     })
   })
   const schema = z.object(schemaFields)
 
   const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm({
     resolver: zodResolver(schema),
-    defaultValues: Object.fromEntries(
-      def?.secciones.flatMap(s => s.campos.map(c => [c.id, ''])) ?? []
-    ),
+    defaultValues: Object.fromEntries([
+      ...(def?.secciones.flatMap(s => s.campos.map(c => [c.id, ''])) ?? []),
+      ...(def?.secciones.flatMap(s => s.campos.flatMap(c =>
+        Array.from({ length: 4 }, (_, i) => [`${c.id}_p${i + 1}`, ''])
+      )) ?? []),
+    ]),
   })
 
   if (!def) return <div className="card p-6 text-slate-500">Documento no encontrado</div>
