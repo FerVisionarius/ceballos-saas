@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient, createAdminClient } from '@/lib/supabase/server'
+import { SCHEMA_DOCUMENTOS } from '@/lib/documentos/schema'
+import { procesarDatosPersonas } from '@/lib/documentos/procesarDatos'
 
 export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
   try {
@@ -37,8 +39,11 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
 
     if (error) return NextResponse.json({ error: error.message }, { status: 400 })
 
-    // Reenviar webhook si se solicita
     if (body.reenviar_webhook && process.env.N8N_WEBHOOK_URL) {
+      const def = SCHEMA_DOCUMENTOS.find(d => d.subtipo === data.subtipo)
+      const tituloDocumento = def?.titulo ?? data.subtipo
+      const datosN8n = procesarDatosPersonas(data.datos)
+
       fetch(process.env.N8N_WEBHOOK_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -46,8 +51,8 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
           evento: 'documento_actualizado',
           documento_id: data.id,
           tipo: data.tipo,
-          subtipo: data.subtipo,
-          datos: data.datos,
+          subtipo: tituloDocumento,
+          datos: datosN8n,
           usuario: { id: user.id, email: user.email },
           timestamp: new Date().toISOString(),
         }),
