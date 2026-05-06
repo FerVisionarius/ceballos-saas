@@ -251,7 +251,7 @@ export function FormularioDinamico({ tipo, subtipo }: FormularioDinamicoProps) {
                                 <select
                                   value={tratamientos[campo.id] ?? ''}
                                   onChange={e => setTratamientos(prev => ({ ...prev, [campo.id]: e.target.value }))}
-                                  className="w-20 shrink-0 px-2 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 bg-white"
+                                  className="w-16 shrink-0 px-2 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 bg-white"
                                 >
                                   <option value="">—</option>
                                   <option value="Don">Don</option>
