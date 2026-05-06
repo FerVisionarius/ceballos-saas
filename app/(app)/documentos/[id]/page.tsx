@@ -111,7 +111,7 @@ export default async function DocumentoDetallePage({ params }: { params: { id: s
 
       {/* Vista o edición según rol */}
       {esSuperadmin ? (
-        <EditarDocumentoForm id={doc.id} datosIniciales={datos} />
+      <EditarDocumentoForm id={doc.id} subtipo={doc.subtipo} datosIniciales={datos} />
       ) : (
         <div className="card overflow-hidden">
           <div className="px-5 py-4 border-b border-slate-100 flex items-center gap-2">
