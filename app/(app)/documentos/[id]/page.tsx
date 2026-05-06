@@ -119,8 +119,10 @@ export default async function DocumentoDetallePage({ params }: { params: { id: s
             <h2 className="font-semibold text-slate-800">Datos del documento</h2>
           </div>
           <div className="divide-y divide-slate-100">
-            {Object.entries(datos).map(([key, value]) =>
-              value ? (
+              {Object.entries(datos)
+                .filter(([key]) => !key.match(/_p\d+$/) && !key.startsWith('tratamiento_'))
+                .map(([key, value]) =>
+                  value ? (
                 <div key={key} className="flex items-start gap-4 px-5 py-3">
                   <p className="text-xs font-medium text-slate-500 w-48 shrink-0 pt-0.5">{formatKey(key)}</p>
                   <p className="text-sm text-slate-800">{String(value)}</p>

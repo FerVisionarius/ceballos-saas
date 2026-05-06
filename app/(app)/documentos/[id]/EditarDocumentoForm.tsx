@@ -8,6 +8,10 @@ function formatKey(key: string): string {
   return key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
 }
 
+function esCampoInterno(key: string): boolean {
+  return key.match(/_p\d+$/) !== null || key.startsWith('tratamiento_')
+}
+
 export function EditarDocumentoForm({ id, datosIniciales }: { id: string; datosIniciales: Record<string, unknown> }) {
   const router = useRouter()
   const [datos, setDatos] = useState<Record<string, string>>(
@@ -54,19 +58,21 @@ export function EditarDocumentoForm({ id, datosIniciales }: { id: string; datosI
       </div>
 
       <div className="divide-y divide-slate-100">
-        {Object.entries(datos).map(([key, value]) => (
-          <div key={key} className="flex items-start gap-4 px-5 py-3">
-            <label className="text-xs font-medium text-slate-500 w-48 shrink-0 pt-2.5">
-              {formatKey(key)}
-            </label>
-            <input
-              type="text"
-              value={value}
-              onChange={e => handleChange(key, e.target.value)}
-              className="flex-1 px-3 py-2 text-sm bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
-            />
-          </div>
-        ))}
+        {Object.entries(datos)
+          .filter(([key]) => !esCampoInterno(key))
+          .map(([key, value]) => (
+            <div key={key} className="flex items-start gap-4 px-5 py-3">
+              <label className="text-xs font-medium text-slate-500 w-48 shrink-0 pt-2.5">
+                {formatKey(key)}
+              </label>
+              <input
+                type="text"
+                value={value}
+                onChange={e => handleChange(key, e.target.value)}
+                className="flex-1 px-3 py-2 text-sm bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
+              />
+            </div>
+          ))}
       </div>
 
       <div className="px-5 py-4 border-t border-slate-100 flex items-center justify-end gap-3">
