@@ -79,24 +79,65 @@ export function FormularioDinamico({ tipo, subtipo }: FormularioDinamicoProps) {
   if (!def) return <div className="card p-6 text-slate-500">Documento no encontrado</div>
 
   function handleSelectCliente(cliente: any, seccionId: string) {
-    const mapeo = MAPEO_CLIENTE[seccionId]
-    if (!mapeo) return
-    Object.entries(mapeo).forEach(([campo, key]) => {
-      if (campo === 'nombre') {
-        setValue(campo as any, `${cliente.nombre} ${cliente.apellidos}`)
-      } else {
-        const valor = cliente[key]
-        if (valor) setValue(campo as any, valor)
-      }
+    const mapeos: Record<string, Record<string, string>> = {
+      vendedor: {
+        nombrecliente: `${cliente.nombre} ${cliente.apellidos}`,
+        nombrevendedor: `${cliente.nombre} ${cliente.apellidos}`,
+        dnicliente: cliente.nif_nie ?? '',
+        dnivendedor: cliente.nif_nie ?? '',
+        telefonocliente: cliente.telefono ?? '',
+        mailcliente: cliente.email ?? '',
+        callecliente: cliente.direccion ?? '',
+        callevendedor: cliente.direccion ?? '',
+      },
+      comprador: {
+        nombrecliente: `${cliente.nombre} ${cliente.apellidos}`,
+        nombrecomprador: `${cliente.nombre} ${cliente.apellidos}`,
+        dnicliente: cliente.nif_nie ?? '',
+        dnicomprador: cliente.nif_nie ?? '',
+        telefonocliente: cliente.telefono ?? '',
+        mailcliente: cliente.email ?? '',
+        callecliente: cliente.direccion ?? '',
+        callecomprador: cliente.direccion ?? '',
+      },
+      arrendador: {
+        nombrearrendador: `${cliente.nombre} ${cliente.apellidos}`,
+        dniarrendador: cliente.nif_nie ?? '',
+        telefonoarrendador: cliente.telefono ?? '',
+        mailarrendador: cliente.email ?? '',
+        callearrendador: cliente.direccion ?? '',
+      },
+      arrendatario: {
+        nombrearrendatario: `${cliente.nombre} ${cliente.apellidos}`,
+        dniarrendatario: cliente.nif_nie ?? '',
+        telefonoarrendatario: cliente.telefono ?? '',
+        mailarrendatario: cliente.email ?? '',
+        callearrendatario: cliente.direccion ?? '',
+      },
+      cliente: {
+        nombrecliente: `${cliente.nombre} ${cliente.apellidos}`,
+        dnicliente: cliente.nif_nie ?? '',
+        telefonocliente: cliente.telefono ?? '',
+        mailcliente: cliente.email ?? '',
+        callecliente: cliente.direccion ?? '',
+      },
+    }
+    const campos = mapeos[seccionId] ?? mapeos['cliente']
+    Object.entries(campos).forEach(([campo, valor]) => {
+      if (valor) setValue(campo as any, valor)
     })
     setModalCliente(null)
     toast.success(`Datos de ${cliente.nombre} ${cliente.apellidos} cargados`)
   }
 
   function handleSelectInmueble(inmueble: any) {
-    Object.entries(MAPEO_INMUEBLE).forEach(([campo, key]) => {
-      const valor = inmueble[key]
-      if (valor !== null && valor !== undefined) setValue(campo as any, String(valor))
+    const campos: Record<string, string> = {
+      municipioinmueble: inmueble.ciudad ?? '',
+      calleinmueble: inmueble.direccion ?? '',
+      referenciacatastralinmueble: inmueble.referencia_catastral ?? '',
+    }
+    Object.entries(campos).forEach(([campo, valor]) => {
+      if (valor) setValue(campo as any, valor)
     })
     setModalInmueble(null)
     toast.success('Datos del inmueble cargados')
