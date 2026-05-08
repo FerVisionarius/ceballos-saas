@@ -32,8 +32,7 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50 p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-        <img src="/logo.png" alt="Ceballos" className="w-16 h-16 rounded-full mb-4 shadow-lg" />
-          <h1 className="text-2xl font-semibold text-slate-900">Inmobiliaria Ceballos</h1>
+        <img src="/logo.png" alt="Ceballos" className="w-16 h-16 rounded-full mb-4 shadow-lg mx-auto" />
           <p className="text-sm text-slate-500 mt-1">Plataforma de gestión interna</p>
         </div>
 
