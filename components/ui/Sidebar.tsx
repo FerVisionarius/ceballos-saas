@@ -43,9 +43,7 @@ export function Sidebar({ user }: SidebarProps) {
   return (
     <aside className="w-60 shrink-0 flex flex-col bg-white border-r border-slate-200 h-full">
       <div className="flex items-center gap-3 px-5 py-5 border-b border-slate-100">
-        <div className="w-8 h-8 bg-brand-600 rounded-lg flex items-center justify-center shrink-0">
-          <Building2 className="w-4 h-4 text-white" />
-        </div>
+      <img src="/logo.png" alt="Ceballos" className="w-8 h-8 rounded-lg shrink-0 object-cover" />
         <div className="min-w-0">
           <p className="text-sm font-semibold text-slate-900 truncate">Ceballos</p>
           <p className="text-xs text-slate-400">Inmobiliaria</p>

@@ -3,12 +3,17 @@ import { Inter } from 'next/font/google'
 import { Toaster } from 'sonner'
 import './globals.css'
 
+
 const inter = Inter({ subsets: ['latin'], variable: '--font-geist-sans' })
 
 export const metadata: Metadata = {
-  title: 'Inmobiliaria Ceballos — Gestión',
-  description: 'Plataforma de gestión documental para Inmobiliaria Ceballos',
+  title: 'Inmobiliaria Ceballos',
+  description: 'Plataforma de gestión interna',
+  icons: {
+    icon: '/logo.png',
+  },
 }
+
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
