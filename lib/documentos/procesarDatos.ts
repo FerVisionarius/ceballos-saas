@@ -61,9 +61,10 @@ export function procesarDatosPersonas(datos: Record<string, any>): Record<string
       const mail = resultado[`mailcliente${n}`] ?? ''
   
       if (nombre) {
+        const parteTelefono = telefono ? `, con teléfono ${telefono}` : ''
         const parteEmail = mail ? ` y correo electrónico ${mail}` : ''
         lineasClientes.push(
-          `${tratamiento} ${nombre}, con domicilio en ${municipio}, C/ ${calle} y provisto/a de D.N.I. nº ${dni}, con teléfono ${telefono}${parteEmail}`
+          `${tratamiento} ${nombre}, con domicilio en ${municipio}, C/ ${calle} y provisto/a de D.N.I. nº ${dni}${parteTelefono}${parteEmail}`
         )
       }
     }
