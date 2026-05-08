@@ -68,7 +68,21 @@ export function procesarDatosPersonas(datos: Record<string, any>): Record<string
         )
       }
     }
-    resultado['clientes'] = lineasClientes.join(' y ')
-  
+    resultado['clientes'] = lineasClientes.length > 1
+      ? lineasClientes.slice(0, -1).join(', ') + ' y ' + lineasClientes.at(-1)
+      : lineasClientes[0] ?? ''
+
+    const lineasClientesCorto: string[] = []
+    for (let n = 1; n <= nPersonas; n++) {
+      const tratamiento = resultado[`tratamiento_nombrecliente${n}`] ?? resultado[`tratamiento_nombrevendedor${n}`] ?? resultado[`tratamiento_nombrecomprador${n}`] ?? ''
+      const nombre = resultado[`nombrecliente${n}`] ?? resultado[`nombrevendedor${n}`] ?? resultado[`nombrecomprador${n}`] ?? ''
+
+      if (nombre) {
+        lineasClientesCorto.push(`${tratamiento} ${nombre}`)
+      }
+    }
+    resultado['clientescorto'] = lineasClientesCorto.length > 1
+      ? lineasClientesCorto.slice(0, -1).join(', ') + ' y ' + lineasClientesCorto.at(-1)
+      : lineasClientesCorto[0] ?? ''
     return resultado
   }
