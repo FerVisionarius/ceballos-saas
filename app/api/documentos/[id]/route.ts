@@ -42,7 +42,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
     if (body.reenviar_webhook && process.env.N8N_WEBHOOK_URL) {
       const def = SCHEMA_DOCUMENTOS.find(d => d.subtipo === data.subtipo)
       const tituloDocumento = def?.titulo ?? data.subtipo
-      const datosN8n = procesarDatosPersonas(data.datos)
+      const datosN8n = procesarDatosPersonas(data.datos, data.subtipo)
 
       fetch(process.env.N8N_WEBHOOK_URL, {
         method: 'POST',

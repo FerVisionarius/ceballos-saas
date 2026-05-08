@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
 
     if (error) return NextResponse.json({ error: 'Error al guardar el documento' }, { status: 500 })
 
-    const datosN8n = procesarDatosPersonas(datos)
+      const datosN8n = procesarDatosPersonas(datos, subtipo)
 
     if (process.env.N8N_WEBHOOK_URL) {
       fetch(process.env.N8N_WEBHOOK_URL, {

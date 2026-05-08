@@ -1,4 +1,4 @@
-export function procesarDatosPersonas(datos: Record<string, any>): Record<string, any> {
+export function procesarDatosPersonas(datos: Record<string, any>, subtipo?: string): Record<string, any> {
   const resultado: Record<string, any> = {}
   const personasExtra: Record<number, Record<string, any>> = {}
 
@@ -95,8 +95,8 @@ export function procesarDatosPersonas(datos: Record<string, any>): Record<string
       resultado[`telefonocliente${n}`] ??
       resultado[`telefonovendedor${n}`] ??
       resultado[`telefonocomprador${n}`] ??
-      resultado[`telefonoardrendador${n}`] ??
-      resultado[`telefonoardrendatario${n}`] ??
+      resultado[`telefonoarrendador${n}`] ??
+      resultado[`telefonoarrendatario${n}`] ??
       ''
     const mail =
       resultado[`mailcliente${n}`] ??
@@ -123,6 +123,35 @@ export function procesarDatosPersonas(datos: Record<string, any>): Record<string
   resultado['clientescorto'] = lineasClientesCorto.length > 1
     ? lineasClientesCorto.slice(0, -1).join(', ') + ' y ' + lineasClientesCorto.at(-1)
     : lineasClientesCorto[0] ?? ''
+
+  // Párrafo especial para conformidad de arras
+  const subtiposConformidad = ['conformidad_arras_confirmatorias', 'conformidad_arras_penitenciales']
+  if (subtipo && subtiposConformidad.includes(subtipo)) {
+    const lineasConformidad: string[] = []
+    for (let n = 1; n <= nPersonas; n++) {
+      const tratamiento =
+        resultado[`tratamiento_nombrecliente${n}`] ?? ''
+      const nombre =
+        resultado[`nombrecliente${n}`] ?? ''
+      const municipio =
+        resultado[`municipiocliente${n}`] ?? ''
+      const calle =
+        resultado[`callecliente${n}`] ?? ''
+      const dni =
+        resultado[`dnicliente${n}`] ?? ''
+
+      if (nombre) {
+        lineasConformidad.push(
+          `${tratamiento} ${nombre}, mayor de edad, con domicilio en ${municipio}, C/${calle} y provisto/a de D.N.I. nº ${dni}`
+        )
+      }
+    }
+
+    const propietario = nPersonas > 1 ? 'propietarios' : 'propietario'
+    resultado['clientes'] = (lineasConformidad.length > 1
+      ? lineasConformidad.slice(0, -1).join(', ') + ' y ' + lineasConformidad.at(-1)
+      : lineasConformidad[0] ?? '') + `, ${propietario}`
+  }
 
   return resultado
 }
