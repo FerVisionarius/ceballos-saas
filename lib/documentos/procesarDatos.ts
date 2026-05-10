@@ -147,6 +147,69 @@ export function procesarDatosPersonas(datos: Record<string, any>, subtipo?: stri
       }
     }
 
+
+    // Párrafo especial para señales
+  const subtiposSenal = [
+    'senal_arrendamiento',
+    'senal_compraventa_confirmatoria',
+    'senal_compraventa_confirmatoria_banco',
+    'senal_compraventa_penitencial',
+    'senal_compraventa_penitencial_banco',
+  ]
+  if (subtipo && subtiposSenal.includes(subtipo)) {
+    // {{clientes}} → HE RECIBIDO DE DON/DOÑA nombre...
+    const lineasRecibido: string[] = []
+    // {{clientescorto}} → ficha con datos
+    const lineasFicha: string[] = []
+
+    for (let n = 1; n <= nPersonas; n++) {
+      const tratamiento =
+        resultado[`tratamiento_nombrecliente${n}`] ??
+        resultado[`tratamiento_nombrecomprador${n}`] ??
+        ''
+      const nombre =
+        resultado[`nombrecliente${n}`] ??
+        resultado[`nombrecomprador${n}`] ??
+        ''
+      const municipio =
+        resultado[`municipiocliente${n}`] ??
+        resultado[`municipiocomprador${n}`] ??
+        ''
+      const calle =
+        resultado[`callecliente${n}`] ??
+        resultado[`callecomprador${n}`] ??
+        ''
+      const numerocalle =
+        resultado[`numerocallecliente${n}`] ??
+        resultado[`numerocallecomprador${n}`] ??
+        ''
+      const dni =
+        resultado[`dnicliente${n}`] ??
+        resultado[`dnicomprador${n}`] ??
+        ''
+      const telefono =
+        resultado[`telefonocliente${n}`] ??
+        resultado[`telefonocomprador${n}`] ??
+        ''
+
+      if (nombre) {
+        // Tratamiento en mayúsculas para "HE RECIBIDO DE DON..."
+        const tratamientoMayus = tratamiento ? tratamiento.toUpperCase() : ''
+        lineasRecibido.push(`${tratamientoMayus} ${nombre}`)
+
+        lineasFicha.push(
+          `Nombre y apellidos: ${nombre}\nDomicilio y población: ${municipio}, ${calle}${numerocalle ? ', ' + numerocalle : ''}\nD.N.I. nº ${dni}\nTeléfono: ${telefono}`
+        )
+      }
+    }
+
+    resultado['clientes'] = 'HE RECIBIDO DE ' + (lineasRecibido.length > 1
+      ? lineasRecibido.slice(0, -1).join(', ') + ' y ' + lineasRecibido.at(-1)
+      : lineasRecibido[0] ?? '')
+
+    resultado['clientescorto'] = lineasFicha.join('\n\n')
+  }
+
     const propietario = nPersonas > 1 ? 'propietarios' : 'propietario'
     resultado['clientes'] = (lineasConformidad.length > 1
       ? lineasConformidad.slice(0, -1).join(', ') + ' y ' + lineasConformidad.at(-1)
