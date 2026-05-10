@@ -50,6 +50,7 @@ export function procesarDatosPersonas(datos: Record<string, any>, subtipo?: stri
     }
   }
 
+  // ── Párrafo genérico (clientes + clientescorto) ──────────────
   const lineasClientes: string[] = []
   const lineasClientesCorto: string[] = []
 
@@ -124,31 +125,29 @@ export function procesarDatosPersonas(datos: Record<string, any>, subtipo?: stri
     ? lineasClientesCorto.slice(0, -1).join(', ') + ' y ' + lineasClientesCorto.at(-1)
     : lineasClientesCorto[0] ?? ''
 
-  // Párrafo especial para conformidad de arras
+  // ── Párrafo especial: conformidad de arras ───────────────────
   const subtiposConformidad = ['conformidad_arras_confirmatorias', 'conformidad_arras_penitenciales']
   if (subtipo && subtiposConformidad.includes(subtipo)) {
     const lineasConformidad: string[] = []
     for (let n = 1; n <= nPersonas; n++) {
-      const tratamiento =
-        resultado[`tratamiento_nombrecliente${n}`] ?? ''
-      const nombre =
-        resultado[`nombrecliente${n}`] ?? ''
-      const municipio =
-        resultado[`municipiocliente${n}`] ?? ''
-      const calle =
-        resultado[`callecliente${n}`] ?? ''
-      const dni =
-        resultado[`dnicliente${n}`] ?? ''
-
+      const tratamiento = resultado[`tratamiento_nombrecliente${n}`] ?? ''
+      const nombre = resultado[`nombrecliente${n}`] ?? ''
+      const municipio = resultado[`municipiocliente${n}`] ?? ''
+      const calle = resultado[`callecliente${n}`] ?? ''
+      const dni = resultado[`dnicliente${n}`] ?? ''
       if (nombre) {
         lineasConformidad.push(
           `${tratamiento} ${nombre}, mayor de edad, con domicilio en ${municipio}, C/${calle} y provisto/a de D.N.I. nº ${dni}`
         )
       }
     }
+    const propietario = nPersonas > 1 ? 'propietarios' : 'propietario'
+    resultado['clientes'] = (lineasConformidad.length > 1
+      ? lineasConformidad.slice(0, -1).join(', ') + ' y ' + lineasConformidad.at(-1)
+      : lineasConformidad[0] ?? '') + `, ${propietario}`
+  }
 
-
-    // Párrafo especial para señales
+  // ── Párrafo especial: señales ────────────────────────────────
   const subtiposSenal = [
     'senal_arrendamiento',
     'senal_compraventa_confirmatoria',
@@ -157,9 +156,7 @@ export function procesarDatosPersonas(datos: Record<string, any>, subtipo?: stri
     'senal_compraventa_penitencial_banco',
   ]
   if (subtipo && subtiposSenal.includes(subtipo)) {
-    // {{clientes}} → HE RECIBIDO DE DON/DOÑA nombre...
     const lineasRecibido: string[] = []
-    // {{clientescorto}} → ficha con datos
     const lineasFicha: string[] = []
 
     for (let n = 1; n <= nPersonas; n++) {
@@ -193,10 +190,8 @@ export function procesarDatosPersonas(datos: Record<string, any>, subtipo?: stri
         ''
 
       if (nombre) {
-        // Tratamiento en mayúsculas para "HE RECIBIDO DE DON..."
         const tratamientoMayus = tratamiento ? tratamiento.toUpperCase() : ''
         lineasRecibido.push(`${tratamientoMayus} ${nombre}`)
-
         lineasFicha.push(
           `Nombre y apellidos: ${nombre}\nDomicilio y población: ${municipio}, ${calle}${numerocalle ? ', ' + numerocalle : ''}\nD.N.I. nº ${dni}\nTeléfono: ${telefono}`
         )
@@ -208,12 +203,6 @@ export function procesarDatosPersonas(datos: Record<string, any>, subtipo?: stri
       : lineasRecibido[0] ?? '')
 
     resultado['clientescorto'] = lineasFicha.join('\n\n')
-  }
-
-    const propietario = nPersonas > 1 ? 'propietarios' : 'propietario'
-    resultado['clientes'] = (lineasConformidad.length > 1
-      ? lineasConformidad.slice(0, -1).join(', ') + ' y ' + lineasConformidad.at(-1)
-      : lineasConformidad[0] ?? '') + `, ${propietario}`
   }
 
   return resultado
