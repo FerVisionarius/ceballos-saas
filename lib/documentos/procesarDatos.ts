@@ -198,7 +198,7 @@ export function procesarDatosPersonas(datos: Record<string, any>, subtipo?: stri
       }
     }
 
-    resultado['clientes'] = 'HE RECIBIDO DE ' + (lineasRecibido.length > 1
+    resultado['clientes'] = 'He recibido de ' + (lineasRecibido.length > 1
       ? lineasRecibido.slice(0, -1).join(', ') + ' y ' + lineasRecibido.at(-1)
       : lineasRecibido[0] ?? '')
 
