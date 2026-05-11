@@ -1,7 +1,8 @@
 'use client'
+import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { Building2, LayoutDashboard, Users, FileText, LogOut, ChevronRight, Settings, UserCog, Home } from 'lucide-react'
+import { LayoutDashboard, Users, FileText, LogOut, ChevronRight, Settings, UserCog, Home, Menu, X } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { cn } from '@/lib/utils'
 import type { UserRole } from '@/types'
@@ -11,12 +12,12 @@ interface SidebarProps {
 }
 
 const NAV_ITEMS = [
-  { href: '/dashboard',          label: 'Dashboard',  icon: LayoutDashboard, roles: ['superadmin','admin','comercial','readonly'] },
-  { href: '/inmuebles',          label: 'Inmuebles',  icon: Home,            roles: ['superadmin','admin','comercial','readonly'] },
-  { href: '/clientes',           label: 'Clientes',   icon: Users,           roles: ['superadmin','admin','comercial'] },
-  { href: '/documentos',         label: 'Documentos', icon: FileText,        roles: ['superadmin','admin','comercial'] },
-  { href: '/ajustes/usuarios',   label: 'Usuarios',   icon: UserCog,         roles: ['superadmin'] },
-  { href: '/ajustes',            label: 'Ajustes',    icon: Settings,        roles: ['superadmin','admin'] },
+  { href: '/dashboard',        label: 'Dashboard',  icon: LayoutDashboard, roles: ['superadmin','admin','comercial','readonly'] },
+  { href: '/inmuebles',        label: 'Inmuebles',  icon: Home,            roles: ['superadmin','admin','comercial','readonly'] },
+  { href: '/clientes',         label: 'Clientes',   icon: Users,           roles: ['superadmin','admin','comercial'] },
+  { href: '/documentos',       label: 'Documentos', icon: FileText,        roles: ['superadmin','admin','comercial'] },
+  { href: '/ajustes/usuarios', label: 'Usuarios',   icon: UserCog,         roles: ['superadmin'] },
+  { href: '/ajustes',          label: 'Ajustes',    icon: Settings,        roles: ['superadmin','admin'] },
 ]
 
 const ROL_LABELS: Record<UserRole, string> = {
@@ -30,6 +31,7 @@ const ROL_COLORS: Record<UserRole, string> = {
 export function Sidebar({ user }: SidebarProps) {
   const pathname = usePathname()
   const router = useRouter()
+  const [abierto, setAbierto] = useState(false)
 
   async function handleLogout() {
     const supabase = createClient()
@@ -40,14 +42,17 @@ export function Sidebar({ user }: SidebarProps) {
 
   const visibleItems = NAV_ITEMS.filter(item => item.roles.includes(user.rol))
 
-  return (
+  const contenido = (
     <aside className="w-60 shrink-0 flex flex-col bg-white border-r border-slate-200 h-full">
       <div className="flex items-center gap-3 px-5 py-5 border-b border-slate-100">
-      <img src="/logo.png" alt="Ceballos" className="w-8 h-8 rounded-lg shrink-0 object-cover" />
-        <div className="min-w-0">
+        <img src="/logo.png" alt="Ceballos" className="w-8 h-8 rounded-lg shrink-0 object-cover" />
+        <div className="min-w-0 flex-1">
           <p className="text-sm font-semibold text-slate-900 truncate">Ceballos</p>
           <p className="text-xs text-slate-400">Inmobiliaria</p>
         </div>
+        <button onClick={() => setAbierto(false)} className="lg:hidden w-7 h-7 flex items-center justify-center text-slate-400 hover:text-slate-600">
+          <X className="w-4 h-4" />
+        </button>
       </div>
 
       <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
@@ -55,7 +60,7 @@ export function Sidebar({ user }: SidebarProps) {
           const active = pathname === item.href || pathname.startsWith(item.href + '/')
           const Icon = item.icon
           return (
-            <Link key={item.href} href={item.href}
+            <Link key={item.href} href={item.href} onClick={() => setAbierto(false)}
               className={cn('flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors group',
                 active ? 'bg-brand-50 text-brand-700 font-medium' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900')}>
               <Icon className={cn('w-4 h-4 shrink-0', active ? 'text-brand-600' : 'text-slate-400 group-hover:text-slate-600')} />
@@ -85,5 +90,32 @@ export function Sidebar({ user }: SidebarProps) {
         </button>
       </div>
     </aside>
+  )
+
+  return (
+    <>
+      {/* Botón hamburguesa — solo móvil */}
+      <button
+        onClick={() => setAbierto(true)}
+        className="lg:hidden fixed top-4 left-4 z-40 w-9 h-9 flex items-center justify-center bg-white border border-slate-200 rounded-lg shadow-sm"
+      >
+        <Menu className="w-4 h-4 text-slate-600" />
+      </button>
+
+      {/* Sidebar desktop — siempre visible */}
+      <div className="hidden lg:flex h-full">
+        {contenido}
+      </div>
+
+      {/* Sidebar móvil — overlay */}
+      {abierto && (
+        <div className="lg:hidden fixed inset-0 z-50 flex">
+          <div className="flex h-full">
+            {contenido}
+          </div>
+          <div className="flex-1 bg-black/40" onClick={() => setAbierto(false)} />
+        </div>
+      )}
+    </>
   )
 }
