@@ -273,5 +273,36 @@ export function procesarDatosPersonas(datos: Record<string, any>, subtipo?: stri
       : lineasVendedoresCo[0] ?? ''
   }
 
+// ── Párrafo especial: reconocimiento honorarios ──────────────
+if (subtipo === 'reconocimiento_honorarios') {
+  const lineasRH: string[] = []
+  const lineasRHCorto: string[] = []
+
+  for (let n = 1; n <= nPersonas; n++) {
+    const tratamiento = resultado[`tratamiento_nombrecliente${n}`] ?? ''
+    const nombre = resultado[`nombrecliente${n}`] ?? ''
+    const municipio = resultado[`municipiocliente${n}`] ?? ''
+    const calle = resultado[`callecliente${n}`] ?? ''
+    const numerocalle = resultado[`numerocallecliente${n}`] ?? ''
+    const dni = resultado[`dnicliente${n}`] ?? ''
+
+    if (nombre) {
+      const parteNumero = numerocalle ? `, ${numerocalle}` : ''
+      lineasRH.push(
+        `${tratamiento} ${nombre}, mayor de edad, con domicilio en ${municipio}, ${calle}${parteNumero} y provisto/a de D.N.I. nº ${dni}`
+      )
+      lineasRHCorto.push(`${tratamiento} ${nombre}`)
+    }
+  }
+
+  resultado['clientes'] = lineasRH.length > 1
+    ? lineasRH.slice(0, -1).join(', ') + ' y ' + lineasRH.at(-1)
+    : lineasRH[0] ?? ''
+
+  resultado['clientescorto'] = lineasRHCorto.length > 1
+    ? lineasRHCorto.slice(0, -1).join(', ') + ' y ' + lineasRHCorto.at(-1)
+    : lineasRHCorto[0] ?? ''
+}
+
   return resultado
 }
