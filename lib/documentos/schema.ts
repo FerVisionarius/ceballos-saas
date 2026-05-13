@@ -521,6 +521,7 @@ export const SCHEMA_DOCUMENTOS: DefinicionDocumento[] = [
           { id: 'registrolibro', label: 'Libro', tipo: 'text', obligatorio: false, ancho: 'third' },
           { id: 'registrofolio', label: 'Folio', tipo: 'text', obligatorio: false, ancho: 'third' },
           { id: 'registrofinca', label: 'Finca', tipo: 'text', obligatorio: false, ancho: 'third' },
+          { id: 'fincaurbana', label: 'Finca urbana (descripción)', tipo: 'textarea', obligatorio: false, ancho: 'full' },
         ],
       },
       {
@@ -581,6 +582,7 @@ export const SCHEMA_DOCUMENTOS: DefinicionDocumento[] = [
           { id: 'registrolibro', label: 'Libro', tipo: 'text', obligatorio: false, ancho: 'third' },
           { id: 'registrofolio', label: 'Folio', tipo: 'text', obligatorio: false, ancho: 'third' },
           { id: 'registrofinca', label: 'Finca', tipo: 'text', obligatorio: false, ancho: 'third' },
+          { id: 'fincaurbana', label: 'Finca urbana (descripción)', tipo: 'textarea', obligatorio: false, ancho: 'full' },
         ],
       },
       {
