@@ -732,8 +732,6 @@ export const SCHEMA_DOCUMENTOS: DefinicionDocumento[] = [
         campos: [
           { id: 'nombrearrendatario', label: 'Nombre arrendatario', tipo: 'text', obligatorio: true, ancho: 'half' },
           { id: 'dniarrendatario', label: 'DNI / NIE', tipo: 'nif', obligatorio: true, ancho: 'half' },
-          { id: 'nombrearrendatario2', label: 'Nombre arrendatario 2 (si aplica)', tipo: 'text', obligatorio: false, ancho: 'half' },
-          { id: 'dniarrendatario2', label: 'DNI / NIE arrendatario 2', tipo: 'nif', obligatorio: false, ancho: 'half' },
           { id: 'municipioarrendatario', label: 'Municipio', tipo: 'text', obligatorio: true, ancho: 'half' },
           { id: 'callearrendatario', label: 'Calle y número', tipo: 'text', obligatorio: true, ancho: 'half' },
         ],
