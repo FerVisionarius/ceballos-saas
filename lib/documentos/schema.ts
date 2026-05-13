@@ -639,6 +639,8 @@ export const SCHEMA_DOCUMENTOS: DefinicionDocumento[] = [
           { id: 'fechalimite', label: 'Fecha límite', tipo: 'date', obligatorio: true, ancho: 'half' },
           { id: 'honorariosletra', label: 'Honorarios (en letra, MAYÚS)', tipo: 'text', obligatorio: true, ancho: 'half' },
           { id: 'honorariosnumero', label: 'Honorarios (€)', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
+          { id: 'señalconfirmatorialetra', label: 'Señal confirmatoria (en letra)', tipo: 'text', obligatorio: false, ancho: 'half' },
+          { id: 'señalconfirmatorianumero', label: 'Señal confirmatoria (€)', tipo: 'currency', obligatorio: false, ancho: 'half', prefijo: '€' },
           { id: 'fechaactual', label: 'Fecha', tipo: 'date', obligatorio: true, ancho: 'half' },
         ],
       },
