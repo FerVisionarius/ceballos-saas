@@ -304,5 +304,63 @@ if (subtipo === 'reconocimiento_honorarios') {
     : lineasRHCorto[0] ?? ''
 }
 
+// ── Párrafo especial: contratos de arrendamiento ─────────────
+const subtiposArrendamiento = ['contrato_arrendamiento', 'contrato_arrendamiento_rescision']
+if (subtipo && subtiposArrendamiento.includes(subtipo)) {
+
+  const nArrendadores = contarPersonasPorCampo('nombrearrendador')
+  const nArrendatarios = contarPersonasPorCampo('nombrearrendatario')
+
+  // Arrendadores
+  const lineasArrendadores: string[] = []
+  const lineasArrendadoresCo: string[] = []
+  for (let n = 1; n <= nArrendadores; n++) {
+    const tratamiento = resultado[`tratamiento_nombrearrendador${n}`] ?? ''
+    const nombre = resultado[`nombrearrendador${n}`] ?? ''
+    const municipio = resultado[`municipioarrendador${n}`] ?? ''
+    const calle = resultado[`callearrendador${n}`] ?? ''
+    const dni = resultado[`dniarrendador${n}`] ?? ''
+    if (nombre) {
+      lineasArrendadores.push(
+        `${tratamiento} ${nombre}, mayor de edad, con domicilio en ${municipio}, C/${calle} y provisto/a de D.N.I. nº.- ${dni}`
+      )
+      lineasArrendadoresCo.push(`${tratamiento} ${nombre}`)
+    }
+  }
+
+  resultado['arrendadores'] = lineasArrendadores.length > 1
+    ? lineasArrendadores.slice(0, -1).join(', ') + ' y ' + lineasArrendadores.at(-1)
+    : lineasArrendadores[0] ?? ''
+
+  resultado['arrendadorescorto'] = lineasArrendadoresCo.length > 1
+    ? lineasArrendadoresCo.slice(0, -1).join(', ') + ' y ' + lineasArrendadoresCo.at(-1)
+    : lineasArrendadoresCo[0] ?? ''
+
+  // Arrendatarios
+  const lineasArrendatarios: string[] = []
+  const lineasArrendatariosCo: string[] = []
+  for (let n = 1; n <= nArrendatarios; n++) {
+    const tratamiento = resultado[`tratamiento_nombrearrendatario${n}`] ?? ''
+    const nombre = resultado[`nombrearrendatario${n}`] ?? ''
+    const municipio = resultado[`municipioarrendatario${n}`] ?? ''
+    const calle = resultado[`callearrendatario${n}`] ?? ''
+    const dni = resultado[`dniarrendatario${n}`] ?? ''
+    if (nombre) {
+      lineasArrendatarios.push(
+        `${tratamiento} ${nombre}, mayor de edad, con domicilio en ${municipio}, C/${calle} y provisto/a de D.N.I. nº.- ${dni}`
+      )
+      lineasArrendatariosCo.push(`${tratamiento} ${nombre}`)
+    }
+  }
+
+  resultado['arrendatarios'] = lineasArrendatarios.length > 1
+    ? lineasArrendatarios.slice(0, -1).join(', ') + ' y ' + lineasArrendatarios.at(-1)
+    : lineasArrendatarios[0] ?? ''
+
+  resultado['arrendatarioscorto'] = lineasArrendatariosCo.length > 1
+    ? lineasArrendatariosCo.slice(0, -1).join(', ') + ' y ' + lineasArrendatariosCo.at(-1)
+    : lineasArrendatariosCo[0] ?? ''
+}
+
   return resultado
 }
