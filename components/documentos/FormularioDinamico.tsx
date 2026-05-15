@@ -51,6 +51,7 @@ export function FormularioDinamico({ tipo, subtipo }: FormularioDinamicoProps) {
       }
     })
   })
+  schemaFields['informacion_adicional_ia'] = z.string().optional()
   const schema = z.object(schemaFields)
 
   const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm({
@@ -60,6 +61,7 @@ export function FormularioDinamico({ tipo, subtipo }: FormularioDinamicoProps) {
       ...(def?.secciones.flatMap(s => s.campos.flatMap(c =>
         Array.from({ length: 4 }, (_, i) => [`${c.id}_p${i + 1}`, ''])
       )) ?? []),
+      ['informacion_adicional_ia', ''],
     ]),
   })
 
@@ -276,17 +278,16 @@ export function FormularioDinamico({ tipo, subtipo }: FormularioDinamicoProps) {
                                 {campo.label}{campo.obligatorio && <span className="text-red-500 ml-1">*</span>}
                               </label>
                               <div className="flex gap-2">
-                              <select
-                                    value={tratamientos[campo.id] ?? ''}
-                                    onChange={e => setTratamientos(prev => ({ ...prev, [campo.id]: e.target.value }))}
-                                    className="w-16 shrink-0 px-2 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 bg-white"
-                                    required
-                                  >
-                                    <option value="" disabled>—</option>
-                                    <option value="Don">Don</option>
-                                    <option value="Doña">Doña</option>
-                                  </select>
-
+                                <select
+                                  value={tratamientos[campo.id] ?? ''}
+                                  onChange={e => setTratamientos(prev => ({ ...prev, [campo.id]: e.target.value }))}
+                                  className="w-16 shrink-0 px-2 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 bg-white"
+                                  required
+                                >
+                                  <option value="" disabled>—</option>
+                                  <option value="Don">Don</option>
+                                  <option value="Doña">Doña</option>
+                                </select>
                                 <input
                                   {...register(campo.id as any)}
                                   type="text"
@@ -330,7 +331,6 @@ export function FormularioDinamico({ tipo, subtipo }: FormularioDinamicoProps) {
                                         required
                                       >
                                         <option value="" disabled>—</option>
-                                        <option value="">—</option>
                                         <option value="Don">Don</option>
                                         <option value="Doña">Doña</option>
                                       </select>
@@ -354,6 +354,22 @@ export function FormularioDinamico({ tipo, subtipo }: FormularioDinamicoProps) {
             </div>
           )
         })}
+
+        {/* Información adicional IA */}
+        <div className="card overflow-hidden">
+          <div className="px-5 py-4 border-b border-slate-100">
+            <h3 className="text-sm font-semibold text-slate-800">Información adicional IA</h3>
+            <p className="text-xs text-slate-400 mt-0.5">Campo opcional para instrucciones o contexto adicional</p>
+          </div>
+          <div className="px-5 py-4">
+            <textarea
+              {...register('informacion_adicional_ia' as any)}
+              rows={4}
+              placeholder="Escribe aquí cualquier información adicional..."
+              className="w-full px-3 py-2 text-sm bg-white border border-slate-200 rounded-lg placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500 resize-none"
+            />
+          </div>
+        </div>
 
         <div className="flex items-center justify-between pt-2">
           <p className="text-xs text-slate-400">* Los campos marcados son obligatorios</p>
