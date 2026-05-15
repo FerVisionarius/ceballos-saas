@@ -1,3 +1,8 @@
+// Helper para provisto/a según tratamiento
+function provisto(tratamiento: string): string {
+  return tratamiento === 'Doña' ? 'provista' : 'provisto'
+}
+
 export function procesarDatosPersonas(datos: Record<string, any>, subtipo?: string): Record<string, any> {
   const resultado: Record<string, any> = {}
   const personasExtra: Record<number, Record<string, any>> = {}
@@ -50,14 +55,12 @@ export function procesarDatosPersonas(datos: Record<string, any>, subtipo?: stri
     }
   }
 
-  // ── Helpers para contar personas por campo base ──────────────
   function contarPersonasPorCampo(campoBase: string): number {
     let max = 1
     if (resultado[campoBase]) max = 1
     for (let i = 1; i <= 4; i++) {
       if (resultado[`${campoBase}${i + 1}`]) max = i + 1
     }
-    // También contar desde _p sufijos procesados
     Object.keys(datos).forEach(key => {
       const match = key.match(new RegExp(`^${campoBase}_p(\\d+)$`))
       if (match && datos[key]) max = Math.max(max, parseInt(match[1]) + 1)
@@ -65,7 +68,7 @@ export function procesarDatosPersonas(datos: Record<string, any>, subtipo?: stri
     return max
   }
 
-  // ── Párrafo genérico (clientes + clientescorto) ──────────────
+  // ── Párrafo genérico ─────────────────────────────────────────
   const lineasClientes: string[] = []
   const lineasClientesCorto: string[] = []
 
@@ -76,57 +79,50 @@ export function procesarDatosPersonas(datos: Record<string, any>, subtipo?: stri
       resultado[`tratamiento_nombrecomprador${n}`] ??
       resultado[`tratamiento_nombrearrendador${n}`] ??
       resultado[`tratamiento_nombrearrendatario${n}`] ??
-      resultado[`tratamiento_nombrepropietario${n}`] ??
-      ''
+      resultado[`tratamiento_nombrepropietario${n}`] ?? ''
     const nombre =
       resultado[`nombrecliente${n}`] ??
       resultado[`nombrevendedor${n}`] ??
       resultado[`nombrecomprador${n}`] ??
       resultado[`nombrearrendador${n}`] ??
       resultado[`nombrearrendatario${n}`] ??
-      resultado[`nombrepropietario${n}`] ??
-      ''
+      resultado[`nombrepropietario${n}`] ?? ''
     const municipio =
       resultado[`municipiocliente${n}`] ??
       resultado[`municipiovendedor${n}`] ??
       resultado[`municipiocomprador${n}`] ??
       resultado[`municipioarrendador${n}`] ??
-      resultado[`municipioarrendatario${n}`] ??
-      ''
+      resultado[`municipioarrendatario${n}`] ?? ''
     const calle =
       resultado[`callecliente${n}`] ??
       resultado[`callevendedor${n}`] ??
       resultado[`callecomprador${n}`] ??
       resultado[`callearrendador${n}`] ??
-      resultado[`callearrendatario${n}`] ??
-      ''
+      resultado[`callearrendatario${n}`] ?? ''
     const dni =
       resultado[`dnicliente${n}`] ??
       resultado[`dnivendedor${n}`] ??
       resultado[`dnicomprador${n}`] ??
       resultado[`dniarrendador${n}`] ??
-      resultado[`dniarrendatario${n}`] ??
-      ''
+      resultado[`dniarrendatario${n}`] ?? ''
     const telefono =
       resultado[`telefonocliente${n}`] ??
       resultado[`telefonovendedor${n}`] ??
       resultado[`telefonocomprador${n}`] ??
       resultado[`telefonoarrendador${n}`] ??
-      resultado[`telefonoarrendatario${n}`] ??
-      ''
+      resultado[`telefonoarrendatario${n}`] ?? ''
     const mail =
       resultado[`mailcliente${n}`] ??
       resultado[`mailvendedor${n}`] ??
       resultado[`mailcomprador${n}`] ??
       resultado[`mailarrendador${n}`] ??
-      resultado[`mailarrendatario${n}`] ??
-      ''
+      resultado[`mailarrendatario${n}`] ?? ''
 
     if (nombre) {
       const parteTelefono = telefono ? `, con teléfono ${telefono}` : ''
       const parteEmail = mail ? ` y correo electrónico ${mail}` : ''
       lineasClientes.push(
-        `${tratamiento} ${nombre}, con domicilio en ${municipio}, C/ ${calle} y provisto/a de D.N.I. nº ${dni}${parteTelefono}${parteEmail}`
+        `${tratamiento} ${nombre}, con domicilio en ${municipio}, C/ ${calle} y ${provisto(tratamiento)}/a de D.N.I. nº ${dni}${parteTelefono}${parteEmail}`
       )
       lineasClientesCorto.push(`${tratamiento} ${nombre}`)
     }
@@ -140,7 +136,7 @@ export function procesarDatosPersonas(datos: Record<string, any>, subtipo?: stri
     ? lineasClientesCorto.slice(0, -1).join(', ') + ' y ' + lineasClientesCorto.at(-1)
     : lineasClientesCorto[0] ?? ''
 
-  // ── Párrafo especial: conformidad de arras ───────────────────
+  // ── Conformidad de arras ─────────────────────────────────────
   const subtiposConformidad = ['conformidad_arras_confirmatorias', 'conformidad_arras_penitenciales']
   if (subtipo && subtiposConformidad.includes(subtipo)) {
     const lineasConformidad: string[] = []
@@ -152,7 +148,7 @@ export function procesarDatosPersonas(datos: Record<string, any>, subtipo?: stri
       const dni = resultado[`dnicliente${n}`] ?? ''
       if (nombre) {
         lineasConformidad.push(
-          `${tratamiento} ${nombre}, mayor de edad, con domicilio en ${municipio}, C/${calle} y provisto/a de D.N.I. nº ${dni}`
+          `${tratamiento} ${nombre}, mayor de edad, con domicilio en ${municipio}, C/${calle} y ${provisto(tratamiento)} de D.N.I. nº ${dni}`
         )
       }
     }
@@ -162,7 +158,7 @@ export function procesarDatosPersonas(datos: Record<string, any>, subtipo?: stri
       : lineasConformidad[0] ?? '') + `, ${propietario}`
   }
 
-  // ── Párrafo especial: señales ────────────────────────────────
+  // ── Señales ──────────────────────────────────────────────────
   const subtiposSenal = [
     'senal_arrendamiento',
     'senal_compraventa_confirmatoria',
@@ -213,15 +209,12 @@ export function procesarDatosPersonas(datos: Record<string, any>, subtipo?: stri
     resultado['clientescorto'] = lineasFicha.join('\n\n')
   }
 
-  // ── Párrafo especial: contratos de arras ─────────────────────
+  // ── Contratos de arras ───────────────────────────────────────
   const subtiposArras = ['contrato_arras_penitencial', 'contrato_arras_confirmatoria']
   if (subtipo && subtiposArras.includes(subtipo)) {
-
-    // Contar compradores y vendedores por separado
     const nCompradores = contarPersonasPorCampo('nombrecomprador')
     const nVendedores = contarPersonasPorCampo('nombrevendedor')
 
-    // Compradores
     const lineasCompradores: string[] = []
     const lineasCompradoresCo: string[] = []
     for (let n = 1; n <= nCompradores; n++) {
@@ -231,7 +224,7 @@ export function procesarDatosPersonas(datos: Record<string, any>, subtipo?: stri
       const dni = resultado[`dnicomprador${n}`] ?? ''
       if (nombre) {
         lineasCompradores.push(
-          `${tratamiento} ${nombre}, mayor de edad, con domicilio a efectos de notificación en Guadalajara, Calle ${calle} y provisto/a de D.N.I. nº ${dni}`
+          `${tratamiento} ${nombre}, mayor de edad, con domicilio a efectos de notificación en Guadalajara, Calle ${calle} y ${provisto(tratamiento)} de D.N.I. nº ${dni}`
         )
         lineasCompradoresCo.push(`${tratamiento} ${nombre}`)
       }
@@ -246,7 +239,6 @@ export function procesarDatosPersonas(datos: Record<string, any>, subtipo?: stri
       ? lineasCompradoresCo.slice(0, -1).join(', ') + ' y ' + lineasCompradoresCo.at(-1)
       : lineasCompradoresCo[0] ?? ''
 
-    // Vendedores
     const lineasVendedores: string[] = []
     const lineasVendedoresCo: string[] = []
     for (let n = 1; n <= nVendedores; n++) {
@@ -256,7 +248,7 @@ export function procesarDatosPersonas(datos: Record<string, any>, subtipo?: stri
       const dni = resultado[`dnivendedor${n}`] ?? ''
       if (nombre) {
         lineasVendedores.push(
-          `${tratamiento} ${nombre}, mayor de edad, vecino de ${calle} y provisto/a de D.N.I. nº ${dni}`
+          `${tratamiento} ${nombre}, mayor de edad, vecino de ${calle} y ${provisto(tratamiento)} de D.N.I. nº ${dni}`
         )
         lineasVendedoresCo.push(`${tratamiento} ${nombre}`)
       }
@@ -273,94 +265,85 @@ export function procesarDatosPersonas(datos: Record<string, any>, subtipo?: stri
       : lineasVendedoresCo[0] ?? ''
   }
 
-// ── Párrafo especial: reconocimiento honorarios ──────────────
-if (subtipo === 'reconocimiento_honorarios') {
-  const lineasRH: string[] = []
-  const lineasRHCorto: string[] = []
-
-  for (let n = 1; n <= nPersonas; n++) {
-    const tratamiento = resultado[`tratamiento_nombrecliente${n}`] ?? ''
-    const nombre = resultado[`nombrecliente${n}`] ?? ''
-    const municipio = resultado[`municipiocliente${n}`] ?? ''
-    const calle = resultado[`callecliente${n}`] ?? ''
-    const numerocalle = resultado[`numerocallecliente${n}`] ?? ''
-    const dni = resultado[`dnicliente${n}`] ?? ''
-
-    if (nombre) {
-      const parteNumero = numerocalle ? `, ${numerocalle}` : ''
-      lineasRH.push(
-        `${tratamiento} ${nombre}, mayor de edad, con domicilio en ${municipio}, ${calle}${parteNumero} y provisto/a de D.N.I. nº ${dni}`
-      )
-      lineasRHCorto.push(`${tratamiento} ${nombre}`)
+  // ── Reconocimiento honorarios ────────────────────────────────
+  if (subtipo === 'reconocimiento_honorarios') {
+    const lineasRH: string[] = []
+    const lineasRHCorto: string[] = []
+    for (let n = 1; n <= nPersonas; n++) {
+      const tratamiento = resultado[`tratamiento_nombrecliente${n}`] ?? ''
+      const nombre = resultado[`nombrecliente${n}`] ?? ''
+      const municipio = resultado[`municipiocliente${n}`] ?? ''
+      const calle = resultado[`callecliente${n}`] ?? ''
+      const numerocalle = resultado[`numerocallecliente${n}`] ?? ''
+      const dni = resultado[`dnicliente${n}`] ?? ''
+      if (nombre) {
+        const parteNumero = numerocalle ? `, ${numerocalle}` : ''
+        lineasRH.push(
+          `${tratamiento} ${nombre}, mayor de edad, con domicilio en ${municipio}, ${calle}${parteNumero} y ${provisto(tratamiento)} de D.N.I. nº ${dni}`
+        )
+        lineasRHCorto.push(`${tratamiento} ${nombre}`)
+      }
     }
+    resultado['clientes'] = lineasRH.length > 1
+      ? lineasRH.slice(0, -1).join(', ') + ' y ' + lineasRH.at(-1)
+      : lineasRH[0] ?? ''
+    resultado['clientescorto'] = lineasRHCorto.length > 1
+      ? lineasRHCorto.slice(0, -1).join(', ') + ' y ' + lineasRHCorto.at(-1)
+      : lineasRHCorto[0] ?? ''
   }
 
-  resultado['clientes'] = lineasRH.length > 1
-    ? lineasRH.slice(0, -1).join(', ') + ' y ' + lineasRH.at(-1)
-    : lineasRH[0] ?? ''
+  // ── Contratos de arrendamiento ───────────────────────────────
+  const subtiposArrendamiento = ['contrato_arrendamiento', 'contrato_arrendamiento_rescision']
+  if (subtipo && subtiposArrendamiento.includes(subtipo)) {
+    const nArrendadores = contarPersonasPorCampo('nombrearrendador')
+    const nArrendatarios = contarPersonasPorCampo('nombrearrendatario')
 
-  resultado['clientescorto'] = lineasRHCorto.length > 1
-    ? lineasRHCorto.slice(0, -1).join(', ') + ' y ' + lineasRHCorto.at(-1)
-    : lineasRHCorto[0] ?? ''
-}
-
-// ── Párrafo especial: contratos de arrendamiento ─────────────
-const subtiposArrendamiento = ['contrato_arrendamiento', 'contrato_arrendamiento_rescision']
-if (subtipo && subtiposArrendamiento.includes(subtipo)) {
-
-  const nArrendadores = contarPersonasPorCampo('nombrearrendador')
-  const nArrendatarios = contarPersonasPorCampo('nombrearrendatario')
-
-  // Arrendadores
-  const lineasArrendadores: string[] = []
-  const lineasArrendadoresCo: string[] = []
-  for (let n = 1; n <= nArrendadores; n++) {
-    const tratamiento = resultado[`tratamiento_nombrearrendador${n}`] ?? ''
-    const nombre = resultado[`nombrearrendador${n}`] ?? ''
-    const municipio = resultado[`municipioarrendador${n}`] ?? ''
-    const calle = resultado[`callearrendador${n}`] ?? ''
-    const dni = resultado[`dniarrendador${n}`] ?? ''
-    if (nombre) {
-      lineasArrendadores.push(
-        `${tratamiento} ${nombre}, mayor de edad, con domicilio en ${municipio}, C/${calle} y provisto/a de D.N.I. nº.- ${dni}`
-      )
-      lineasArrendadoresCo.push(`${tratamiento} ${nombre}`)
+    const lineasArrendadores: string[] = []
+    const lineasArrendadoresCo: string[] = []
+    for (let n = 1; n <= nArrendadores; n++) {
+      const tratamiento = resultado[`tratamiento_nombrearrendador${n}`] ?? ''
+      const nombre = resultado[`nombrearrendador${n}`] ?? ''
+      const municipio = resultado[`municipioarrendador${n}`] ?? ''
+      const calle = resultado[`callearrendador${n}`] ?? ''
+      const dni = resultado[`dniarrendador${n}`] ?? ''
+      if (nombre) {
+        lineasArrendadores.push(
+          `${tratamiento} ${nombre}, mayor de edad, con domicilio en ${municipio}, C/${calle} y ${provisto(tratamiento)} de D.N.I. nº.- ${dni}`
+        )
+        lineasArrendadoresCo.push(`${tratamiento} ${nombre}`)
+      }
     }
-  }
 
-  resultado['arrendadores'] = lineasArrendadores.length > 1
-    ? lineasArrendadores.slice(0, -1).join(', ') + ' y ' + lineasArrendadores.at(-1)
-    : lineasArrendadores[0] ?? ''
+    resultado['arrendadores'] = lineasArrendadores.length > 1
+      ? lineasArrendadores.slice(0, -1).join(', ') + ' y ' + lineasArrendadores.at(-1)
+      : lineasArrendadores[0] ?? ''
+    resultado['arrendadorescorto'] = lineasArrendadoresCo.length > 1
+      ? lineasArrendadoresCo.slice(0, -1).join(', ') + ' y ' + lineasArrendadoresCo.at(-1)
+      : lineasArrendadoresCo[0] ?? ''
 
-  resultado['arrendadorescorto'] = lineasArrendadoresCo.length > 1
-    ? lineasArrendadoresCo.slice(0, -1).join(', ') + ' y ' + lineasArrendadoresCo.at(-1)
-    : lineasArrendadoresCo[0] ?? ''
-
-  // Arrendatarios
-  const lineasArrendatarios: string[] = []
-  const lineasArrendatariosCo: string[] = []
-  for (let n = 1; n <= nArrendatarios; n++) {
-    const tratamiento = resultado[`tratamiento_nombrearrendatario${n}`] ?? ''
-    const nombre = resultado[`nombrearrendatario${n}`] ?? ''
-    const municipio = resultado[`municipioarrendatario${n}`] ?? ''
-    const calle = resultado[`callearrendatario${n}`] ?? ''
-    const dni = resultado[`dniarrendatario${n}`] ?? ''
-    if (nombre) {
-      lineasArrendatarios.push(
-        `${tratamiento} ${nombre}, mayor de edad, con domicilio en ${municipio}, C/${calle} y provisto/a de D.N.I. nº.- ${dni}`
-      )
-      lineasArrendatariosCo.push(`${tratamiento} ${nombre}`)
+    const lineasArrendatarios: string[] = []
+    const lineasArrendatariosCo: string[] = []
+    for (let n = 1; n <= nArrendatarios; n++) {
+      const tratamiento = resultado[`tratamiento_nombrearrendatario${n}`] ?? ''
+      const nombre = resultado[`nombrearrendatario${n}`] ?? ''
+      const municipio = resultado[`municipioarrendatario${n}`] ?? ''
+      const calle = resultado[`callearrendatario${n}`] ?? ''
+      const dni = resultado[`dniarrendatario${n}`] ?? ''
+      if (nombre) {
+        lineasArrendatarios.push(
+          `${tratamiento} ${nombre}, mayor de edad, con domicilio en ${municipio}, C/${calle} y ${provisto(tratamiento)} de D.N.I. nº.- ${dni}`
+        )
+        lineasArrendatariosCo.push(`${tratamiento} ${nombre}`)
+      }
     }
+
+    resultado['arrendatarios'] = lineasArrendatarios.length > 1
+      ? lineasArrendatarios.slice(0, -1).join(', ') + ' y ' + lineasArrendatarios.at(-1)
+      : lineasArrendatarios[0] ?? ''
+    resultado['arrendatarioscorto'] = lineasArrendatariosCo.length > 1
+      ? lineasArrendatariosCo.slice(0, -1).join(', ') + ' y ' + lineasArrendatariosCo.at(-1)
+      : lineasArrendatariosCo[0] ?? ''
   }
-
-  resultado['arrendatarios'] = lineasArrendatarios.length > 1
-    ? lineasArrendatarios.slice(0, -1).join(', ') + ' y ' + lineasArrendatarios.at(-1)
-    : lineasArrendatarios[0] ?? ''
-
-  resultado['arrendatarioscorto'] = lineasArrendatariosCo.length > 1
-    ? lineasArrendatariosCo.slice(0, -1).join(', ') + ' y ' + lineasArrendatariosCo.at(-1)
-    : lineasArrendatariosCo[0] ?? ''
-}
 
   return resultado
 }
