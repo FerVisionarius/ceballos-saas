@@ -68,6 +68,53 @@ export function FormularioDinamico({ tipo, subtipo }: FormularioDinamicoProps) {
   if (!def) return <div className="card p-6 text-slate-500">Documento no encontrado</div>
 
   function handleSelectCliente(cliente: any, seccionId: string) {
+    const matchPersona = seccionId.match(/^(.+)_p(\d+)$/)
+
+    if (matchPersona) {
+      const seccionBase = matchPersona[1]
+      const idx = matchPersona[2]
+
+      const campoNombre = seccionBase === 'arrendador' ? 'nombrearrendador'
+        : seccionBase === 'arrendatario' ? 'nombrearrendatario'
+        : seccionBase === 'comprador' ? 'nombrecomprador'
+        : seccionBase === 'vendedor' ? 'nombrevendedor'
+        : 'nombrecliente'
+      const campoDni = seccionBase === 'arrendador' ? 'dniarrendador'
+        : seccionBase === 'arrendatario' ? 'dniarrendatario'
+        : seccionBase === 'comprador' ? 'dnicomprador'
+        : seccionBase === 'vendedor' ? 'dnivendedor'
+        : 'dnicliente'
+      const campoTelefono = seccionBase === 'arrendador' ? 'telefonoarrendador'
+        : seccionBase === 'arrendatario' ? 'telefonoarrendatario'
+        : seccionBase === 'comprador' ? 'telefonocomprador'
+        : seccionBase === 'vendedor' ? 'telefonovendedor'
+        : 'telefonocliente'
+      const campoMail = seccionBase === 'arrendador' ? 'mailarrendador'
+        : seccionBase === 'arrendatario' ? 'mailarrendatario'
+        : seccionBase === 'comprador' ? 'mailcomprador'
+        : seccionBase === 'vendedor' ? 'mailvendedor'
+        : 'mailcliente'
+      const campoCalle = seccionBase === 'arrendador' ? 'callearrendador'
+        : seccionBase === 'arrendatario' ? 'callearrendatario'
+        : seccionBase === 'comprador' ? 'callecomprador'
+        : seccionBase === 'vendedor' ? 'callevendedor'
+        : 'callecliente'
+
+      const campos: Record<string, string> = {
+        [`${campoNombre}_p${idx}`]: `${cliente.nombre} ${cliente.apellidos}`,
+        [`${campoDni}_p${idx}`]: cliente.nif_nie ?? '',
+        [`${campoTelefono}_p${idx}`]: cliente.telefono ?? '',
+        [`${campoMail}_p${idx}`]: cliente.email ?? '',
+        [`${campoCalle}_p${idx}`]: cliente.direccion ?? '',
+      }
+      Object.entries(campos).forEach(([campo, valor]) => {
+        if (valor) setValue(campo as any, valor)
+      })
+      setModalCliente(null)
+      toast.success(`Datos de ${cliente.nombre} ${cliente.apellidos} cargados`)
+      return
+    }
+
     const mapeos: Record<string, Record<string, string>> = {
       vendedor: {
         nombrecliente: `${cliente.nombre} ${cliente.apellidos}`,
@@ -311,7 +358,17 @@ export function FormularioDinamico({ tipo, subtipo }: FormularioDinamicoProps) {
                     const camposExtra = getCamposPersonaExtra(seccion, idx)
                     return (
                       <div key={idx} className="mt-4 pt-4 border-t border-slate-100">
-                        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Persona {idx + 1}</p>
+                        <div className="flex items-center justify-between mb-3">
+                          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Persona {idx + 1}</p>
+                          <button
+                            type="button"
+                            onClick={() => setModalCliente(`${seccion.id}_p${idx}`)}
+                            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-brand-600 bg-brand-50 hover:bg-brand-100 rounded-lg transition-colors"
+                          >
+                            <UserSearch className="w-3.5 h-3.5" />
+                            Cliente existente
+                          </button>
+                        </div>
                         <div className="grid grid-cols-12 gap-4">
                           {camposExtra.map(campo => {
                             const ancho = campo.ancho === 'third' ? 'col-span-12 sm:col-span-4'
