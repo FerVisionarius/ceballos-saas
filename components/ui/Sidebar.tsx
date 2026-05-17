@@ -2,7 +2,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { LayoutDashboard, Users, FileText, LogOut, ChevronRight, Settings, UserCog, Home, Menu, X } from 'lucide-react'
+import { LayoutDashboard, Users, FileText, LogOut, ChevronRight, Settings, Home, Menu, X } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { cn } from '@/lib/utils'
 import type { UserRole } from '@/types'
@@ -12,12 +12,11 @@ interface SidebarProps {
 }
 
 const NAV_ITEMS = [
-  { href: '/dashboard',        label: 'Dashboard',  icon: LayoutDashboard, roles: ['superadmin','admin','comercial','readonly'] },
-  { href: '/inmuebles',        label: 'Inmuebles',  icon: Home,            roles: ['superadmin','admin','comercial','readonly'] },
-  { href: '/clientes',         label: 'Clientes',   icon: Users,           roles: ['superadmin','admin','comercial'] },
-  { href: '/documentos',       label: 'Documentos', icon: FileText,        roles: ['superadmin','admin','comercial'] },
-  { href: '/ajustes/usuarios', label: 'Usuarios',   icon: UserCog,         roles: ['superadmin'] },
-  { href: '/ajustes',          label: 'Ajustes',    icon: Settings,        roles: ['superadmin','admin'] },
+  { href: '/dashboard',  label: 'Dashboard',  icon: LayoutDashboard, roles: ['superadmin','admin','comercial','readonly'] },
+  { href: '/inmuebles',  label: 'Inmuebles',  icon: Home,            roles: ['superadmin','admin','comercial','readonly'] },
+  { href: '/clientes',   label: 'Clientes',   icon: Users,           roles: ['superadmin','admin','comercial','readonly'] },
+  { href: '/documentos', label: 'Documentos', icon: FileText,        roles: ['superadmin','admin','comercial','readonly'] },
+  { href: '/ajustes',    label: 'Ajustes',    icon: Settings,        roles: ['superadmin'] },
 ]
 
 const ROL_LABELS: Record<UserRole, string> = {
@@ -57,7 +56,10 @@ export function Sidebar({ user }: SidebarProps) {
 
       <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
         {visibleItems.map(item => {
-          const active = pathname === item.href || pathname.startsWith(item.href + '/')
+          // Ajustes está activo si la ruta empieza por /ajustes
+          const active = item.href === '/ajustes'
+            ? pathname.startsWith('/ajustes')
+            : pathname === item.href || pathname.startsWith(item.href + '/')
           const Icon = item.icon
           return (
             <Link key={item.href} href={item.href} onClick={() => setAbierto(false)}
@@ -94,7 +96,6 @@ export function Sidebar({ user }: SidebarProps) {
 
   return (
     <>
-      {/* Botón hamburguesa — solo móvil */}
       <button
         onClick={() => setAbierto(true)}
         className="lg:hidden fixed top-4 left-4 z-40 w-9 h-9 flex items-center justify-center bg-white border border-slate-200 rounded-lg shadow-sm"
@@ -102,12 +103,10 @@ export function Sidebar({ user }: SidebarProps) {
         <Menu className="w-4 h-4 text-slate-600" />
       </button>
 
-      {/* Sidebar desktop — siempre visible */}
       <div className="hidden lg:flex h-full">
         {contenido}
       </div>
 
-      {/* Sidebar móvil — overlay */}
       {abierto && (
         <div className="lg:hidden fixed inset-0 z-50 flex">
           <div className="flex h-full">

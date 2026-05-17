@@ -1,5 +1,7 @@
 import { createClient, createAdminClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
+import Link from 'next/link'
+import { ArrowLeft } from 'lucide-react'
 import { NuevoUsuarioForm } from './NuevoUsuarioForm'
 import { UsuariosFila } from './UsuariosFila'
 
@@ -26,6 +28,10 @@ export default async function UsuariosPage() {
   return (
     <div className="space-y-6">
       <div>
+        <Link href="/ajustes" className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-700 mb-4">
+          <ArrowLeft className="w-4 h-4" />
+          Volver a ajustes
+        </Link>
         <h1 className="text-2xl font-semibold text-slate-900">Gestión de usuarios</h1>
         <p className="text-slate-500 mt-1">{usuarios.length} usuarios registrados</p>
       </div>
