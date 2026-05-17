@@ -16,6 +16,18 @@ interface FormularioDinamicoProps {
   subtipo: SubtipoDocumento
 }
 
+interface Cliente {
+  id: string
+  tratamiento: string | null
+  nombre: string
+  apellidos: string
+  nif_nie: string
+  telefono: string
+  email: string
+  direccion: string
+  municipio: string
+}
+
 const SECCIONES_CLIENTE = ['vendedor', 'comprador', 'arrendador', 'arrendatario', 'cliente']
 const SECCIONES_INMUEBLE = ['inmueble']
 
@@ -67,103 +79,86 @@ export function FormularioDinamico({ tipo, subtipo }: FormularioDinamicoProps) {
 
   if (!def) return <div className="card p-6 text-slate-500">Documento no encontrado</div>
 
-  function handleSelectCliente(cliente: any, seccionId: string) {
-    const matchPersona = seccionId.match(/^(.+)_p(\d+)$/)
+  function handleSelectCliente(cliente: Cliente, seccionId: string) {
+    // Detectar si es persona adicional (ej: "comprador_p1", "cliente_p2")
+    const matchAdicional = seccionId.match(/_p(\d+)$/)
+    const sufijoForm = matchAdicional ? `_p${matchAdicional[1]}` : ''
+    const seccionBase = seccionId.replace(/_p\d+$/, '') // ej: "comprador"
 
-    if (matchPersona) {
-      const seccionBase = matchPersona[1]
-      const idx = matchPersona[2]
+    const nombreCompleto = `${cliente.nombre} ${cliente.apellidos}`.trim()
 
-      const campoNombre = seccionBase === 'arrendador' ? 'nombrearrendador'
-        : seccionBase === 'arrendatario' ? 'nombrearrendatario'
-        : seccionBase === 'comprador' ? 'nombrecomprador'
-        : seccionBase === 'vendedor' ? 'nombrevendedor'
-        : 'nombrecliente'
-      const campoDni = seccionBase === 'arrendador' ? 'dniarrendador'
-        : seccionBase === 'arrendatario' ? 'dniarrendatario'
-        : seccionBase === 'comprador' ? 'dnicomprador'
-        : seccionBase === 'vendedor' ? 'dnivendedor'
-        : 'dnicliente'
-      const campoTelefono = seccionBase === 'arrendador' ? 'telefonoarrendador'
-        : seccionBase === 'arrendatario' ? 'telefonoarrendatario'
-        : seccionBase === 'comprador' ? 'telefonocomprador'
-        : seccionBase === 'vendedor' ? 'telefonovendedor'
-        : 'telefonocliente'
-      const campoMail = seccionBase === 'arrendador' ? 'mailarrendador'
-        : seccionBase === 'arrendatario' ? 'mailarrendatario'
-        : seccionBase === 'comprador' ? 'mailcomprador'
-        : seccionBase === 'vendedor' ? 'mailvendedor'
-        : 'mailcliente'
-      const campoCalle = seccionBase === 'arrendador' ? 'callearrendador'
-        : seccionBase === 'arrendatario' ? 'callearrendatario'
-        : seccionBase === 'comprador' ? 'callecomprador'
-        : seccionBase === 'vendedor' ? 'callevendedor'
-        : 'callecliente'
-
-      const campos: Record<string, string> = {
-        [`${campoNombre}_p${idx}`]: `${cliente.nombre} ${cliente.apellidos}`,
-        [`${campoDni}_p${idx}`]: cliente.nif_nie ?? '',
-        [`${campoTelefono}_p${idx}`]: cliente.telefono ?? '',
-        [`${campoMail}_p${idx}`]: cliente.email ?? '',
-        [`${campoCalle}_p${idx}`]: cliente.direccion ?? '',
-      }
-      Object.entries(campos).forEach(([campo, valor]) => {
-        if (valor) setValue(campo as any, valor)
-      })
-      setModalCliente(null)
-      toast.success(`Datos de ${cliente.nombre} ${cliente.apellidos} cargados`)
-      return
-    }
-
-    const mapeos: Record<string, Record<string, string>> = {
+    // Mapeo de campos por sección base
+    const mapeosPorSeccion: Record<string, Record<string, string>> = {
       vendedor: {
-        nombrecliente: `${cliente.nombre} ${cliente.apellidos}`,
-        nombrevendedor: `${cliente.nombre} ${cliente.apellidos}`,
-        dnicliente: cliente.nif_nie ?? '',
+        nombrevendedor: nombreCompleto,
+        nombrecliente: nombreCompleto,
         dnivendedor: cliente.nif_nie ?? '',
+        dnicliente: cliente.nif_nie ?? '',
+        callevendedor: cliente.direccion ?? '',
+        callecliente: cliente.direccion ?? '',
+        municipiovendedor: cliente.municipio ?? '',
+        municipiocliente: cliente.municipio ?? '',
         telefonocliente: cliente.telefono ?? '',
         mailcliente: cliente.email ?? '',
-        callecliente: cliente.direccion ?? '',
-        callevendedor: cliente.direccion ?? '',
       },
       comprador: {
-        nombrecliente: `${cliente.nombre} ${cliente.apellidos}`,
-        nombrecomprador: `${cliente.nombre} ${cliente.apellidos}`,
-        dnicliente: cliente.nif_nie ?? '',
+        nombrecomprador: nombreCompleto,
+        nombrecliente: nombreCompleto,
         dnicomprador: cliente.nif_nie ?? '',
+        dnicliente: cliente.nif_nie ?? '',
+        callecomprador: cliente.direccion ?? '',
+        callecliente: cliente.direccion ?? '',
+        municipiocomprador: cliente.municipio ?? '',
+        municipiocliente: cliente.municipio ?? '',
         telefonocliente: cliente.telefono ?? '',
         mailcliente: cliente.email ?? '',
-        callecliente: cliente.direccion ?? '',
-        callecomprador: cliente.direccion ?? '',
       },
       arrendador: {
-        nombrearrendador: `${cliente.nombre} ${cliente.apellidos}`,
+        nombrearrendador: nombreCompleto,
         dniarrendador: cliente.nif_nie ?? '',
+        callearrendador: cliente.direccion ?? '',
+        municipioarrendador: cliente.municipio ?? '',
         telefonoarrendador: cliente.telefono ?? '',
         mailarrendador: cliente.email ?? '',
-        callearrendador: cliente.direccion ?? '',
       },
       arrendatario: {
-        nombrearrendatario: `${cliente.nombre} ${cliente.apellidos}`,
+        nombrearrendatario: nombreCompleto,
         dniarrendatario: cliente.nif_nie ?? '',
+        callearrendatario: cliente.direccion ?? '',
+        municipioarrendatario: cliente.municipio ?? '',
         telefonoarrendatario: cliente.telefono ?? '',
         mailarrendatario: cliente.email ?? '',
-        callearrendatario: cliente.direccion ?? '',
       },
       cliente: {
-        nombrecliente: `${cliente.nombre} ${cliente.apellidos}`,
+        nombrecliente: nombreCompleto,
         dnicliente: cliente.nif_nie ?? '',
+        callecliente: cliente.direccion ?? '',
+        municipiocliente: cliente.municipio ?? '',
         telefonocliente: cliente.telefono ?? '',
         mailcliente: cliente.email ?? '',
-        callecliente: cliente.direccion ?? '',
       },
     }
-    const campos = mapeos[seccionId] ?? mapeos['cliente']
+
+    const campos = mapeosPorSeccion[seccionBase] ?? mapeosPorSeccion['cliente']
+
+    // Aplicar campos al formulario con sufijo si es persona adicional
     Object.entries(campos).forEach(([campo, valor]) => {
-      if (valor) setValue(campo as any, valor)
+      if (valor !== undefined) {
+        const campoFinal = sufijoForm ? `${campo}${sufijoForm}` : campo
+        setValue(campoFinal as any, valor)
+      }
     })
+
+    // Aplicar tratamiento al estado local
+    // El campo nombre de esta sección/persona
+    const campoNombreBase = CAMPOS_NOMBRE.find(n => n.includes(seccionBase)) ?? `nombre${seccionBase}`
+    const campoTratamiento = sufijoForm ? `${campoNombreBase}${sufijoForm}` : campoNombreBase
+    if (cliente.tratamiento) {
+      setTratamientos(prev => ({ ...prev, [campoTratamiento]: cliente.tratamiento! }))
+    }
+
     setModalCliente(null)
-    toast.success(`Datos de ${cliente.nombre} ${cliente.apellidos} cargados`)
+    toast.success(`Datos de ${nombreCompleto} cargados`)
   }
 
   function handleSelectInmueble(inmueble: any) {
@@ -356,13 +351,15 @@ export function FormularioDinamico({ tipo, subtipo }: FormularioDinamicoProps) {
                   {/* Personas adicionales */}
                   {esSeccionCliente && personas > 1 && Array.from({ length: personas - 1 }, (_, i) => i + 1).map(idx => {
                     const camposExtra = getCamposPersonaExtra(seccion, idx)
+                    // El seccionId para el modal de persona adicional
+                    const seccionIdAdicional = `${seccion.id}_p${idx}`
                     return (
                       <div key={idx} className="mt-4 pt-4 border-t border-slate-100">
                         <div className="flex items-center justify-between mb-3">
                           <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Persona {idx + 1}</p>
                           <button
                             type="button"
-                            onClick={() => setModalCliente(`${seccion.id}_p${idx}`)}
+                            onClick={() => setModalCliente(seccionIdAdicional)}
                             className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-brand-600 bg-brand-50 hover:bg-brand-100 rounded-lg transition-colors"
                           >
                             <UserSearch className="w-3.5 h-3.5" />
