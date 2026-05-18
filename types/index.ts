@@ -71,7 +71,7 @@ export type TipoDocumento =
   | 'reconocimiento_honorarios'
   | 'contrato_arrendamiento'
 
-export type SubtipoDocumento =
+  export type SubtipoDocumento =
   | 'nota_encargo_exclusiva'
   | 'nota_encargo_sin_exclusiva'
   | 'conformidad_arras_confirmatorias'
@@ -84,6 +84,8 @@ export type SubtipoDocumento =
   | 'senal_oferta'
   | 'contrato_arras_penitencial'
   | 'contrato_arras_confirmatoria'
+  | 'contrato_arras_compraventa_pago_aplazado'
+  | 'contrato_arras_promesa_compraventa_vpo'
   | 'reconocimiento_honorarios'
   | 'contrato_arrendamiento'
   | 'contrato_arrendamiento_rescision'

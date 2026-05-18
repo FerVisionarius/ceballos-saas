@@ -762,6 +762,162 @@ export const SCHEMA_DOCUMENTOS: DefinicionDocumento[] = [
       },
     ],
   },
+
+  // 16. ContratoArrasCompraVentaPagoAplazado
+  {
+    tipo: 'contrato_arras',
+    subtipo: 'contrato_arras_compraventa_pago_aplazado',
+    titulo: 'ContratoArrasCompraVentaPagoAplazado',
+    descripcion: 'Contrato de arras compraventa con pago aplazado',
+    secciones: [
+      {
+        id: 'arrendador',
+        titulo: 'Datos del propietario',
+        campos: [
+          { id: 'nombrepropietario', label: 'Nombre completo', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'dnipropietario', label: 'DNI / NIE', tipo: 'nif', obligatorio: true, ancho: 'half' },
+          { id: 'municipiopropietario', label: 'Municipio', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'callepropietario', label: 'Calle y número', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'propietariotelefono', label: 'Teléfono', tipo: 'phone', obligatorio: true, ancho: 'half' },
+          { id: 'propietariomail', label: 'Email', tipo: 'email', obligatorio: false, ancho: 'half' },
+        ],
+      },
+      {
+        id: 'arrendatario',
+        titulo: 'Datos del inquilino / comprador',
+        campos: [
+          { id: 'nombreinquilino', label: 'Nombre completo', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'dniinquilino', label: 'DNI / NIE', tipo: 'nif', obligatorio: true, ancho: 'half' },
+          { id: 'municipioinquilino', label: 'Municipio', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'calleinquilino', label: 'Calle y número', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'inquilinotelefono', label: 'Teléfono', tipo: 'phone', obligatorio: true, ancho: 'half' },
+          { id: 'inquilinomail', label: 'Email', tipo: 'email', obligatorio: false, ancho: 'half' },
+        ],
+      },
+      {
+        id: 'inmueble',
+        titulo: 'Datos del inmueble',
+        campos: [
+          { id: 'municipioinmueble', label: 'Municipio del inmueble', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'calleinmueble', label: 'Calle, número y piso completo', tipo: 'text', obligatorio: true, ancho: 'full' },
+        ],
+      },
+      {
+        id: 'condiciones_arrendamiento',
+        titulo: 'Condiciones del arrendamiento',
+        campos: [
+          { id: 'fechacontratovigor', label: 'Fecha entrada en vigor', tipo: 'date', obligatorio: true, ancho: 'half' },
+          { id: 'duracioncontrato', label: 'Duración del contrato (años)', tipo: 'number', obligatorio: true, ancho: 'half' },
+          { id: 'alargarmesescontrato', label: 'Prórroga (meses)', tipo: 'number', obligatorio: true, ancho: 'half' },
+          { id: 'comoseentregainmueble', label: 'Estado de entrega del inmueble', tipo: 'textarea', obligatorio: true, ancho: 'full' },
+          { id: 'rentaanualletra', label: 'Renta anual (en letra, MAYÚS)', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'rentaanualnumero', label: 'Renta anual (€)', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
+          { id: 'rentamensualletra', label: 'Renta mensual (en letra, MAYÚS)', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'rentamensualnumero', label: 'Renta mensual (€)', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
+          { id: 'porcentajeprimeraño', label: 'Actualización 1er año (%)', tipo: 'percentage', obligatorio: true, ancho: 'third', sufijo: '%' },
+          { id: 'porcentajesegundoaño', label: 'Actualización 2º año (%)', tipo: 'percentage', obligatorio: true, ancho: 'third', sufijo: '%' },
+          { id: 'porcentajeterceraño', label: 'Actualización 3er año (%)', tipo: 'percentage', obligatorio: true, ancho: 'third', sufijo: '%' },
+        ],
+      },
+      {
+        id: 'garantias',
+        titulo: 'Garantías',
+        campos: [
+          { id: 'primaletra', label: 'Prima (en letra, MAYÚS)', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'primanumero', label: 'Prima (€)', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
+          { id: 'importegarantialetra', label: 'Importe garantía (en letra, MAYÚS)', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'importegarantianumero', label: 'Importe garantía (€)', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
+        ],
+      },
+      {
+        id: 'compraventa',
+        titulo: 'Condiciones de compraventa',
+        campos: [
+          { id: 'plazocompraaños', label: 'Plazo para compra (años)', tipo: 'number', obligatorio: true, ancho: 'half' },
+          { id: 'preciocompraventaletra', label: 'Precio compraventa (en letra, MAYÚS)', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'preciocompraventanumero', label: 'Precio compraventa (€)', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
+        ],
+      },
+      {
+        id: 'cuenta_propietario',
+        titulo: 'Cuenta bancaria del propietario',
+        campos: [
+          { id: 'titularcuentapropietario', label: 'Titular de la cuenta', tipo: 'text', obligatorio: true, ancho: 'third' },
+          { id: 'entidadcuentapropietario', label: 'Entidad bancaria', tipo: 'text', obligatorio: true, ancho: 'third' },
+          { id: 'numerocuentapropietario', label: 'Número de cuenta (IBAN)', tipo: 'text', obligatorio: true, ancho: 'third' },
+        ],
+      },
+      {
+        id: 'condiciones_fecha',
+        titulo: 'Fecha del documento',
+        campos: [
+          { id: 'fechaactual', label: 'Fecha', tipo: 'date', obligatorio: true, ancho: 'half' },
+        ],
+      },
+    ],
+  },
+
+// 17. ContratoArrasPromesaCompraVentaVPO
+{
+  tipo: 'contrato_arras',
+  subtipo: 'contrato_arras_promesa_compraventa_vpo',
+  titulo: 'ContratoArrasPromesaCompraVentaVPO',
+  descripcion: 'Contrato de arras promesa de compraventa VPO',
+  secciones: [
+    {
+      id: 'vendedor',
+      titulo: 'Datos del vendedor',
+      campos: [
+        { id: 'nombrevendedor', label: 'Nombre completo', tipo: 'text', obligatorio: true, ancho: 'half' },
+        { id: 'dnivendedor', label: 'DNI / NIE', tipo: 'nif', obligatorio: true, ancho: 'half' },
+        { id: 'municipiovendedor', label: 'Municipio', tipo: 'text', obligatorio: true, ancho: 'half' },
+        { id: 'callevendedor', label: 'Calle y número', tipo: 'text', obligatorio: true, ancho: 'half' },
+        { id: 'telefonovendedor', label: 'Teléfono', tipo: 'phone', obligatorio: true, ancho: 'half' },
+        { id: 'mailvendedor', label: 'Email', tipo: 'email', obligatorio: false, ancho: 'half' },
+      ],
+    },
+    {
+      id: 'comprador',
+      titulo: 'Datos del comprador',
+      campos: [
+        { id: 'nombrecomprador', label: 'Nombre completo', tipo: 'text', obligatorio: true, ancho: 'half' },
+        { id: 'dnicomprador', label: 'DNI / NIE', tipo: 'nif', obligatorio: true, ancho: 'half' },
+        { id: 'municipiocomprador', label: 'Municipio', tipo: 'text', obligatorio: true, ancho: 'half' },
+        { id: 'callecomprador', label: 'Calle y número', tipo: 'text', obligatorio: true, ancho: 'half' },
+        { id: 'telefonocomprador', label: 'Teléfono', tipo: 'phone', obligatorio: true, ancho: 'half' },
+        { id: 'mailcomprador', label: 'Email', tipo: 'email', obligatorio: false, ancho: 'half' },
+      ],
+    },
+    {
+      id: 'inmueble',
+      titulo: 'Datos del inmueble',
+      campos: [
+        { id: 'municipioinmueble', label: 'Municipio del inmueble', tipo: 'text', obligatorio: true, ancho: 'half' },
+        { id: 'calleinmueble', label: 'Calle, número y piso completo', tipo: 'text', obligatorio: true, ancho: 'full' },
+        { id: 'garajeinmueble', label: 'Garaje (nº o anejo — se añadirá "y garaje")', tipo: 'text', obligatorio: false, ancho: 'half' },
+        { id: 'trasteroinmueble', label: 'Trastero (nº o anejo — se añadirá "y trastero")', tipo: 'text', obligatorio: false, ancho: 'half' },
+        { id: 'superficieconstruida', label: 'Superficie construida (m²)', tipo: 'number', obligatorio: true, ancho: 'third' },
+        { id: 'superficieutil', label: 'Superficie útil (m²)', tipo: 'number', obligatorio: true, ancho: 'third' },
+        { id: 'superficiegarajetrastero', label: 'Superficie garaje/trastero (m²)', tipo: 'number', obligatorio: false, ancho: 'third' },
+        { id: 'numeroexpedientevpo', label: 'Nº expediente VPO', tipo: 'text', obligatorio: true, ancho: 'half' },
+        { id: 'delegacionconsejeria', label: 'Delegación / Consejería', tipo: 'text', obligatorio: true, ancho: 'half' },
+      ],
+    },
+    {
+      id: 'condiciones',
+      titulo: 'Condiciones económicas',
+      campos: [
+        { id: 'preciototalcompraventaletra', label: 'Precio total compraventa (en letra, MAYÚS)', tipo: 'text', obligatorio: true, ancho: 'half' },
+        { id: 'preciototalcompraventanumero', label: 'Precio total compraventa (€)', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
+        { id: 'formapago', label: 'Forma de pago', tipo: 'textarea', obligatorio: true, ancho: 'full' },
+        { id: 'fechadocumentoconformidad', label: 'Fecha documento de conformidad', tipo: 'date', obligatorio: true, ancho: 'half' },
+        { id: 'plazodiasescritura', label: 'Plazo para escritura (días)', tipo: 'number', obligatorio: true, ancho: 'half' },
+        { id: 'fechaactual', label: 'Fecha', tipo: 'date', obligatorio: true, ancho: 'half' },
+      ],
+    },
+  ],
+},
+
 ]
 
 export function getDefinicionDocumento(subtipo: string): DefinicionDocumento | undefined {
@@ -811,6 +967,8 @@ export const GRUPOS_DOCUMENTOS: GrupoTipoDocumento[] = [
     subtipos: [
       { subtipo: 'contrato_arras_penitencial', label: 'Arras penitenciales' },
       { subtipo: 'contrato_arras_confirmatoria', label: 'Arras confirmatorias' },
+      { subtipo: 'contrato_arras_compraventa_pago_aplazado', label: 'Compraventa pago aplazado' },
+      { subtipo: 'contrato_arras_promesa_compraventa_vpo', label: 'Promesa compraventa VPO' },
     ],
   },
   {
