@@ -345,5 +345,113 @@ export function procesarDatosPersonas(datos: Record<string, any>, subtipo?: stri
       : lineasArrendatariosCo[0] ?? ''
   }
 
+  // ── ContratoArrasCompraVentaPagoAplazado ─────────────────────
+  if (subtipo === 'contrato_arras_compraventa_pago_aplazado') {
+    const nPropietarios = contarPersonasPorCampo('nombrepropietario')
+    const nInquilinos = contarPersonasPorCampo('nombreinquilino')
+
+    // Propietarios
+    const lineasPropietarios: string[] = []
+    const lineasPropietariosCo: string[] = []
+    for (let n = 1; n <= nPropietarios; n++) {
+      const tratamiento = resultado[`tratamiento_nombrepropietario${n}`] ?? ''
+      const nombre = resultado[`nombrepropietario${n}`] ?? ''
+      const municipio = resultado[`municipiopropietario${n}`] ?? ''
+      const calle = resultado[`callepropietario${n}`] ?? ''
+      const dni = resultado[`dnipropietario${n}`] ?? ''
+      if (nombre) {
+        lineasPropietarios.push(
+          `${tratamiento} ${nombre}, mayores de edad, con domicilio en ${municipio}), Calle ${calle} y ${provisto(tratamiento)} de D.N.I. nº ${dni}`
+        )
+        lineasPropietariosCo.push(`${tratamiento} ${nombre}`)
+      }
+    }
+
+    resultado['propietarios'] = lineasPropietarios.length > 1
+      ? lineasPropietarios.slice(0, -1).join(', ') + ' y ' + lineasPropietarios.at(-1)
+      : lineasPropietarios[0] ?? ''
+    resultado['propietarioscorto'] = lineasPropietariosCo.length > 1
+      ? lineasPropietariosCo.slice(0, -1).join(', ') + ' y ' + lineasPropietariosCo.at(-1)
+      : lineasPropietariosCo[0] ?? ''
+
+    // Inquilinos
+    const lineasInquilinos: string[] = []
+    const lineasInquilinosCo: string[] = []
+    for (let n = 1; n <= nInquilinos; n++) {
+      const tratamiento = resultado[`tratamiento_nombreinquilino${n}`] ?? ''
+      const nombre = resultado[`nombreinquilino${n}`] ?? ''
+      const municipio = resultado[`municipioinquilino${n}`] ?? ''
+      const calle = resultado[`calleinquilino${n}`] ?? ''
+      const dni = resultado[`dniinquilino${n}`] ?? ''
+      if (nombre) {
+        lineasInquilinos.push(
+          `${tratamiento} ${nombre}, mayor de edad, con domicilio en ${municipio}, Calle ${calle} y ${provisto(tratamiento)} de D.N.I. nº ${dni}`
+        )
+        lineasInquilinosCo.push(`${tratamiento} ${nombre}`)
+      }
+    }
+
+    resultado['inquilinos'] = lineasInquilinos.length > 1
+      ? lineasInquilinos.slice(0, -1).join(', ') + ' y ' + lineasInquilinos.at(-1)
+      : lineasInquilinos[0] ?? ''
+    resultado['inquilinoscorto'] = lineasInquilinosCo.length > 1
+      ? lineasInquilinosCo.slice(0, -1).join(', ') + ' y ' + lineasInquilinosCo.at(-1)
+      : lineasInquilinosCo[0] ?? ''
+  }
+
+  // ── ContratoArrasPromesaCompraVentaVPO ───────────────────────
+  if (subtipo === 'contrato_arras_promesa_compraventa_vpo') {
+    const nVendedores = contarPersonasPorCampo('nombrevendedor')
+    const nCompradores = contarPersonasPorCampo('nombrecomprador')
+
+    // Vendedores
+    const lineasVendedores: string[] = []
+    const lineasVendedoresCo: string[] = []
+    for (let n = 1; n <= nVendedores; n++) {
+      const tratamiento = resultado[`tratamiento_nombrevendedor${n}`] ?? ''
+      const nombre = resultado[`nombrevendedor${n}`] ?? ''
+      const municipio = resultado[`municipiovendedor${n}`] ?? ''
+      const calle = resultado[`callevendedor${n}`] ?? ''
+      const dni = resultado[`dnivendedor${n}`] ?? ''
+      if (nombre) {
+        lineasVendedores.push(
+          `${tratamiento} ${nombre}, mayores de edad, con domicilio en ${municipio}), Calle ${calle} y ${provisto(tratamiento)} de D.N.I. nº ${dni}`
+        )
+        lineasVendedoresCo.push(`${tratamiento} ${nombre}`)
+      }
+    }
+
+    resultado['vendedores'] = lineasVendedores.length > 1
+      ? lineasVendedores.slice(0, -1).join(', ') + ' y ' + lineasVendedores.at(-1)
+      : lineasVendedores[0] ?? ''
+    resultado['vendedorescorto'] = lineasVendedoresCo.length > 1
+      ? lineasVendedoresCo.slice(0, -1).join(', ') + ' y ' + lineasVendedoresCo.at(-1)
+      : lineasVendedoresCo[0] ?? ''
+
+    // Compradores
+    const lineasCompradores: string[] = []
+    const lineasCompradoresCo: string[] = []
+    for (let n = 1; n <= nCompradores; n++) {
+      const tratamiento = resultado[`tratamiento_nombrecomprador${n}`] ?? ''
+      const nombre = resultado[`nombrecomprador${n}`] ?? ''
+      const municipio = resultado[`municipiocomprador${n}`] ?? ''
+      const calle = resultado[`callecomprador${n}`] ?? ''
+      const dni = resultado[`dnicomprador${n}`] ?? ''
+      if (nombre) {
+        lineasCompradores.push(
+          `${tratamiento} ${nombre}, mayor de edad, con domicilio en ${municipio}, Calle ${calle} y ${provisto(tratamiento)} de D.N.I. nº ${dni}`
+        )
+        lineasCompradoresCo.push(`${tratamiento} ${nombre}`)
+      }
+    }
+
+    resultado['compradores'] = lineasCompradores.length > 1
+      ? lineasCompradores.slice(0, -1).join(', ') + ' y ' + lineasCompradores.at(-1)
+      : lineasCompradores[0] ?? ''
+    resultado['compradorescorto'] = lineasCompradoresCo.length > 1
+      ? lineasCompradoresCo.slice(0, -1).join(', ') + ' y ' + lineasCompradoresCo.at(-1)
+      : lineasCompradoresCo[0] ?? ''
+  }
+
   return resultado
 }
