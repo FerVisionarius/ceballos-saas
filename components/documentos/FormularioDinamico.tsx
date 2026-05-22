@@ -28,12 +28,16 @@ interface Cliente {
   municipio: string
 }
 
-const SECCIONES_CLIENTE = ['vendedor', 'comprador', 'arrendador', 'arrendatario', 'cliente']
+const SECCIONES_CLIENTE = [
+  'vendedor', 'comprador', 'arrendador', 'arrendatario', 'cliente',
+  'avalista', 'trabajador',
+]
 const SECCIONES_INMUEBLE = ['inmueble']
 
 const CAMPOS_NOMBRE = [
   'nombrecliente', 'nombrecomprador', 'nombrevendedor',
   'nombrearrendador', 'nombrearrendatario',
+  'nombrepropietario', 'nombreinquilino', 'nombreavalista', 'nombretrabajador',
 ]
 
 export function FormularioDinamico({ tipo, subtipo }: FormularioDinamicoProps) {
@@ -80,14 +84,12 @@ export function FormularioDinamico({ tipo, subtipo }: FormularioDinamicoProps) {
   if (!def) return <div className="card p-6 text-slate-500">Documento no encontrado</div>
 
   function handleSelectCliente(cliente: Cliente, seccionId: string) {
-    // Detectar si es persona adicional (ej: "comprador_p1", "cliente_p2")
     const matchAdicional = seccionId.match(/_p(\d+)$/)
     const sufijoForm = matchAdicional ? `_p${matchAdicional[1]}` : ''
-    const seccionBase = seccionId.replace(/_p\d+$/, '') // ej: "comprador"
+    const seccionBase = seccionId.replace(/_p\d+$/, '')
 
     const nombreCompleto = `${cliente.nombre} ${cliente.apellidos}`.trim()
 
-    // Mapeo de campos por sección base
     const mapeosPorSeccion: Record<string, Record<string, string>> = {
       vendedor: {
         nombrevendedor: nombreCompleto,
@@ -120,6 +122,13 @@ export function FormularioDinamico({ tipo, subtipo }: FormularioDinamicoProps) {
         municipioarrendador: cliente.municipio ?? '',
         telefonoarrendador: cliente.telefono ?? '',
         mailarrendador: cliente.email ?? '',
+        // para docs con nombrepropietario en sección arrendador
+        nombrepropietario: nombreCompleto,
+        dnipropietario: cliente.nif_nie ?? '',
+        callepropietario: cliente.direccion ?? '',
+        municipiopropietario: cliente.municipio ?? '',
+        propietariotelefono: cliente.telefono ?? '',
+        propietariomail: cliente.email ?? '',
       },
       arrendatario: {
         nombrearrendatario: nombreCompleto,
@@ -128,6 +137,13 @@ export function FormularioDinamico({ tipo, subtipo }: FormularioDinamicoProps) {
         municipioarrendatario: cliente.municipio ?? '',
         telefonoarrendatario: cliente.telefono ?? '',
         mailarrendatario: cliente.email ?? '',
+        // para docs con nombreinquilino en sección arrendatario
+        nombreinquilino: nombreCompleto,
+        dniinquilino: cliente.nif_nie ?? '',
+        calleinquilino: cliente.direccion ?? '',
+        municipioinquilino: cliente.municipio ?? '',
+        inquilinotelefono: cliente.telefono ?? '',
+        inquilinomail: cliente.email ?? '',
       },
       cliente: {
         nombrecliente: nombreCompleto,
@@ -137,11 +153,20 @@ export function FormularioDinamico({ tipo, subtipo }: FormularioDinamicoProps) {
         telefonocliente: cliente.telefono ?? '',
         mailcliente: cliente.email ?? '',
       },
+      avalista: {
+        nombreavalista: nombreCompleto,
+        dniavalista: cliente.nif_nie ?? '',
+        calleavalista: cliente.direccion ?? '',
+        municipioavalista: cliente.municipio ?? '',
+      },
+      trabajador: {
+        nombretrabajador: nombreCompleto,
+        dnitrabajador: cliente.nif_nie ?? '',
+      },
     }
 
     const campos = mapeosPorSeccion[seccionBase] ?? mapeosPorSeccion['cliente']
 
-    // Aplicar campos al formulario con sufijo si es persona adicional
     Object.entries(campos).forEach(([campo, valor]) => {
       if (valor !== undefined) {
         const campoFinal = sufijoForm ? `${campo}${sufijoForm}` : campo
@@ -149,8 +174,7 @@ export function FormularioDinamico({ tipo, subtipo }: FormularioDinamicoProps) {
       }
     })
 
-    // Aplicar tratamiento al estado local
-    // El campo nombre de esta sección/persona
+    // Aplicar tratamiento
     const campoNombreBase = CAMPOS_NOMBRE.find(n => n.includes(seccionBase)) ?? `nombre${seccionBase}`
     const campoTratamiento = sufijoForm ? `${campoNombreBase}${sufijoForm}` : campoNombreBase
     if (cliente.tratamiento) {
@@ -351,7 +375,6 @@ export function FormularioDinamico({ tipo, subtipo }: FormularioDinamicoProps) {
                   {/* Personas adicionales */}
                   {esSeccionCliente && personas > 1 && Array.from({ length: personas - 1 }, (_, i) => i + 1).map(idx => {
                     const camposExtra = getCamposPersonaExtra(seccion, idx)
-                    // El seccionId para el modal de persona adicional
                     const seccionIdAdicional = `${seccion.id}_p${idx}`
                     return (
                       <div key={idx} className="mt-4 pt-4 border-t border-slate-100">
