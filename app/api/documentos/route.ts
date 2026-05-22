@@ -38,9 +38,19 @@ export async function POST(req: NextRequest) {
       .select()
       .single()
 
-    if (error) return NextResponse.json({ error: 'Error al guardar el documento' }, { status: 500 })
+    if (error) {
+      console.error('Error insertando documento:', JSON.stringify(error, Object.getOwnPropertyNames(error)))
+      return NextResponse.json({ error: 'Error al guardar el documento' }, { status: 500 })
+    }
 
-      const datosN8n = procesarDatosPersonas(datos, subtipo)
+    let datosN8n: Record<string, any> = {}
+    try {
+      datosN8n = procesarDatosPersonas(datos, subtipo)
+    } catch (procesarErr) {
+      console.error('Error en procesarDatosPersonas:', JSON.stringify(procesarErr, Object.getOwnPropertyNames(procesarErr)))
+      console.error('Datos recibidos:', JSON.stringify(datos))
+      console.error('Subtipo:', subtipo)
+    }
 
     if (process.env.N8N_WEBHOOK_URL) {
       fetch(process.env.N8N_WEBHOOK_URL, {
@@ -70,7 +80,7 @@ export async function POST(req: NextRequest) {
     })
 
   } catch (err) {
-    console.error('Error:', err)
+    console.error('Error completo:', JSON.stringify(err, Object.getOwnPropertyNames(err)))
     return NextResponse.json({ error: 'Error interno del servidor' }, { status: 500 })
   }
 }
