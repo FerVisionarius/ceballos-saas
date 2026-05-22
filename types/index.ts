@@ -89,6 +89,9 @@ export type TipoDocumento =
   | 'reconocimiento_honorarios'
   | 'contrato_arrendamiento'
   | 'contrato_arrendamiento_rescision'
+  | 'contrato_arrendamiento_aval'
+  | 'contrato_arrendamiento_trabajadores'
+  | 'contrato_arrendamiento_vpo'
 
 // ============================================================
 // SCHEMA DE CAMPOS

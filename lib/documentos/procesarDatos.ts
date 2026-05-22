@@ -453,5 +453,119 @@ export function procesarDatosPersonas(datos: Record<string, any>, subtipo?: stri
       : lineasCompradoresCo[0] ?? ''
   }
 
+// ── ContratoArrendamientoAval ────────────────────────────────
+if (subtipo === 'contrato_arrendamiento_aval') {
+  const nPropietarios = contarPersonasPorCampo('nombrepropietario')
+  const nInquilinos = contarPersonasPorCampo('nombreinquilino')
+  const nAvalistas = contarPersonasPorCampo('nombreavalista')
+
+  const lineasProp: string[] = []
+  const lineasPropCo: string[] = []
+  for (let n = 1; n <= nPropietarios; n++) {
+    const t = resultado[`tratamiento_nombrepropietario${n}`] ?? ''
+    const nombre = resultado[`nombrepropietario${n}`] ?? ''
+    const municipio = resultado[`municipiopropietario${n}`] ?? ''
+    const calle = resultado[`callepropietario${n}`] ?? ''
+    const dni = resultado[`dnipropietario${n}`] ?? ''
+    if (nombre) {
+      lineasProp.push(`${t} ${nombre}, mayor de edad, con domicilio en ${municipio}, C/ ${calle} y ${provisto(t)} de D.N.I. nº.- ${dni}`)
+      lineasPropCo.push(`${t} ${nombre}`)
+    }
+  }
+  resultado['propietarios'] = lineasProp.length > 1 ? lineasProp.slice(0, -1).join(', ') + ' y ' + lineasProp.at(-1) : lineasProp[0] ?? ''
+  resultado['propietarioscorto'] = lineasPropCo.length > 1 ? lineasPropCo.slice(0, -1).join(', ') + ' y ' + lineasPropCo.at(-1) : lineasPropCo[0] ?? ''
+
+  const lineasInq: string[] = []
+  const lineasInqCo: string[] = []
+  for (let n = 1; n <= nInquilinos; n++) {
+    const t = resultado[`tratamiento_nombreinquilino${n}`] ?? ''
+    const nombre = resultado[`nombreinquilino${n}`] ?? ''
+    const municipio = resultado[`municipioinquilino${n}`] ?? ''
+    const calle = resultado[`calleinquilino${n}`] ?? ''
+    const dni = resultado[`dniinquilino${n}`] ?? ''
+    if (nombre) {
+      lineasInq.push(`${t} ${nombre}, mayor de edad, con domicilio en ${municipio}, C/ ${calle} y ${provisto(t)} de D.N.I. nº.- ${dni}`)
+      lineasInqCo.push(`${t} ${nombre}`)
+    }
+  }
+  resultado['inquilinos'] = lineasInq.length > 1 ? lineasInq.slice(0, -1).join(', ') + ' y ' + lineasInq.at(-1) : lineasInq[0] ?? ''
+  resultado['inquilinoscorto'] = lineasInqCo.length > 1 ? lineasInqCo.slice(0, -1).join(', ') + ' y ' + lineasInqCo.at(-1) : lineasInqCo[0] ?? ''
+
+  const lineasAval: string[] = []
+  const lineasAvalCo: string[] = []
+  for (let n = 1; n <= nAvalistas; n++) {
+    const t = resultado[`tratamiento_nombreavalista${n}`] ?? ''
+    const nombre = resultado[`nombreavalista${n}`] ?? ''
+    const municipio = resultado[`municipioavalista${n}`] ?? ''
+    const calle = resultado[`calleavalista${n}`] ?? ''
+    const dni = resultado[`dniavalista${n}`] ?? ''
+    if (nombre) {
+      lineasAval.push(`${t} ${nombre}, mayor de edad, con domicilio en ${municipio}, ${calle} y ${provisto(t)} de D.N.I. nº ${dni}`)
+      lineasAvalCo.push(`${t} ${nombre}`)
+    }
+  }
+  resultado['avalista'] = lineasAval.length > 1 ? lineasAval.slice(0, -1).join(', ') + ' y ' + lineasAval.at(-1) : lineasAval[0] ?? ''
+  resultado['avalistascorto'] = lineasAvalCo.length > 1 ? lineasAvalCo.slice(0, -1).join(', ') + ' y ' + lineasAvalCo.at(-1) : lineasAvalCo[0] ?? ''
+}
+
+// ── ContratoArrendamientoTrabajadores / VPO ──────────────────
+const subtiposTrabajadores = ['contrato_arrendamiento_trabajadores', 'contrato_arrendamiento_vpo']
+if (subtipo && subtiposTrabajadores.includes(subtipo)) {
+  const nPropietarios = contarPersonasPorCampo('nombrepropietario')
+  const nInquilinos = contarPersonasPorCampo('nombreinquilino')
+  const nTrabajadores = contarPersonasPorCampo('nombretrabajador')
+
+  const lineasProp: string[] = []
+  const lineasPropCo: string[] = []
+  for (let n = 1; n <= nPropietarios; n++) {
+    const t = resultado[`tratamiento_nombrepropietario${n}`] ?? ''
+    const nombre = resultado[`nombrepropietario${n}`] ?? ''
+    const municipio = resultado[`municipiopropietario${n}`] ?? ''
+    const calle = resultado[`callepropietario${n}`] ?? ''
+    const dni = resultado[`dnipropietario${n}`] ?? ''
+    if (nombre) {
+      lineasProp.push(`${t} ${nombre}, mayor de edad, con domicilio en ${municipio}, C/ ${calle} y ${provisto(t)} de D.N.I. nº.- ${dni}`)
+      lineasPropCo.push(`${t} ${nombre}`)
+    }
+  }
+  resultado['propietarios'] = lineasProp.length > 1 ? lineasProp.slice(0, -1).join(', ') + ' y ' + lineasProp.at(-1) : lineasProp[0] ?? ''
+  resultado['propietarioscorto'] = lineasPropCo.length > 1 ? lineasPropCo.slice(0, -1).join(', ') + ' y ' + lineasPropCo.at(-1) : lineasPropCo[0] ?? ''
+
+  const lineasInq: string[] = []
+  const lineasInqCo: string[] = []
+  for (let n = 1; n <= nInquilinos; n++) {
+    const t = resultado[`tratamiento_nombreinquilino${n}`] ?? ''
+    const nombre = resultado[`nombreinquilino${n}`] ?? ''
+    const municipio = resultado[`municipioinquilino${n}`] ?? ''
+    const calle = resultado[`calleinquilino${n}`] ?? ''
+    const dni = resultado[`dniinquilino${n}`] ?? ''
+    if (nombre) {
+      lineasInq.push(`${t} ${nombre}, mayor de edad, con domicilio en ${municipio}, C/ ${calle} y ${provisto(t)} de D.N.I. nº.- ${dni}`)
+      lineasInqCo.push(`${t} ${nombre}`)
+    }
+  }
+  resultado['inquilinos'] = lineasInq.length > 1 ? lineasInq.slice(0, -1).join(', ') + ' y ' + lineasInq.at(-1) : lineasInq[0] ?? ''
+  resultado['inquilinoscorto'] = lineasInqCo.length > 1 ? lineasInqCo.slice(0, -1).join(', ') + ' y ' + lineasInqCo.at(-1) : lineasInqCo[0] ?? ''
+
+  // Trabajadores: "del trabajador Don X, provisto de D.N.I. nº Y" / "de los trabajadores Don X provisto…, Don Y provisto…"
+  const lineasTrab: string[] = []
+  for (let n = 1; n <= nTrabajadores; n++) {
+    const t = resultado[`tratamiento_nombretrabajador${n}`] ?? ''
+    const nombre = resultado[`nombretrabajador${n}`] ?? ''
+    const dni = resultado[`dnitrabajador${n}`] ?? ''
+    if (nombre) {
+      lineasTrab.push(`${t} ${nombre}, ${provisto(t)} de D.N.I. nº ${dni}`)
+    }
+  }
+
+  if (lineasTrab.length === 1) {
+    resultado['trabajadores'] = `del trabajador ${lineasTrab[0]}`
+  } else if (lineasTrab.length > 1) {
+    resultado['trabajadores'] = `de los trabajadores ${lineasTrab.join(', ')}`
+  } else {
+    resultado['trabajadores'] = ''
+  }
+}
+
   return resultado
 }

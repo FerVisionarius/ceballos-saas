@@ -857,67 +857,290 @@ export const SCHEMA_DOCUMENTOS: DefinicionDocumento[] = [
     ],
   },
 
-// 17. ContratoArrasPromesaCompraVentaVPO
-{
-  tipo: 'contrato_arras',
-  subtipo: 'contrato_arras_promesa_compraventa_vpo',
-  titulo: 'ContratoArrasPromesaCompraVentaVPO',
-  descripcion: 'Contrato de arras promesa de compraventa VPO',
-  secciones: [
-    {
-      id: 'vendedor',
-      titulo: 'Datos del vendedor',
-      campos: [
-        { id: 'nombrevendedor', label: 'Nombre completo', tipo: 'text', obligatorio: true, ancho: 'half' },
-        { id: 'dnivendedor', label: 'DNI / NIE', tipo: 'nif', obligatorio: true, ancho: 'half' },
-        { id: 'municipiovendedor', label: 'Municipio', tipo: 'text', obligatorio: true, ancho: 'half' },
-        { id: 'callevendedor', label: 'Calle y número', tipo: 'text', obligatorio: true, ancho: 'half' },
-        { id: 'telefonovendedor', label: 'Teléfono', tipo: 'phone', obligatorio: true, ancho: 'half' },
-        { id: 'mailvendedor', label: 'Email', tipo: 'email', obligatorio: false, ancho: 'half' },
-      ],
-    },
-    {
-      id: 'comprador',
-      titulo: 'Datos del comprador',
-      campos: [
-        { id: 'nombrecomprador', label: 'Nombre completo', tipo: 'text', obligatorio: true, ancho: 'half' },
-        { id: 'dnicomprador', label: 'DNI / NIE', tipo: 'nif', obligatorio: true, ancho: 'half' },
-        { id: 'municipiocomprador', label: 'Municipio', tipo: 'text', obligatorio: true, ancho: 'half' },
-        { id: 'callecomprador', label: 'Calle y número', tipo: 'text', obligatorio: true, ancho: 'half' },
-        { id: 'telefonocomprador', label: 'Teléfono', tipo: 'phone', obligatorio: true, ancho: 'half' },
-        { id: 'mailcomprador', label: 'Email', tipo: 'email', obligatorio: false, ancho: 'half' },
-      ],
-    },
-    {
-      id: 'inmueble',
-      titulo: 'Datos del inmueble',
-      campos: [
-        { id: 'municipioinmueble', label: 'Municipio del inmueble', tipo: 'text', obligatorio: true, ancho: 'half' },
-        { id: 'calleinmueble', label: 'Calle, número y piso completo', tipo: 'text', obligatorio: true, ancho: 'full' },
-        { id: 'garajeinmueble', label: 'Garaje (nº o anejo — se añadirá "y garaje")', tipo: 'text', obligatorio: false, ancho: 'half' },
-        { id: 'trasteroinmueble', label: 'Trastero (nº o anejo — se añadirá "y trastero")', tipo: 'text', obligatorio: false, ancho: 'half' },
-        { id: 'superficieconstruida', label: 'Superficie construida (m²)', tipo: 'number', obligatorio: true, ancho: 'third' },
-        { id: 'superficieutil', label: 'Superficie útil (m²)', tipo: 'number', obligatorio: true, ancho: 'third' },
-        { id: 'superficiegarajetrastero', label: 'Superficie garaje/trastero (m²)', tipo: 'number', obligatorio: false, ancho: 'third' },
-        { id: 'numeroexpedientevpo', label: 'Nº expediente VPO', tipo: 'text', obligatorio: true, ancho: 'half' },
-        { id: 'delegacionconsejeria', label: 'Delegación / Consejería', tipo: 'text', obligatorio: true, ancho: 'half' },
-      ],
-    },
-    {
-      id: 'condiciones',
-      titulo: 'Condiciones económicas',
-      campos: [
-        { id: 'preciototalcompraventaletra', label: 'Precio total compraventa (en letra, MAYÚS)', tipo: 'text', obligatorio: true, ancho: 'half' },
-        { id: 'preciototalcompraventanumero', label: 'Precio total compraventa (€)', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
-        { id: 'formapago', label: 'Forma de pago', tipo: 'textarea', obligatorio: true, ancho: 'full' },
-        { id: 'fechadocumentoconformidad', label: 'Fecha documento de conformidad', tipo: 'date', obligatorio: true, ancho: 'half' },
-        { id: 'plazodiasescritura', label: 'Plazo para escritura (días)', tipo: 'number', obligatorio: true, ancho: 'half' },
-        { id: 'fechaactual', label: 'Fecha', tipo: 'date', obligatorio: true, ancho: 'half' },
-      ],
-    },
-  ],
-},
+  // 17. ContratoArrasPromesaCompraVentaVPO
+  {
+    tipo: 'contrato_arras',
+    subtipo: 'contrato_arras_promesa_compraventa_vpo',
+    titulo: 'ContratoArrasPromesaCompraVentaVPO',
+    descripcion: 'Contrato de arras promesa de compraventa VPO',
+    secciones: [
+      {
+        id: 'vendedor',
+        titulo: 'Datos del vendedor',
+        campos: [
+          { id: 'nombrevendedor', label: 'Nombre completo', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'dnivendedor', label: 'DNI / NIE', tipo: 'nif', obligatorio: true, ancho: 'half' },
+          { id: 'municipiovendedor', label: 'Municipio', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'callevendedor', label: 'Calle y número', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'telefonovendedor', label: 'Teléfono', tipo: 'phone', obligatorio: true, ancho: 'half' },
+          { id: 'mailvendedor', label: 'Email', tipo: 'email', obligatorio: false, ancho: 'half' },
+        ],
+      },
+      {
+        id: 'comprador',
+        titulo: 'Datos del comprador',
+        campos: [
+          { id: 'nombrecomprador', label: 'Nombre completo', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'dnicomprador', label: 'DNI / NIE', tipo: 'nif', obligatorio: true, ancho: 'half' },
+          { id: 'municipiocomprador', label: 'Municipio', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'callecomprador', label: 'Calle y número', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'telefonocomprador', label: 'Teléfono', tipo: 'phone', obligatorio: true, ancho: 'half' },
+          { id: 'mailcomprador', label: 'Email', tipo: 'email', obligatorio: false, ancho: 'half' },
+        ],
+      },
+      {
+        id: 'inmueble',
+        titulo: 'Datos del inmueble',
+        campos: [
+          { id: 'municipioinmueble', label: 'Municipio del inmueble', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'calleinmueble', label: 'Calle, número y piso completo', tipo: 'text', obligatorio: true, ancho: 'full' },
+          { id: 'garajeinmueble', label: 'Garaje (nº o anejo)', tipo: 'text', obligatorio: false, ancho: 'half' },
+          { id: 'trasteroinmueble', label: 'Trastero (nº o anejo)', tipo: 'text', obligatorio: false, ancho: 'half' },
+          { id: 'superficieconstruida', label: 'Superficie construida (m²)', tipo: 'number', obligatorio: true, ancho: 'third' },
+          { id: 'superficieutil', label: 'Superficie útil (m²)', tipo: 'number', obligatorio: true, ancho: 'third' },
+          { id: 'superficiegarajetrastero', label: 'Superficie garaje/trastero (m²)', tipo: 'number', obligatorio: false, ancho: 'third' },
+          { id: 'numeroexpedientevpo', label: 'Nº expediente VPO', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'delegacionconsejeria', label: 'Delegación / Consejería', tipo: 'text', obligatorio: true, ancho: 'half' },
+        ],
+      },
+      {
+        id: 'condiciones',
+        titulo: 'Condiciones económicas',
+        campos: [
+          { id: 'preciototalcompraventaletra', label: 'Precio total compraventa (en letra, MAYÚS)', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'preciototalcompraventanumero', label: 'Precio total compraventa (€)', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
+          { id: 'formapago', label: 'Forma de pago', tipo: 'textarea', obligatorio: true, ancho: 'full' },
+          { id: 'fechadocumentoconformidad', label: 'Fecha documento de conformidad', tipo: 'date', obligatorio: true, ancho: 'half' },
+          { id: 'plazodiasescritura', label: 'Plazo para escritura (días)', tipo: 'number', obligatorio: true, ancho: 'half' },
+          { id: 'fechaactual', label: 'Fecha', tipo: 'date', obligatorio: true, ancho: 'half' },
+        ],
+      },
+    ],
+  },
 
+  // 18. ContratoArrendamientoAval
+  {
+    tipo: 'contrato_arrendamiento',
+    subtipo: 'contrato_arrendamiento_aval',
+    titulo: 'ContratoArrendamientoAval',
+    descripcion: 'Contrato de arrendamiento con aval',
+    secciones: [
+      {
+        id: 'arrendador',
+        titulo: 'Datos del propietario',
+        campos: [
+          { id: 'nombrepropietario', label: 'Nombre completo', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'dnipropietario', label: 'DNI / NIE', tipo: 'nif', obligatorio: true, ancho: 'half' },
+          { id: 'municipiopropietario', label: 'Municipio', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'callepropietario', label: 'Calle y número', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'propietariotelefono', label: 'Teléfono', tipo: 'phone', obligatorio: true, ancho: 'half' },
+          { id: 'propietariomail', label: 'Email', tipo: 'email', obligatorio: false, ancho: 'half' },
+        ],
+      },
+      {
+        id: 'arrendatario',
+        titulo: 'Datos del inquilino',
+        campos: [
+          { id: 'nombreinquilino', label: 'Nombre completo', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'dniinquilino', label: 'DNI / NIE', tipo: 'nif', obligatorio: true, ancho: 'half' },
+          { id: 'municipioinquilino', label: 'Municipio', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'calleinquilino', label: 'Calle y número', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'inquilinotelefono', label: 'Teléfono', tipo: 'phone', obligatorio: true, ancho: 'half' },
+          { id: 'inquilinomail', label: 'Email', tipo: 'email', obligatorio: false, ancho: 'half' },
+        ],
+      },
+      {
+        id: 'avalista',
+        titulo: 'Datos del avalista',
+        campos: [
+          { id: 'nombreavalista', label: 'Nombre completo', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'dniavalista', label: 'DNI / NIE', tipo: 'nif', obligatorio: true, ancho: 'half' },
+          { id: 'municipioavalista', label: 'Municipio', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'calleavalista', label: 'Calle y número', tipo: 'text', obligatorio: true, ancho: 'half' },
+        ],
+      },
+      {
+        id: 'inmueble',
+        titulo: 'Datos del inmueble',
+        campos: [
+          { id: 'municipioinmueble', label: 'Municipio del inmueble', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'calleinmueble', label: 'Calle, número y piso completo', tipo: 'text', obligatorio: true, ancho: 'full' },
+          { id: 'referenciacatastralinmueble', label: 'Referencia catastral', tipo: 'text', obligatorio: false, ancho: 'half' },
+          { id: 'certificadoeficienciaenergetica', label: 'Certificado eficiencia energética', tipo: 'text', obligatorio: false, ancho: 'half' },
+        ],
+      },
+      {
+        id: 'condiciones',
+        titulo: 'Condiciones del arrendamiento',
+        campos: [
+          { id: 'fechacontratovigor', label: 'Fecha entrada en vigor', tipo: 'date', obligatorio: true, ancho: 'half' },
+          { id: 'rentamensualletra', label: 'Renta mensual (en letra)', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'garantiaadicionalletra', label: 'Garantía adicional (en letra)', tipo: 'text', obligatorio: false, ancho: 'half' },
+          { id: 'garantiaadicionalnumero', label: 'Garantía adicional (€)', tipo: 'currency', obligatorio: false, ancho: 'half', prefijo: '€' },
+          { id: 'fianzaletra', label: 'Fianza (en letra)', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'fianzanumero', label: 'Fianza (€)', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
+          { id: 'importeavalletra', label: 'Importe aval (en letra)', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'importeavalnumero', label: 'Importe aval (€)', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
+          { id: 'fechafinaval', label: 'Fecha fin aval', tipo: 'date', obligatorio: true, ancho: 'half' },
+          { id: 'fechaactual', label: 'Fecha', tipo: 'date', obligatorio: true, ancho: 'half' },
+        ],
+      },
+      {
+        id: 'cuenta_propietario',
+        titulo: 'Cuenta bancaria del propietario',
+        campos: [
+          { id: 'titularcuentapropietario', label: 'Titular de la cuenta', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'numerocuentapropietario', label: 'Número de cuenta (IBAN)', tipo: 'text', obligatorio: true, ancho: 'half' },
+        ],
+      },
+    ],
+  },
+
+  // 19. ContratoArrendamientoTrabajadores
+  {
+    tipo: 'contrato_arrendamiento',
+    subtipo: 'contrato_arrendamiento_trabajadores',
+    titulo: 'ContratoArrendamientoTrabajadores',
+    descripcion: 'Contrato de arrendamiento para trabajadores',
+    secciones: [
+      {
+        id: 'arrendador',
+        titulo: 'Datos del propietario',
+        campos: [
+          { id: 'nombrepropietario', label: 'Nombre completo', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'dnipropietario', label: 'DNI / NIE', tipo: 'nif', obligatorio: true, ancho: 'half' },
+          { id: 'municipiopropietario', label: 'Municipio', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'callepropietario', label: 'Calle y número', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'propietariotelefono', label: 'Teléfono', tipo: 'phone', obligatorio: true, ancho: 'half' },
+          { id: 'propietariomail', label: 'Email', tipo: 'email', obligatorio: false, ancho: 'half' },
+        ],
+      },
+      {
+        id: 'arrendatario',
+        titulo: 'Datos del inquilino',
+        campos: [
+          { id: 'nombreinquilino', label: 'Nombre completo', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'dniinquilino', label: 'DNI / NIE', tipo: 'nif', obligatorio: true, ancho: 'half' },
+          { id: 'municipioinquilino', label: 'Municipio', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'calleinquilino', label: 'Calle y número', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'inquilinotelefono', label: 'Teléfono', tipo: 'phone', obligatorio: true, ancho: 'half' },
+          { id: 'inquilinomail', label: 'Email', tipo: 'email', obligatorio: false, ancho: 'half' },
+        ],
+      },
+      {
+        id: 'trabajador',
+        titulo: 'Datos del trabajador',
+        campos: [
+          { id: 'nombretrabajador', label: 'Nombre completo', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'dnitrabajador', label: 'DNI / NIE', tipo: 'nif', obligatorio: true, ancho: 'half' },
+        ],
+      },
+      {
+        id: 'inmueble',
+        titulo: 'Datos del inmueble',
+        campos: [
+          { id: 'municipioinmueble', label: 'Municipio del inmueble', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'calleinmueble', label: 'Calle, número y piso completo', tipo: 'text', obligatorio: true, ancho: 'full' },
+          { id: 'referenciacatastralinmueble', label: 'Referencia catastral', tipo: 'text', obligatorio: false, ancho: 'half' },
+          { id: 'certificadoeficienciaenergetica', label: 'Certificado eficiencia energética', tipo: 'text', obligatorio: false, ancho: 'half' },
+        ],
+      },
+      {
+        id: 'condiciones',
+        titulo: 'Condiciones del arrendamiento',
+        campos: [
+          { id: 'fechacontratovigor', label: 'Fecha entrada en vigor', tipo: 'date', obligatorio: true, ancho: 'half' },
+          { id: 'rentamensualletra', label: 'Renta mensual (en letra)', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'garantiaadicionalletra', label: 'Garantía adicional (en letra)', tipo: 'text', obligatorio: false, ancho: 'half' },
+          { id: 'garantiaadicionalnumero', label: 'Garantía adicional (€)', tipo: 'currency', obligatorio: false, ancho: 'half', prefijo: '€' },
+          { id: 'fianzaletra', label: 'Fianza (en letra)', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'fianzanumero', label: 'Fianza (€)', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
+          { id: 'fechaactual', label: 'Fecha', tipo: 'date', obligatorio: true, ancho: 'half' },
+        ],
+      },
+      {
+        id: 'cuenta_propietario',
+        titulo: 'Cuenta bancaria del propietario',
+        campos: [
+          { id: 'titularcuentapropietario', label: 'Titular de la cuenta', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'numerocuentapropietario', label: 'Número de cuenta (IBAN)', tipo: 'text', obligatorio: true, ancho: 'half' },
+        ],
+      },
+    ],
+  },
+
+  // 20. ContratoArrendamientoVPO
+  {
+    tipo: 'contrato_arrendamiento',
+    subtipo: 'contrato_arrendamiento_vpo',
+    titulo: 'ContratoArrendamientoVPO',
+    descripcion: 'Contrato de arrendamiento VPO',
+    secciones: [
+      {
+        id: 'arrendador',
+        titulo: 'Datos del propietario',
+        campos: [
+          { id: 'nombrepropietario', label: 'Nombre completo', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'dnipropietario', label: 'DNI / NIE', tipo: 'nif', obligatorio: true, ancho: 'half' },
+          { id: 'municipiopropietario', label: 'Municipio', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'callepropietario', label: 'Calle y número', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'propietariotelefono', label: 'Teléfono', tipo: 'phone', obligatorio: true, ancho: 'half' },
+          { id: 'propietariomail', label: 'Email', tipo: 'email', obligatorio: false, ancho: 'half' },
+        ],
+      },
+      {
+        id: 'arrendatario',
+        titulo: 'Datos del inquilino',
+        campos: [
+          { id: 'nombreinquilino', label: 'Nombre completo', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'dniinquilino', label: 'DNI / NIE', tipo: 'nif', obligatorio: true, ancho: 'half' },
+          { id: 'municipioinquilino', label: 'Municipio', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'calleinquilino', label: 'Calle y número', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'inquilinotelefono', label: 'Teléfono', tipo: 'phone', obligatorio: true, ancho: 'half' },
+          { id: 'inquilinomail', label: 'Email', tipo: 'email', obligatorio: false, ancho: 'half' },
+        ],
+      },
+      {
+        id: 'trabajador',
+        titulo: 'Datos del trabajador / beneficiario VPO',
+        campos: [
+          { id: 'nombretrabajador', label: 'Nombre completo', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'dnitrabajador', label: 'DNI / NIE', tipo: 'nif', obligatorio: true, ancho: 'half' },
+        ],
+      },
+      {
+        id: 'inmueble',
+        titulo: 'Datos del inmueble',
+        campos: [
+          { id: 'municipioinmueble', label: 'Municipio del inmueble', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'calleinmueble', label: 'Calle, número y piso completo', tipo: 'text', obligatorio: true, ancho: 'full' },
+          { id: 'referenciacatastralinmueble', label: 'Referencia catastral', tipo: 'text', obligatorio: false, ancho: 'half' },
+          { id: 'certificadoeficienciaenergetica', label: 'Certificado eficiencia energética', tipo: 'text', obligatorio: false, ancho: 'half' },
+        ],
+      },
+      {
+        id: 'condiciones',
+        titulo: 'Condiciones del arrendamiento',
+        campos: [
+          { id: 'fechacontratovigor', label: 'Fecha entrada en vigor', tipo: 'date', obligatorio: true, ancho: 'half' },
+          { id: 'rentamensualletra', label: 'Renta mensual (en letra)', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'garantiaadicionalletra', label: 'Garantía adicional (en letra)', tipo: 'text', obligatorio: false, ancho: 'half' },
+          { id: 'garantiaadicionalnumero', label: 'Garantía adicional (€)', tipo: 'currency', obligatorio: false, ancho: 'half', prefijo: '€' },
+          { id: 'fianzaletra', label: 'Fianza (en letra)', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'fianzanumero', label: 'Fianza (€)', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
+          { id: 'fechaactual', label: 'Fecha', tipo: 'date', obligatorio: true, ancho: 'half' },
+        ],
+      },
+      {
+        id: 'cuenta_propietario',
+        titulo: 'Cuenta bancaria del propietario',
+        campos: [
+          { id: 'titularcuentapropietario', label: 'Titular de la cuenta', tipo: 'text', obligatorio: true, ancho: 'half' },
+          { id: 'numerocuentapropietario', label: 'Número de cuenta (IBAN)', tipo: 'text', obligatorio: true, ancho: 'half' },
+        ],
+      },
+    ],
+  },
 ]
 
 export function getDefinicionDocumento(subtipo: string): DefinicionDocumento | undefined {
@@ -988,6 +1211,9 @@ export const GRUPOS_DOCUMENTOS: GrupoTipoDocumento[] = [
     subtipos: [
       { subtipo: 'contrato_arrendamiento', label: 'Contrato de arrendamiento' },
       { subtipo: 'contrato_arrendamiento_rescision', label: 'Rescisión de contrato' },
+      { subtipo: 'contrato_arrendamiento_aval', label: 'Arrendamiento con aval' },
+      { subtipo: 'contrato_arrendamiento_trabajadores', label: 'Arrendamiento trabajadores' },
+      { subtipo: 'contrato_arrendamiento_vpo', label: 'Arrendamiento VPO' },
     ],
   },
 ]
