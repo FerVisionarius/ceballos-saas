@@ -87,9 +87,9 @@ export function FormularioDinamico({ tipo, subtipo }: FormularioDinamicoProps) {
     const matchAdicional = seccionId.match(/_p(\d+)$/)
     const sufijoForm = matchAdicional ? `_p${matchAdicional[1]}` : ''
     const seccionBase = seccionId.replace(/_p\d+$/, '')
-
+  
     const nombreCompleto = `${cliente.nombre} ${cliente.apellidos}`.trim()
-
+  
     const mapeosPorSeccion: Record<string, Record<string, string>> = {
       vendedor: {
         nombrevendedor: nombreCompleto,
@@ -122,7 +122,6 @@ export function FormularioDinamico({ tipo, subtipo }: FormularioDinamicoProps) {
         municipioarrendador: cliente.municipio ?? '',
         telefonoarrendador: cliente.telefono ?? '',
         mailarrendador: cliente.email ?? '',
-        // para docs con nombrepropietario en sección arrendador
         nombrepropietario: nombreCompleto,
         dnipropietario: cliente.nif_nie ?? '',
         callepropietario: cliente.direccion ?? '',
@@ -137,7 +136,6 @@ export function FormularioDinamico({ tipo, subtipo }: FormularioDinamicoProps) {
         municipioarrendatario: cliente.municipio ?? '',
         telefonoarrendatario: cliente.telefono ?? '',
         mailarrendatario: cliente.email ?? '',
-        // para docs con nombreinquilino en sección arrendatario
         nombreinquilino: nombreCompleto,
         dniinquilino: cliente.nif_nie ?? '',
         calleinquilino: cliente.direccion ?? '',
@@ -164,23 +162,34 @@ export function FormularioDinamico({ tipo, subtipo }: FormularioDinamicoProps) {
         dnitrabajador: cliente.nif_nie ?? '',
       },
     }
-
+  
     const campos = mapeosPorSeccion[seccionBase] ?? mapeosPorSeccion['cliente']
-
+  
     Object.entries(campos).forEach(([campo, valor]) => {
       if (valor !== undefined) {
         const campoFinal = sufijoForm ? `${campo}${sufijoForm}` : campo
         setValue(campoFinal as any, valor)
       }
     })
-
-    // Aplicar tratamiento
-    const campoNombreBase = CAMPOS_NOMBRE.find(n => n.includes(seccionBase)) ?? `nombre${seccionBase}`
+  
+    // Mapeo explícito sección → campo nombre para el tratamiento
+    const campoNombrePorSeccion: Record<string, string> = {
+      vendedor: 'nombrevendedor',
+      comprador: 'nombrecomprador',
+      arrendador: 'nombrearrendador',
+      arrendatario: 'nombrearrendatario',
+      cliente: 'nombrecliente',
+      avalista: 'nombreavalista',
+      trabajador: 'nombretrabajador',
+    }
+  
+    const campoNombreBase = campoNombrePorSeccion[seccionBase] ?? `nombre${seccionBase}`
     const campoTratamiento = sufijoForm ? `${campoNombreBase}${sufijoForm}` : campoNombreBase
+  
     if (cliente.tratamiento) {
       setTratamientos(prev => ({ ...prev, [campoTratamiento]: cliente.tratamiento! }))
     }
-
+  
     setModalCliente(null)
     toast.success(`Datos de ${nombreCompleto} cargados`)
   }
