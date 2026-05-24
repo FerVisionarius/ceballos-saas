@@ -87,9 +87,9 @@ export function FormularioDinamico({ tipo, subtipo }: FormularioDinamicoProps) {
     const matchAdicional = seccionId.match(/_p(\d+)$/)
     const sufijoForm = matchAdicional ? `_p${matchAdicional[1]}` : ''
     const seccionBase = seccionId.replace(/_p\d+$/, '')
-  
+
     const nombreCompleto = `${cliente.nombre} ${cliente.apellidos}`.trim()
-  
+
     const mapeosPorSeccion: Record<string, Record<string, string>> = {
       vendedor: {
         nombrevendedor: nombreCompleto,
@@ -162,34 +162,26 @@ export function FormularioDinamico({ tipo, subtipo }: FormularioDinamicoProps) {
         dnitrabajador: cliente.nif_nie ?? '',
       },
     }
-  
+
     const campos = mapeosPorSeccion[seccionBase] ?? mapeosPorSeccion['cliente']
-  
+
     Object.entries(campos).forEach(([campo, valor]) => {
       if (valor !== undefined) {
         const campoFinal = sufijoForm ? `${campo}${sufijoForm}` : campo
         setValue(campoFinal as any, valor)
       }
     })
-  
-    // Mapeo explícito sección → campo nombre para el tratamiento
-    const campoNombrePorSeccion: Record<string, string> = {
-      vendedor: 'nombrevendedor',
-      comprador: 'nombrecomprador',
-      arrendador: 'nombrearrendador',
-      arrendatario: 'nombrearrendatario',
-      cliente: 'nombrecliente',
-      avalista: 'nombreavalista',
-      trabajador: 'nombretrabajador',
-    }
-  
-    const campoNombreBase = campoNombrePorSeccion[seccionBase] ?? `nombre${seccionBase}`
-    const campoTratamiento = sufijoForm ? `${campoNombreBase}${sufijoForm}` : campoNombreBase
-  
+
+    // Detectar el campo nombre real que existe en esta sección del schema
+    const seccionDef = def?.secciones.find(s => s.id === seccionBase)
+    const campoNombreReal = seccionDef?.campos.find(c => CAMPOS_NOMBRE.includes(c.id))?.id
+      ?? `nombre${seccionBase}`
+    const campoTratamiento = sufijoForm ? `${campoNombreReal}${sufijoForm}` : campoNombreReal
+
     if (cliente.tratamiento) {
       setTratamientos(prev => ({ ...prev, [campoTratamiento]: cliente.tratamiento! }))
     }
-  
+
     setModalCliente(null)
     toast.success(`Datos de ${nombreCompleto} cargados`)
   }
@@ -357,9 +349,8 @@ export function FormularioDinamico({ tipo, subtipo }: FormularioDinamicoProps) {
                                   value={tratamientos[campo.id] ?? ''}
                                   onChange={e => setTratamientos(prev => ({ ...prev, [campo.id]: e.target.value }))}
                                   className="w-16 shrink-0 px-2 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 bg-white"
-                                  required
                                 >
-                                  <option value="" disabled>—</option>
+                                  <option value="">—</option>
                                   <option value="Don">Don</option>
                                   <option value="Doña">Doña</option>
                                 </select>
@@ -414,9 +405,8 @@ export function FormularioDinamico({ tipo, subtipo }: FormularioDinamicoProps) {
                                         value={tratamientos[campo.id] ?? ''}
                                         onChange={e => setTratamientos(prev => ({ ...prev, [campo.id]: e.target.value }))}
                                         className="w-16 shrink-0 px-2 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 bg-white"
-                                        required
                                       >
-                                        <option value="" disabled>—</option>
+                                        <option value="">—</option>
                                         <option value="Don">Don</option>
                                         <option value="Doña">Doña</option>
                                       </select>
