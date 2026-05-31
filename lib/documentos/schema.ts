@@ -176,7 +176,6 @@ export const SCHEMA_DOCUMENTOS: DefinicionDocumento[] = [
           { id: 'nombrecliente', label: 'Nombre completo', tipo: 'text', obligatorio: true, ancho: 'half' },
           { id: 'municipiocliente', label: 'Municipio', tipo: 'text', obligatorio: true, ancho: 'half' },
           { id: 'callecliente', label: 'Calle y número', tipo: 'text', obligatorio: true, ancho: 'half' },
-          { id: 'numerocallecliente', label: 'Número', tipo: 'text', obligatorio: false, ancho: 'half' },
           { id: 'dnicliente', label: 'DNI / NIE', tipo: 'nif', obligatorio: true, ancho: 'half' },
         ],
       },
@@ -186,7 +185,6 @@ export const SCHEMA_DOCUMENTOS: DefinicionDocumento[] = [
         campos: [
           { id: 'municipioinmueble', label: 'Municipio del inmueble', tipo: 'text', obligatorio: true, ancho: 'half' },
           { id: 'calleinmueble', label: 'Calle del inmueble', tipo: 'text', obligatorio: true, ancho: 'half' },
-          { id: 'numerocalleinmueble', label: 'Número', tipo: 'text', obligatorio: false, ancho: 'half' },
           { id: 'garajeinmueble', label: 'Nº garaje', tipo: 'text', obligatorio: false, ancho: 'half' },
           { id: 'trasteroinmueble', label: 'Nº trastero', tipo: 'text', obligatorio: false, ancho: 'half' },
         ],

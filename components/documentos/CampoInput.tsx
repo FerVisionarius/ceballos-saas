@@ -1,4 +1,5 @@
 'use client'
+import { useState } from 'react'
 import type { UseFormRegister, FieldError, UseFormSetValue, UseFormWatch } from 'react-hook-form'
 import type { CampoFormulario } from '@/types'
 import { cn } from '@/lib/utils'
@@ -9,6 +10,16 @@ interface CampoInputProps {
   error?: FieldError
   setValue: UseFormSetValue<any>
   watch: UseFormWatch<any>
+}
+
+function formatearMiles(valor: string): string {
+  const soloNumeros = valor.replace(/[^\d]/g, '')
+  if (!soloNumeros) return ''
+  return parseInt(soloNumeros, 10).toLocaleString('es-ES')
+}
+
+function desformatear(valor: string): string {
+  return valor.replace(/\./g, '').replace(/,/g, '.')
 }
 
 export function CampoInput({ campo, register, error, setValue, watch }: CampoInputProps) {
@@ -67,19 +78,31 @@ export function CampoInput({ campo, register, error, setValue, watch }: CampoInp
     )
   }
 
-  // CURRENCY con prefijo €
+  // CURRENCY con prefijo € y formateo de miles
   if (campo.tipo === 'currency') {
+    const { onChange, onBlur, name, ref } = register(campo.id)
+    const valorActual = watch(campo.id) ?? ''
+
+    const handleCurrencyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const raw = e.target.value.replace(/[^\d]/g, '')
+      const formateado = raw ? parseInt(raw, 10).toLocaleString('es-ES') : ''
+      setValue(campo.id, formateado)
+    }
+
     return (
       <div>
         {labelEl}
         <div className="relative">
           <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-slate-400 font-medium select-none">€</span>
           <input
-            {...register(campo.id)}
-            type="number"
-            step="0.01"
-            min="0"
-            placeholder="0,00"
+            name={name}
+            ref={ref}
+            onBlur={onBlur}
+            type="text"
+            inputMode="numeric"
+            value={valorActual}
+            onChange={handleCurrencyChange}
+            placeholder="0"
             className={cn(inputBase, 'pl-7')}
           />
         </div>
