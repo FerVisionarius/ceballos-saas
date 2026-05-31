@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { FileText, Plus } from 'lucide-react'
 import { createAdminClient } from '@/lib/supabase/server'
 import { FiltroDocumentos } from './FiltroDocumentos'
+import { SCHEMA_DOCUMENTOS } from '@/lib/documentos/schema'
 
 async function getDocumentos() {
   try {
@@ -19,7 +20,8 @@ async function getDocumentos() {
 
 export default async function DocumentosPage() {
   const documentos = await getDocumentos()
-  const subtiposUnicos: string[] = Array.from(new Set(documentos.map((d: any) => d.subtipo as string)))
+  // Todos los subtipos posibles del schema, no solo los que existen en BD
+  const todosLosSubtipos = SCHEMA_DOCUMENTOS.map(d => d.subtipo)
 
   return (
     <div className="space-y-6">
@@ -49,7 +51,7 @@ export default async function DocumentosPage() {
       ) : (
         <FiltroDocumentos
           documentos={documentos}
-          subtiposUnicos={subtiposUnicos}
+          subtiposUnicos={todosLosSubtipos}
         />
       )}
     </div>

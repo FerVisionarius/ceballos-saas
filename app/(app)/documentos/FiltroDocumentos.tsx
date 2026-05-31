@@ -5,8 +5,8 @@ import { FileText, Search } from 'lucide-react'
 import { EliminarDocumentoBtn } from './EliminarDocumentoBtn'
 
 const SUBTIPO_LABELS: Record<string, string> = {
-  nota_encargo_exclusiva: 'Nota encargo exclusiva',
-  nota_encargo_sin_exclusiva: 'Nota encargo sin exclusiva',
+  nota_encargo_exclusiva: 'Nota de encargo en exclusiva',
+  nota_encargo_sin_exclusiva: 'Nota de encargo sin exclusiva',
   conformidad_arras_confirmatorias: 'Conformidad arras confirmatorias',
   conformidad_arras_penitenciales: 'Conformidad arras penitenciales',
   senal_arrendamiento: 'Señal arrendamiento',
@@ -17,9 +17,14 @@ const SUBTIPO_LABELS: Record<string, string> = {
   senal_oferta: 'Señal / Oferta',
   contrato_arras_penitencial: 'Contrato arras penitencial',
   contrato_arras_confirmatoria: 'Contrato arras confirmatoria',
+  contrato_arras_compraventa_pago_aplazado: 'Contrato arras compraventa pago aplazado',
+  contrato_arras_promesa_compraventa_vpo: 'Contrato arras promesa compraventa VPO',
   reconocimiento_honorarios: 'Reconocimiento de honorarios',
   contrato_arrendamiento: 'Contrato de arrendamiento',
   contrato_arrendamiento_rescision: 'Rescisión de arrendamiento',
+  contrato_arrendamiento_aval: 'Arrendamiento con aval',
+  contrato_arrendamiento_trabajadores: 'Arrendamiento trabajadores',
+  contrato_arrendamiento_vpo: 'Arrendamiento VPO',
 }
 
 function getInmueble(datos: any): string {
