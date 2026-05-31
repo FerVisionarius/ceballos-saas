@@ -158,63 +158,68 @@ export function procesarDatosPersonas(datos: Record<string, any>, subtipo?: stri
       : lineasConformidad[0] ?? '') + `, ${propietario}`
   }
 
-  // ── Señales ──────────────────────────────────────────────────
-  const subtiposSenal = [
-    'senal_arrendamiento',
-    'senal_compraventa_confirmatoria',
-    'senal_compraventa_confirmatoria_banco',
-    'senal_compraventa_penitencial',
-    'senal_compraventa_penitencial_banco',
-  ]
-  if (subtipo && subtiposSenal.includes(subtipo)) {
-    const lineasRecibido: string[] = []
-    const lineasFicha: string[] = []
+// ── Señales ──────────────────────────────────────────────────
+const subtiposSenal = [
+  'senal_arrendamiento',
+  'senal_compraventa_confirmatoria',
+  'senal_compraventa_confirmatoria_banco',
+  'senal_compraventa_penitencial',
+  'senal_compraventa_penitencial_banco',
+]
+if (subtipo && subtiposSenal.includes(subtipo)) {
+  const lineasRecibido: string[] = []
+  const lineasFicha: string[] = []
 
-    for (let n = 1; n <= nPersonas; n++) {
-      const tratamiento =
-        resultado[`tratamiento_nombrecliente${n}`] ??
-        resultado[`tratamiento_nombrecomprador${n}`] ?? ''
-      const nombre =
-        resultado[`nombrecliente${n}`] ??
-        resultado[`nombrecomprador${n}`] ?? ''
-      const municipio =
-        resultado[`municipiocliente${n}`] ??
-        resultado[`municipiocomprador${n}`] ?? ''
-      const calle =
-        resultado[`callecliente${n}`] ??
-        resultado[`callecomprador${n}`] ?? ''
-      const numerocalle =
-        resultado[`numerocallecliente${n}`] ??
-        resultado[`numerocallecomprador${n}`] ?? ''
-      const dni =
-        resultado[`dnicliente${n}`] ??
-        resultado[`dnicomprador${n}`] ?? ''
-      const telefono =
-        resultado[`telefonocliente${n}`] ??
-        resultado[`telefonocomprador${n}`] ?? ''
+  for (let n = 1; n <= nPersonas; n++) {
+    const tratamiento =
+      resultado[`tratamiento_nombrecliente${n}`] ??
+      resultado[`tratamiento_nombrecomprador${n}`] ?? ''
+    const nombre =
+      resultado[`nombrecliente${n}`] ??
+      resultado[`nombrecomprador${n}`] ?? ''
+    const municipio =
+      resultado[`municipiocliente${n}`] ??
+      resultado[`municipiocomprador${n}`] ?? ''
+    const calle =
+      resultado[`callecliente${n}`] ??
+      resultado[`callecomprador${n}`] ?? ''
+    const dni =
+      resultado[`dnicliente${n}`] ??
+      resultado[`dnicomprador${n}`] ?? ''
+    const telefono =
+      resultado[`telefonocliente${n}`] ??
+      resultado[`telefonocomprador${n}`] ?? ''
 
-      if (nombre) {
-        const tratamientoMayus = tratamiento ? tratamiento.toUpperCase() : ''
-        lineasRecibido.push(`${tratamientoMayus} ${nombre}`)
-        lineasFicha.push(
-          `Nombre y apellidos: ${nombre}\nDomicilio y población: ${municipio}, ${calle}${numerocalle ? ', ' + numerocalle : ''}\nD.N.I. nº ${dni}\nTeléfono: ${telefono}`
-        )
-      }
+    if (nombre) {
+      const tratamientoMayus = tratamiento ? tratamiento.toUpperCase() : ''
+      lineasRecibido.push(`${tratamientoMayus} ${nombre}`)
+      lineasFicha.push(
+        `Nombre y apellidos: ${nombre.toUpperCase()}\nDomicilio y población: ${municipio}, ${calle}\nD.N.I. nº ${dni}\nTeléfono: ${telefono}`
+      )
     }
+  }
 
-    resultado['clientes'] = 'He recibido de ' + (lineasRecibido.length > 1
-      ? lineasRecibido.slice(0, -1).join(', ') + ' y ' + lineasRecibido.at(-1)
-      : lineasRecibido[0] ?? '')
+  resultado['clientes'] = 'He recibido de ' + (lineasRecibido.length > 1
+    ? lineasRecibido.slice(0, -1).join(', ') + ' y ' + lineasRecibido.at(-1)
+    : lineasRecibido[0] ?? '')
 
-    resultado['clientescorto'] = lineasFicha.join('\n\n')
-// Párrafo propietarioscorto
-const nPropietarios = contarPersonasPorCampo('nombrepropietario')
-const lineasProp: string[] = []
-for (let n = 1; n <= nPropietarios; n++) {
-  const t = resultado[`tratamiento_nombrepropietario${n}`] ?? ''
-  const nombre = resultado[`nombrepropietario${n}`] ?? ''
-  if (nombre) lineasProp.push(`${t} ${nombre}`.trim())
-}
+  resultado['clientescorto'] = lineasFicha.join('\n\n')
+
+  // Párrafo propietarioscorto
+  const nPropietarios = contarPersonasPorCampo('nombrepropietario')
+  const lineasProp: string[] = []
+  for (let n = 1; n <= nPropietarios; n++) {
+    const t = resultado[`tratamiento_nombrepropietario${n}`] ?? ''
+    const nombre = resultado[`nombrepropietario${n}`] ?? ''
+    if (nombre) lineasProp.push(`${t} ${nombre}`.trim().toUpperCase())
+  }
+
+  if (lineasProp.length === 1) {
+    resultado['propietarioscorto'] = `Y LA PROPIETARIA DE LA MISMA ${lineasProp[0]}.`
+  } else if (lineasProp.length > 1) {
+    const todos = lineasProp.slice(0, -1).join(', ') + ' Y ' + lineasProp.at(-1)
+    resultado['propietarioscorto'] = `Y LOS PROPIETARIOS DE LA MISMA ${todos}.`
+  }
 
 if (lineasProp.length === 1) {
   resultado['propietarioscorto'] = `Y LA PROPIETARIA DE LA MISMA ${lineasProp[0]}.`

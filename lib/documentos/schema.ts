@@ -492,11 +492,17 @@ export const SCHEMA_DOCUMENTOS: DefinicionDocumento[] = [
         ],
       },
       {
+        id: 'propietario',
+        titulo: 'Datos del propietario',
+        campos: [
+          { id: 'nombrepropietario', label: 'Nombre propietario', tipo: 'text', obligatorio: true, ancho: 'half' },
+        ],
+      },
+      {
         id: 'condiciones',
         titulo: 'Condiciones económicas',
         campos: [
           { id: 'precioventanumero', label: 'Precio venta (MAYÚS)', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
-          { id: 'nombrepropietario', label: 'Nombre propietario (MAYÚS)', tipo: 'text', obligatorio: true, ancho: 'half' },
           { id: 'precioofertanumero', label: 'Precio oferta (MAYÚS)', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
           { id: 'depositooferta', label: 'Depósito de oferta (€)', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
           { id: 'fechaactual', label: 'Fecha', tipo: 'date', obligatorio: true, ancho: 'half' },
