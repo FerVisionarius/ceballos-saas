@@ -30,7 +30,7 @@ interface Cliente {
 
 const SECCIONES_CLIENTE = [
   'vendedor', 'comprador', 'arrendador', 'arrendatario', 'cliente',
-  'avalista', 'trabajador',
+  'avalista', 'trabajador', 'propietario',
 ]
 const SECCIONES_INMUEBLE = ['inmueble']
 
@@ -161,6 +161,9 @@ export function FormularioDinamico({ tipo, subtipo }: FormularioDinamicoProps) {
         nombretrabajador: nombreCompleto,
         dnitrabajador: cliente.nif_nie ?? '',
       },
+      propietario: {
+        nombrepropietario: nombreCompleto,
+      },
     }
 
     const campos = mapeosPorSeccion[seccionBase] ?? mapeosPorSeccion['cliente']
@@ -172,7 +175,6 @@ export function FormularioDinamico({ tipo, subtipo }: FormularioDinamicoProps) {
       }
     })
 
-    // Detectar el campo nombre real que existe en esta sección del schema
     const seccionDef = def?.secciones.find(s => s.id === seccionBase)
     const campoNombreReal = seccionDef?.campos.find(c => CAMPOS_NOMBRE.includes(c.id))?.id
       ?? `nombre${seccionBase}`
@@ -329,7 +331,6 @@ export function FormularioDinamico({ tipo, subtipo }: FormularioDinamicoProps) {
                     </div>
                   )}
 
-                  {/* Persona 1 */}
                   <div className="grid grid-cols-12 gap-4 mt-4">
                     {seccion.campos.map(campo => {
                       const ancho = campo.ancho === 'third' ? 'col-span-12 sm:col-span-4'
@@ -372,7 +373,6 @@ export function FormularioDinamico({ tipo, subtipo }: FormularioDinamicoProps) {
                     })}
                   </div>
 
-                  {/* Personas adicionales */}
                   {esSeccionCliente && personas > 1 && Array.from({ length: personas - 1 }, (_, i) => i + 1).map(idx => {
                     const camposExtra = getCamposPersonaExtra(seccion, idx)
                     const seccionIdAdicional = `${seccion.id}_p${idx}`
@@ -431,7 +431,6 @@ export function FormularioDinamico({ tipo, subtipo }: FormularioDinamicoProps) {
           )
         })}
 
-        {/* Información adicional IA */}
         <div className="card overflow-hidden">
           <div className="px-5 py-4 border-b border-slate-100">
             <h3 className="text-sm font-semibold text-slate-800">Información adicional IA</h3>

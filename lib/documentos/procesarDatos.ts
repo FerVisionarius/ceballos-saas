@@ -207,7 +207,22 @@ export function procesarDatosPersonas(datos: Record<string, any>, subtipo?: stri
       : lineasRecibido[0] ?? '')
 
     resultado['clientescorto'] = lineasFicha.join('\n\n')
-  }
+// Párrafo propietarioscorto
+const nPropietarios = contarPersonasPorCampo('nombrepropietario')
+const lineasProp: string[] = []
+for (let n = 1; n <= nPropietarios; n++) {
+  const t = resultado[`tratamiento_nombrepropietario${n}`] ?? ''
+  const nombre = resultado[`nombrepropietario${n}`] ?? ''
+  if (nombre) lineasProp.push(`${t} ${nombre}`.trim())
+}
+
+if (lineasProp.length === 1) {
+  resultado['propietarioscorto'] = `Y LA PROPIETARIA DE LA MISMA ${lineasProp[0]}.`
+} else if (lineasProp.length > 1) {
+  const todos = lineasProp.slice(0, -1).join(', ') + ' Y ' + lineasProp.at(-1)
+  resultado['propietarioscorto'] = `Y LOS PROPIETARIOS DE LA MISMA ${todos}.`
+}
+}
 
   // ── Contratos de arras ───────────────────────────────────────
   const subtiposArras = ['contrato_arras_penitencial', 'contrato_arras_confirmatoria']

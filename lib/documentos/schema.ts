@@ -284,6 +284,13 @@ export const SCHEMA_DOCUMENTOS: DefinicionDocumento[] = [
         ],
       },
       {
+        id: 'propietario',
+        titulo: 'Datos del propietario',
+        campos: [
+          { id: 'nombrepropietario', label: 'Nombre propietario', tipo: 'text', obligatorio: true, ancho: 'half' },
+        ],
+      },
+      {
         id: 'condiciones',
         titulo: 'Condiciones económicas',
         campos: [
@@ -291,7 +298,6 @@ export const SCHEMA_DOCUMENTOS: DefinicionDocumento[] = [
           { id: 'precioseñalnumero', label: 'Precio señal (€)', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
           { id: 'precioventaletra', label: 'Precio venta (en letra, MAYÚS)', tipo: 'text', obligatorio: true, ancho: 'half' },
           { id: 'precioventanumero', label: 'Precio venta (€)', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
-          { id: 'nombrepropietario', label: 'Nombre propietario (MAYÚS)', tipo: 'text', obligatorio: true, ancho: 'half' },
           { id: 'plazomaximodias', label: 'Plazo máximo (días)', tipo: 'number', obligatorio: true, ancho: 'half' },
           { id: 'fechaactual', label: 'Fecha', tipo: 'date', obligatorio: true, ancho: 'half' },
         ],
@@ -330,6 +336,13 @@ export const SCHEMA_DOCUMENTOS: DefinicionDocumento[] = [
         ],
       },
       {
+        id: 'propietario',
+        titulo: 'Datos del propietario',
+        campos: [
+          { id: 'nombrepropietario', label: 'Nombre propietario', tipo: 'text', obligatorio: true, ancho: 'half' },
+        ],
+      },
+      {
         id: 'condiciones',
         titulo: 'Condiciones económicas',
         campos: [
@@ -337,7 +350,6 @@ export const SCHEMA_DOCUMENTOS: DefinicionDocumento[] = [
           { id: 'precioseñalnumero', label: 'Precio señal (€)', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
           { id: 'precioventaletra', label: 'Precio venta (en letra, MAYÚS)', tipo: 'text', obligatorio: true, ancho: 'half' },
           { id: 'precioventanumero', label: 'Precio venta (€)', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
-          { id: 'nombrepropietario', label: 'Nombre propietario (MAYÚS)', tipo: 'text', obligatorio: true, ancho: 'half' },
           { id: 'plazomaximodias', label: 'Plazo máximo (días)', tipo: 'number', obligatorio: true, ancho: 'half' },
           { id: 'fechaactual', label: 'Fecha', tipo: 'date', obligatorio: true, ancho: 'half' },
         ],
@@ -376,6 +388,13 @@ export const SCHEMA_DOCUMENTOS: DefinicionDocumento[] = [
         ],
       },
       {
+        id: 'propietario',
+        titulo: 'Datos del propietario',
+        campos: [
+          { id: 'nombrepropietario', label: 'Nombre propietario', tipo: 'text', obligatorio: true, ancho: 'half' },
+        ],
+      },
+      {
         id: 'condiciones',
         titulo: 'Condiciones económicas',
         campos: [
@@ -383,7 +402,6 @@ export const SCHEMA_DOCUMENTOS: DefinicionDocumento[] = [
           { id: 'precioseñalnumero', label: 'Precio señal (€)', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
           { id: 'precioventaletra', label: 'Precio venta (en letra, MAYÚS)', tipo: 'text', obligatorio: true, ancho: 'half' },
           { id: 'precioventanumero', label: 'Precio venta (€)', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
-          { id: 'nombrepropietario', label: 'Nombre propietario (MAYÚS)', tipo: 'text', obligatorio: true, ancho: 'half' },
           { id: 'plazomaximodias', label: 'Plazo máximo (días)', tipo: 'number', obligatorio: true, ancho: 'half' },
           { id: 'fechaactual', label: 'Fecha', tipo: 'date', obligatorio: true, ancho: 'half' },
         ],
@@ -422,6 +440,13 @@ export const SCHEMA_DOCUMENTOS: DefinicionDocumento[] = [
         ],
       },
       {
+        id: 'propietario',
+        titulo: 'Datos del propietario',
+        campos: [
+          { id: 'nombrepropietario', label: 'Nombre propietario', tipo: 'text', obligatorio: true, ancho: 'half' },
+        ],
+      },
+      {
         id: 'condiciones',
         titulo: 'Condiciones económicas',
         campos: [
@@ -429,7 +454,6 @@ export const SCHEMA_DOCUMENTOS: DefinicionDocumento[] = [
           { id: 'precioseñalnumero', label: 'Precio señal (€)', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
           { id: 'precioventaletra', label: 'Precio venta (en letra, MAYÚS)', tipo: 'text', obligatorio: true, ancho: 'half' },
           { id: 'precioventanumero', label: 'Precio venta (€)', tipo: 'currency', obligatorio: true, ancho: 'half', prefijo: '€' },
-          { id: 'nombrepropietario', label: 'Nombre propietario (MAYÚS)', tipo: 'text', obligatorio: true, ancho: 'half' },
           { id: 'plazomaximodias', label: 'Plazo máximo (días)', tipo: 'number', obligatorio: true, ancho: 'half' },
           { id: 'fechaactual', label: 'Fecha', tipo: 'date', obligatorio: true, ancho: 'half' },
         ],
