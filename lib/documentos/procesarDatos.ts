@@ -289,8 +289,8 @@ if (subtipo && subtiposArras.includes(subtipo)) {
 
   // ── Solo para contrato_arras_confirmatoria: clientescortofirma y vendedorescortofirma ──
   if (subtipo === 'contrato_arras_confirmatoria') {
-    resultado['clientescortofirma'] = lineasCompradoresCo.join('\n')
-    resultado['vendedorescortofirma'] = lineasVendedoresCo.join('\n')
+    resultado['clientescortofirma'] = lineasCompradoresCo.map(l => `Fdo. ${l}`).join('\n')
+    resultado['vendedorescortofirma'] = lineasVendedoresCo.map(l => `Fdo. ${l}`).join('\n')
   }
 }
 
