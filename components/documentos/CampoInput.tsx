@@ -67,15 +67,25 @@ export function CampoInput({ campo, register, error, setValue, watch }: CampoInp
     )
   }
 
-  // CURRENCY con prefijo € y formateo de miles + ,00
+  // CURRENCY con prefijo € — formatea solo la parte entera mientras se escribe,
+  // el ",00" se añade al perder el foco (onBlur)
   if (campo.tipo === 'currency') {
-    const { onBlur, name, ref } = register(campo.id)
+    const { onBlur: rhfOnBlur, name, ref } = register(campo.id)
     const valorActual = watch(campo.id) ?? ''
 
     const handleCurrencyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const raw = e.target.value.replace(/[^\d]/g, '')
-      const formateado = raw ? `${parseInt(raw, 10).toLocaleString('es-ES')},00` : ''
+      // Solo dígitos de la parte entera (se ignora cualquier , o . que el usuario teclee)
+      const soloDigitos = e.target.value.split(',')[0].replace(/[^\d]/g, '')
+      const formateado = soloDigitos ? parseInt(soloDigitos, 10).toLocaleString('es-ES') : ''
       setValue(campo.id, formateado)
+    }
+
+    const handleCurrencyBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+      const soloDigitos = valorActual.replace(/[^\d]/g, '')
+      if (soloDigitos) {
+        setValue(campo.id, `${parseInt(soloDigitos, 10).toLocaleString('es-ES')},00`)
+      }
+      rhfOnBlur(e)
     }
 
     return (
@@ -86,7 +96,7 @@ export function CampoInput({ campo, register, error, setValue, watch }: CampoInp
           <input
             name={name}
             ref={ref}
-            onBlur={onBlur}
+            onBlur={handleCurrencyBlur}
             type="text"
             inputMode="numeric"
             value={valorActual}
