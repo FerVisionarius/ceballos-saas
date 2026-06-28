@@ -73,17 +73,22 @@ export function CampoInput({ campo, register, error, setValue, watch }: CampoInp
     const { onBlur: rhfOnBlur, name, ref } = register(campo.id)
     const valorActual = watch(campo.id) ?? ''
 
+    const formatearEntero = (digitos: string) => {
+      if (!digitos) return ''
+      const numero = parseInt(digitos, 10)
+      if (isNaN(numero)) return ''
+      return new Intl.NumberFormat('es-ES', { maximumFractionDigits: 0 }).format(numero)
+    }
+
     const handleCurrencyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      // Solo dígitos de la parte entera (se ignora cualquier , o . que el usuario teclee)
       const soloDigitos = e.target.value.split(',')[0].replace(/[^\d]/g, '')
-      const formateado = soloDigitos ? parseInt(soloDigitos, 10).toLocaleString('es-ES') : ''
-      setValue(campo.id, formateado)
+      setValue(campo.id, formatearEntero(soloDigitos))
     }
 
     const handleCurrencyBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-      const soloDigitos = valorActual.replace(/[^\d]/g, '')
+      const soloDigitos = String(valorActual).replace(/[^\d]/g, '')
       if (soloDigitos) {
-        setValue(campo.id, `${parseInt(soloDigitos, 10).toLocaleString('es-ES')},00`)
+        setValue(campo.id, `${formatearEntero(soloDigitos)},00`)
       }
       rhfOnBlur(e)
     }
