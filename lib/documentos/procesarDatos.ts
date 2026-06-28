@@ -257,7 +257,7 @@ if (subtipo && subtiposArras.includes(subtipo)) {
   resultado['compradores'] = lineasCompradores.length > 0
     ? 'Y de otra parte, ' + textoCompradores
     : ''
-    resultado['compradorescorto'] = lineasCompradoresCo.length > 1
+  resultado['compradorescorto'] = lineasCompradoresCo.length > 1
     ? lineasCompradoresCo.slice(0, -1).join(', ') + ' y ' + lineasCompradoresCo.at(-1) + ' quienes la aceptan y compran'
     : lineasCompradoresCo.length === 1
     ? lineasCompradoresCo[0] + ' quien la acepta y compra'
@@ -286,6 +286,12 @@ if (subtipo && subtiposArras.includes(subtipo)) {
   resultado['vendedorescorto'] = lineasVendedoresCo.length > 1
     ? lineasVendedoresCo.slice(0, -1).join(', ') + ' y ' + lineasVendedoresCo.at(-1)
     : lineasVendedoresCo[0] ?? ''
+
+  // ── Solo para contrato_arras_confirmatoria: clientescortofirma y vendedorescortofirma ──
+  if (subtipo === 'contrato_arras_confirmatoria') {
+    resultado['clientescortofirma'] = lineasCompradoresCo.join('\n')
+    resultado['vendedorescortofirma'] = lineasVendedoresCo.join('\n')
+  }
 }
 
   // ── Reconocimiento honorarios ────────────────────────────────
