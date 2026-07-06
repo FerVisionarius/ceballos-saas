@@ -40,6 +40,14 @@ const CAMPOS_NOMBRE = [
   'nombrepropietario', 'nombreinquilino', 'nombreavalista', 'nombretrabajador',
 ]
 
+const SUBTIPOS_SENAL = [
+  'senal_arrendamiento',
+  'senal_compraventa_confirmatoria',
+  'senal_compraventa_confirmatoria_banco',
+  'senal_compraventa_penitencial',
+  'senal_compraventa_penitencial_banco',
+]
+
 export function FormularioDinamico({ tipo, subtipo }: FormularioDinamicoProps) {
   const def = getDefinicionDocumento(subtipo)
   const [loading, setLoading] = useState(false)
@@ -53,6 +61,7 @@ export function FormularioDinamico({ tipo, subtipo }: FormularioDinamicoProps) {
   const [modalInmueble, setModalInmueble] = useState<string | null>(null)
   const [nPersonas, setNPersonas] = useState<Record<string, number>>({})
   const [tratamientos, setTratamientos] = useState<Record<string, string>>({})
+  const [compartenDomicilio, setCompartenDomicilio] = useState<Record<string, boolean>>({})
 
   const schemaFields: Record<string, z.ZodTypeAny> = {}
   def?.secciones.forEach(seccion => {
@@ -87,7 +96,6 @@ export function FormularioDinamico({ tipo, subtipo }: FormularioDinamicoProps) {
     const matchAdicional = seccionId.match(/_p(\d+)$/)
     const sufijoForm = matchAdicional ? `_p${matchAdicional[1]}` : ''
     const seccionBase = seccionId.replace(/_p\d+$/, '')
-
     const nombreCompleto = `${cliente.nombre} ${cliente.apellidos}`.trim()
 
     const mapeosPorSeccion: Record<string, Record<string, string>> = {
@@ -167,7 +175,6 @@ export function FormularioDinamico({ tipo, subtipo }: FormularioDinamicoProps) {
     }
 
     const campos = mapeosPorSeccion[seccionBase] ?? mapeosPorSeccion['cliente']
-
     Object.entries(campos).forEach(([campo, valor]) => {
       if (valor !== undefined) {
         const campoFinal = sufijoForm ? `${campo}${sufijoForm}` : campo
@@ -176,10 +183,8 @@ export function FormularioDinamico({ tipo, subtipo }: FormularioDinamicoProps) {
     })
 
     const seccionDef = def?.secciones.find(s => s.id === seccionBase)
-    const campoNombreReal = seccionDef?.campos.find(c => CAMPOS_NOMBRE.includes(c.id))?.id
-      ?? `nombre${seccionBase}`
+    const campoNombreReal = seccionDef?.campos.find(c => CAMPOS_NOMBRE.includes(c.id))?.id ?? `nombre${seccionBase}`
     const campoTratamiento = sufijoForm ? `${campoNombreReal}${sufijoForm}` : campoNombreReal
-
     if (cliente.tratamiento) {
       setTratamientos(prev => ({ ...prev, [campoTratamiento]: cliente.tratamiento! }))
     }
@@ -205,6 +210,9 @@ export function FormularioDinamico({ tipo, subtipo }: FormularioDinamicoProps) {
     const datosConTratamientos = { ...data }
     Object.entries(tratamientos).forEach(([campo, trato]) => {
       if (trato) datosConTratamientos[`tratamiento_${campo}`] = trato
+    })
+    Object.entries(compartenDomicilio).forEach(([seccion, valor]) => {
+      if (valor) datosConTratamientos[`compartendomicilio_${seccion}`] = true
     })
     setLoading(true)
     try {
@@ -277,6 +285,7 @@ export function FormularioDinamico({ tipo, subtipo }: FormularioDinamicoProps) {
           const esSeccionCliente = SECCIONES_CLIENTE.includes(seccion.id)
           const esSeccionInmueble = SECCIONES_INMUEBLE.includes(seccion.id)
           const personas = nPersonas[seccion.id] ?? 1
+          const esDocumentoSenal = SUBTIPOS_SENAL.includes(subtipo)
 
           return (
             <div key={seccion.id} className="card overflow-hidden">
@@ -317,7 +326,7 @@ export function FormularioDinamico({ tipo, subtipo }: FormularioDinamicoProps) {
               {abierta && (
                 <div className="px-5 pb-5">
                   {esSeccionCliente && (
-                    <div className="flex items-center gap-3 mt-4 mb-2 pb-3 border-b border-slate-100">
+                    <div className="flex items-center gap-4 mt-4 mb-2 pb-3 border-b border-slate-100 flex-wrap">
                       <label className="text-sm font-medium text-slate-600">Nº de personas</label>
                       <select
                         value={personas}
@@ -328,6 +337,17 @@ export function FormularioDinamico({ tipo, subtipo }: FormularioDinamicoProps) {
                           <option key={n} value={n}>{n} {n === 1 ? 'persona' : 'personas'}</option>
                         ))}
                       </select>
+                      {esDocumentoSenal && (
+                        <label className="flex items-center gap-2 text-sm text-slate-600 cursor-pointer select-none">
+                          <input
+                            type="checkbox"
+                            checked={compartenDomicilio[seccion.id] ?? false}
+                            onChange={e => setCompartenDomicilio(prev => ({ ...prev, [seccion.id]: e.target.checked }))}
+                            className="w-4 h-4 rounded border-slate-300 text-brand-600 focus:ring-brand-500 cursor-pointer"
+                          />
+                          Comparten domicilio
+                        </label>
+                      )}
                     </div>
                   )}
 

@@ -203,7 +203,28 @@ if (subtipo && subtiposSenal.includes(subtipo)) {
     ? lineasRecibido.slice(0, -1).join(', ') + ' y ' + lineasRecibido.at(-1)
     : lineasRecibido[0] ?? '')
 
-  resultado['clientescorto'] = lineasFicha.join('\n\n')
+  const compartenDomicilio = Object.keys(datos).some(
+    k => k.startsWith('compartendomicilio_') && datos[k] === true
+  )
+
+  if (compartenDomicilio && lineasFicha.length > 1) {
+    const nombresFormateados = lineasFicha
+      .map(f => f.split('\n')[0].replace('Nombre y apellidos: ', ''))
+      .join(' Y ')
+
+    const municipio = resultado[`municipiocliente1`] ?? resultado[`municipiocomprador1`] ?? ''
+    const calle = resultado[`callecliente1`] ?? resultado[`callecomprador1`] ?? ''
+    const dnis = Array.from({ length: lineasFicha.length }, (_, i) => i + 1)
+      .map(n => resultado[`dnicliente${n}`] ?? resultado[`dnicomprador${n}`] ?? '')
+      .filter(Boolean)
+      .join(' y ')
+    const telefono = resultado[`telefonocliente1`] ?? resultado[`telefonocomprador1`] ?? ''
+
+    resultado['clientescorto'] =
+      `Nombre y apellidos: ${nombresFormateados}\nDomicilio y población: ${municipio}, ${calle}\nD.N.I. nº ${dnis}\nTeléfono: ${telefono}`
+  } else {
+    resultado['clientescorto'] = lineasFicha.join('\n\n')
+  }
 
   // Párrafo propietarioscorto
   const nPropietarios = contarPersonasPorCampo('nombrepropietario')
@@ -220,13 +241,6 @@ if (subtipo && subtiposSenal.includes(subtipo)) {
     const todos = lineasProp.slice(0, -1).join(', ') + ' Y ' + lineasProp.at(-1)
     resultado['propietarioscorto'] = `Y LOS PROPIETARIOS DE LA MISMA ${todos}.`
   }
-
-if (lineasProp.length === 1) {
-  resultado['propietarioscorto'] = `Y LA PROPIETARIA DE LA MISMA ${lineasProp[0]}.`
-} else if (lineasProp.length > 1) {
-  const todos = lineasProp.slice(0, -1).join(', ') + ' Y ' + lineasProp.at(-1)
-  resultado['propietarioscorto'] = `Y LOS PROPIETARIOS DE LA MISMA ${todos}.`
-}
 }
 
 // ── Contratos de arras ───────────────────────────────────────
