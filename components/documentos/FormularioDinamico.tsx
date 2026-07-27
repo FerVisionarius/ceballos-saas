@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { Loader2, CheckCircle2, AlertCircle, ChevronDown, ChevronUp, UserSearch, Home, Paperclip, X } from 'lucide-react'
+import { Loader2, CheckCircle2, AlertCircle, ChevronDown, ChevronUp, UserSearch, Home, Paperclip, X, UserPlus } from 'lucide-react'
 import { toast } from 'sonner'
 import { getDefinicionDocumento } from '@/lib/documentos/schema'
 import { CampoInput } from './CampoInput'
@@ -19,6 +19,17 @@ interface FormularioDinamicoProps {
 interface Cliente {
   id: string
   tratamiento: string | null
+  nombre: string
+  apellidos: string
+  nif_nie: string
+  telefono: string
+  email: string
+  direccion: string
+  municipio: string
+}
+
+interface ClienteNuevo {
+  tratamiento: string
   nombre: string
   apellidos: string
   nif_nie: string
@@ -48,6 +59,39 @@ const SUBTIPOS_SENAL = [
   'senal_compraventa_penitencial_banco',
 ]
 
+// Campos DNI que pueden aparecer en los formularios
+const CAMPOS_DNI = [
+  'dnicliente', 'dnicomprador', 'dnivendedor',
+  'dniarrendador', 'dniarrendatario',
+  'dnipropietario', 'dniinquilino', 'dniavalista', 'dnitrabajador',
+]
+
+// Mapeo campo DNI → campo nombre correspondiente
+const DNI_A_NOMBRE: Record<string, string> = {
+  dnicliente: 'nombrecliente',
+  dnicomprador: 'nombrecomprador',
+  dnivendedor: 'nombrevendedor',
+  dniarrendador: 'nombrearrendador',
+  dniarrendatario: 'nombrearrendatario',
+  dnipropietario: 'nombrepropietario',
+  dniinquilino: 'nombreinquilino',
+  dniavalista: 'nombreavalista',
+  dnitrabajador: 'nombretrabajador',
+}
+
+// Mapeo campo DNI → campos adicionales del formulario
+const DNI_A_CAMPOS: Record<string, { telefono?: string; email?: string; direccion?: string; municipio?: string }> = {
+  dnicliente: { telefono: 'telefonocliente', email: 'mailcliente', direccion: 'callecliente', municipio: 'municipiocliente' },
+  dnicomprador: { telefono: 'telefonocliente', email: 'mailcliente', direccion: 'callecomprador', municipio: 'municipiocomprador' },
+  dnivendedor: { telefono: 'telefonocliente', email: 'mailcliente', direccion: 'callevendedor', municipio: 'municipiovendedor' },
+  dniarrendador: { telefono: 'telefonoarrendador', email: 'mailarrendador', direccion: 'callearrendador', municipio: 'municipioarrendador' },
+  dniarrendatario: { telefono: 'telefonoarrendatario', email: 'mailarrendatario', direccion: 'callearrendatario', municipio: 'municipioarrendatario' },
+  dnipropietario: { telefono: 'propietariotelefono', email: 'propietariomail', direccion: 'callepropietario', municipio: 'municipiopropietario' },
+  dniinquilino: { telefono: 'inquilinotelefono', email: 'inquilinomail', direccion: 'calleinquilino', municipio: 'municipioinquilino' },
+  dniavalista: { direccion: 'calleavalista', municipio: 'municipioavalista' },
+  dnitrabajador: {},
+}
+
 export function FormularioDinamico({ tipo, subtipo }: FormularioDinamicoProps) {
   const def = getDefinicionDocumento(subtipo)
   const [loading, setLoading] = useState(false)
@@ -63,6 +107,13 @@ export function FormularioDinamico({ tipo, subtipo }: FormularioDinamicoProps) {
   const [tratamientos, setTratamientos] = useState<Record<string, string>>({})
   const [compartenDomicilio, setCompartenDomicilio] = useState<Record<string, boolean>>({})
   const [archivoAdjunto, setArchivoAdjunto] = useState<File | null>(null)
+
+  // Estado para el modal de guardar clientes nuevos
+  const [clientesNuevos, setClientesNuevos] = useState<ClienteNuevo[]>([])
+  const [modalGuardarClientes, setModalGuardarClientes] = useState(false)
+  const [guardandoClientes, setGuardandoClientes] = useState(false)
+  const [datosSubmitPendiente, setDatosSubmitPendiente] = useState<Record<string, unknown> | null>(null)
+  const [archivoSubmitPendiente, setArchivoSubmitPendiente] = useState<{ base64: string; nombre: string; tipo: string } | null>(null)
 
   const schemaFields: Record<string, z.ZodTypeAny> = {}
   def?.secciones.forEach(seccion => {
@@ -101,78 +152,46 @@ export function FormularioDinamico({ tipo, subtipo }: FormularioDinamicoProps) {
 
     const mapeosPorSeccion: Record<string, Record<string, string>> = {
       vendedor: {
-        nombrevendedor: nombreCompleto,
-        nombrecliente: nombreCompleto,
-        dnivendedor: cliente.nif_nie ?? '',
-        dnicliente: cliente.nif_nie ?? '',
-        callevendedor: cliente.direccion ?? '',
-        callecliente: cliente.direccion ?? '',
-        municipiovendedor: cliente.municipio ?? '',
-        municipiocliente: cliente.municipio ?? '',
-        telefonocliente: cliente.telefono ?? '',
-        mailcliente: cliente.email ?? '',
+        nombrevendedor: nombreCompleto, nombrecliente: nombreCompleto,
+        dnivendedor: cliente.nif_nie ?? '', dnicliente: cliente.nif_nie ?? '',
+        callevendedor: cliente.direccion ?? '', callecliente: cliente.direccion ?? '',
+        municipiovendedor: cliente.municipio ?? '', municipiocliente: cliente.municipio ?? '',
+        telefonocliente: cliente.telefono ?? '', mailcliente: cliente.email ?? '',
       },
       comprador: {
-        nombrecomprador: nombreCompleto,
-        nombrecliente: nombreCompleto,
-        dnicomprador: cliente.nif_nie ?? '',
-        dnicliente: cliente.nif_nie ?? '',
-        callecomprador: cliente.direccion ?? '',
-        callecliente: cliente.direccion ?? '',
-        municipiocomprador: cliente.municipio ?? '',
-        municipiocliente: cliente.municipio ?? '',
-        telefonocliente: cliente.telefono ?? '',
-        mailcliente: cliente.email ?? '',
+        nombrecomprador: nombreCompleto, nombrecliente: nombreCompleto,
+        dnicomprador: cliente.nif_nie ?? '', dnicliente: cliente.nif_nie ?? '',
+        callecomprador: cliente.direccion ?? '', callecliente: cliente.direccion ?? '',
+        municipiocomprador: cliente.municipio ?? '', municipiocliente: cliente.municipio ?? '',
+        telefonocliente: cliente.telefono ?? '', mailcliente: cliente.email ?? '',
       },
       arrendador: {
-        nombrearrendador: nombreCompleto,
-        dniarrendador: cliente.nif_nie ?? '',
-        callearrendador: cliente.direccion ?? '',
-        municipioarrendador: cliente.municipio ?? '',
-        telefonoarrendador: cliente.telefono ?? '',
-        mailarrendador: cliente.email ?? '',
-        nombrepropietario: nombreCompleto,
-        dnipropietario: cliente.nif_nie ?? '',
-        callepropietario: cliente.direccion ?? '',
-        municipiopropietario: cliente.municipio ?? '',
-        propietariotelefono: cliente.telefono ?? '',
-        propietariomail: cliente.email ?? '',
+        nombrearrendador: nombreCompleto, dniarrendador: cliente.nif_nie ?? '',
+        callearrendador: cliente.direccion ?? '', municipioarrendador: cliente.municipio ?? '',
+        telefonoarrendador: cliente.telefono ?? '', mailarrendador: cliente.email ?? '',
+        nombrepropietario: nombreCompleto, dnipropietario: cliente.nif_nie ?? '',
+        callepropietario: cliente.direccion ?? '', municipiopropietario: cliente.municipio ?? '',
+        propietariotelefono: cliente.telefono ?? '', propietariomail: cliente.email ?? '',
       },
       arrendatario: {
-        nombrearrendatario: nombreCompleto,
-        dniarrendatario: cliente.nif_nie ?? '',
-        callearrendatario: cliente.direccion ?? '',
-        municipioarrendatario: cliente.municipio ?? '',
-        telefonoarrendatario: cliente.telefono ?? '',
-        mailarrendatario: cliente.email ?? '',
-        nombreinquilino: nombreCompleto,
-        dniinquilino: cliente.nif_nie ?? '',
-        calleinquilino: cliente.direccion ?? '',
-        municipioinquilino: cliente.municipio ?? '',
-        inquilinotelefono: cliente.telefono ?? '',
-        inquilinomail: cliente.email ?? '',
+        nombrearrendatario: nombreCompleto, dniarrendatario: cliente.nif_nie ?? '',
+        callearrendatario: cliente.direccion ?? '', municipioarrendatario: cliente.municipio ?? '',
+        telefonoarrendatario: cliente.telefono ?? '', mailarrendatario: cliente.email ?? '',
+        nombreinquilino: nombreCompleto, dniinquilino: cliente.nif_nie ?? '',
+        calleinquilino: cliente.direccion ?? '', municipioinquilino: cliente.municipio ?? '',
+        inquilinotelefono: cliente.telefono ?? '', inquilinomail: cliente.email ?? '',
       },
       cliente: {
-        nombrecliente: nombreCompleto,
-        dnicliente: cliente.nif_nie ?? '',
-        callecliente: cliente.direccion ?? '',
-        municipiocliente: cliente.municipio ?? '',
-        telefonocliente: cliente.telefono ?? '',
-        mailcliente: cliente.email ?? '',
+        nombrecliente: nombreCompleto, dnicliente: cliente.nif_nie ?? '',
+        callecliente: cliente.direccion ?? '', municipiocliente: cliente.municipio ?? '',
+        telefonocliente: cliente.telefono ?? '', mailcliente: cliente.email ?? '',
       },
       avalista: {
-        nombreavalista: nombreCompleto,
-        dniavalista: cliente.nif_nie ?? '',
-        calleavalista: cliente.direccion ?? '',
-        municipioavalista: cliente.municipio ?? '',
+        nombreavalista: nombreCompleto, dniavalista: cliente.nif_nie ?? '',
+        calleavalista: cliente.direccion ?? '', municipioavalista: cliente.municipio ?? '',
       },
-      trabajador: {
-        nombretrabajador: nombreCompleto,
-        dnitrabajador: cliente.nif_nie ?? '',
-      },
-      propietario: {
-        nombrepropietario: nombreCompleto,
-      },
+      trabajador: { nombretrabajador: nombreCompleto, dnitrabajador: cliente.nif_nie ?? '' },
+      propietario: { nombrepropietario: nombreCompleto },
     }
 
     const campos = mapeosPorSeccion[seccionBase] ?? mapeosPorSeccion['cliente']
@@ -207,30 +226,100 @@ export function FormularioDinamico({ tipo, subtipo }: FormularioDinamicoProps) {
     toast.success('Datos del inmueble cargados')
   }
 
-  async function onSubmit(data: Record<string, unknown>) {
-    const datosConTratamientos = { ...data }
-    Object.entries(tratamientos).forEach(([campo, trato]) => {
-      if (trato) datosConTratamientos[`tratamiento_${campo}`] = trato
-    })
-    Object.entries(compartenDomicilio).forEach(([seccion, valor]) => {
-      if (valor) datosConTratamientos[`compartendomicilio_${seccion}`] = true
-    })
+  // Extrae todos los DNIs del formulario y busca cuáles no existen en BD
+  async function buscarClientesNuevos(data: Record<string, unknown>): Promise<ClienteNuevo[]> {
+    const dnisEncontrados: { dni: string; campoDni: string; sufijo: string }[] = []
 
-    let archivoPayload: { base64: string; nombre: string; tipo: string } | null = null
-    if (archivoAdjunto) {
-      const base64 = await new Promise<string>((resolve, reject) => {
-        const reader = new FileReader()
-        reader.onload = () => resolve((reader.result as string).split(',')[1])
-        reader.onerror = reject
-        reader.readAsDataURL(archivoAdjunto)
-      })
-      archivoPayload = {
-        base64,
-        nombre: archivoAdjunto.name,
-        tipo: archivoAdjunto.type,
+    // Buscar todos los campos DNI en los datos (persona 1 y personas adicionales)
+    for (const [key, value] of Object.entries(data)) {
+      if (!value || typeof value !== 'string') continue
+
+      // Persona 1: dnicliente, dnicomprador, etc.
+      const campoDniBase = CAMPOS_DNI.find(d => key === d)
+      if (campoDniBase) {
+        dnisEncontrados.push({ dni: value, campoDni: campoDniBase, sufijo: '' })
+        continue
+      }
+
+      // Personas adicionales: dnicliente_p1, dnicomprador_p2, etc.
+      const matchAdicional = key.match(/^(.+)_p(\d+)$/)
+      if (matchAdicional) {
+        const campoBase = matchAdicional[1]
+        const sufijo = `_p${matchAdicional[2]}`
+        if (CAMPOS_DNI.includes(campoBase) && value) {
+          dnisEncontrados.push({ dni: value, campoDni: campoBase, sufijo })
+        }
       }
     }
 
+    if (dnisEncontrados.length === 0) return []
+
+    // Buscar en BD cuáles no existen
+    const nuevos: ClienteNuevo[] = []
+    for (const { dni, campoDni, sufijo } of dnisEncontrados) {
+      try {
+        const res = await fetch(`/api/clientes?search=${encodeURIComponent(dni)}`)
+        const clientes = await res.json()
+        const existe = Array.isArray(clientes) && clientes.some(
+          (c: any) => c.nif_nie?.toUpperCase() === dni.toUpperCase()
+        )
+
+        if (!existe) {
+          const campoNombre = DNI_A_NOMBRE[campoDni] ?? ''
+          const camposExtra = DNI_A_CAMPOS[campoDni] ?? {}
+          const nombreCompleto = (data[`${campoNombre}${sufijo}`] as string ?? '').trim()
+          const partes = nombreCompleto.split(' ')
+          const nombre = partes[0] ?? ''
+          const apellidos = partes.slice(1).join(' ') ?? ''
+          const tratamiento = tratamientos[`${campoNombre}${sufijo}`] ?? ''
+
+          if (nombreCompleto) {
+            nuevos.push({
+              tratamiento,
+              nombre,
+              apellidos,
+              nif_nie: dni,
+              telefono: (data[`${camposExtra.telefono}${sufijo}`] as string ?? ''),
+              email: (data[`${camposExtra.email}${sufijo}`] as string ?? ''),
+              direccion: (data[`${camposExtra.direccion}${sufijo}`] as string ?? ''),
+              municipio: (data[`${camposExtra.municipio}${sufijo}`] as string ?? ''),
+            })
+          }
+        }
+      } catch { /* si falla la búsqueda, continúa */ }
+    }
+
+    // Eliminar duplicados por DNI
+    return nuevos.filter((c, i, arr) => arr.findIndex(x => x.nif_nie === c.nif_nie) === i)
+  }
+
+  async function guardarClientesNuevos() {
+    setGuardandoClientes(true)
+    try {
+      for (const cliente of clientesNuevos) {
+        await fetch('/api/clientes', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(cliente),
+        })
+      }
+      toast.success(`${clientesNuevos.length === 1 ? 'Cliente guardado' : `${clientesNuevos.length} clientes guardados`} correctamente`)
+    } catch {
+      toast.error('Error al guardar algún cliente')
+    } finally {
+      setGuardandoClientes(false)
+      setModalGuardarClientes(false)
+      // Continuar con la generación del documento
+      if (datosSubmitPendiente) {
+        await generarDocumento(datosSubmitPendiente, archivoSubmitPendiente)
+      }
+    }
+  }
+
+  async function generarDocumento(
+    datosConTratamientos: Record<string, unknown>,
+    archivoPayload: { base64: string; nombre: string; tipo: string } | null
+  ) {
     setLoading(true)
     try {
       const res = await fetch('/api/documentos', {
@@ -251,6 +340,40 @@ export function FormularioDinamico({ tipo, subtipo }: FormularioDinamicoProps) {
     } finally {
       setLoading(false)
     }
+  }
+
+  async function onSubmit(data: Record<string, unknown>) {
+    const datosConTratamientos = { ...data }
+    Object.entries(tratamientos).forEach(([campo, trato]) => {
+      if (trato) datosConTratamientos[`tratamiento_${campo}`] = trato
+    })
+    Object.entries(compartenDomicilio).forEach(([seccion, valor]) => {
+      if (valor) datosConTratamientos[`compartendomicilio_${seccion}`] = true
+    })
+
+    let archivoPayload: { base64: string; nombre: string; tipo: string } | null = null
+    if (archivoAdjunto) {
+      const base64 = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader()
+        reader.onload = () => resolve((reader.result as string).split(',')[1])
+        reader.onerror = reject
+        reader.readAsDataURL(archivoAdjunto)
+      })
+      archivoPayload = { base64, nombre: archivoAdjunto.name, tipo: archivoAdjunto.type }
+    }
+
+    // Buscar clientes nuevos
+    const nuevos = await buscarClientesNuevos(datosConTratamientos)
+
+    if (nuevos.length > 0) {
+      setClientesNuevos(nuevos)
+      setDatosSubmitPendiente(datosConTratamientos)
+      setArchivoSubmitPendiente(archivoPayload)
+      setModalGuardarClientes(true)
+      return
+    }
+
+    await generarDocumento(datosConTratamientos, archivoPayload)
   }
 
   function toggleSeccion(id: string) {
@@ -518,6 +641,72 @@ export function FormularioDinamico({ tipo, subtipo }: FormularioDinamicoProps) {
           </button>
         </div>
       </form>
+
+      {/* Modal guardar clientes nuevos */}
+      {modalGuardarClientes && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-md">
+            <div className="p-5 border-b border-slate-100">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-brand-100 rounded-xl flex items-center justify-center shrink-0">
+                  <UserPlus className="w-5 h-5 text-brand-600" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-slate-800">
+                    {clientesNuevos.length === 1 ? 'Cliente nuevo detectado' : `${clientesNuevos.length} clientes nuevos detectados`}
+                  </h3>
+                  <p className="text-xs text-slate-500 mt-0.5">
+                    {clientesNuevos.length === 1
+                      ? 'Este cliente no está en tu base de datos. ¿Deseas guardarlo?'
+                      : 'Estos clientes no están en tu base de datos. ¿Deseas guardarlos?'}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-5 space-y-3 max-h-64 overflow-y-auto">
+              {clientesNuevos.map((c, i) => (
+                <div key={i} className="flex items-start gap-3 p-3 bg-slate-50 rounded-lg">
+                  <div className="w-8 h-8 bg-brand-100 rounded-full flex items-center justify-center shrink-0">
+                    <span className="text-xs font-semibold text-brand-700">
+                      {c.nombre?.charAt(0)?.toUpperCase()}
+                    </span>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-slate-800">
+                      {c.tratamiento && <span className="text-slate-500 mr-1">{c.tratamiento}</span>}
+                      {c.nombre} {c.apellidos}
+                    </p>
+                    <p className="text-xs text-slate-500">{c.nif_nie}{c.telefono ? ` · ${c.telefono}` : ''}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="p-5 border-t border-slate-100 flex gap-3">
+              <button
+                onClick={async () => {
+                  setModalGuardarClientes(false)
+                  if (datosSubmitPendiente) {
+                    await generarDocumento(datosSubmitPendiente, archivoSubmitPendiente)
+                  }
+                }}
+                className="flex-1 py-2 border border-slate-200 rounded-lg text-sm text-slate-600 hover:bg-slate-50"
+              >
+                No guardar
+              </button>
+              <button
+                onClick={guardarClientesNuevos}
+                disabled={guardandoClientes}
+                className="flex-1 py-2 bg-brand-600 text-white rounded-lg text-sm font-medium hover:bg-brand-700 disabled:opacity-50 flex items-center justify-center gap-2"
+              >
+                {guardandoClientes && <Loader2 size={14} className="animate-spin" />}
+                Guardar {clientesNuevos.length === 1 ? 'cliente' : 'clientes'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {modalCliente && (
         <SelectorClienteModal
