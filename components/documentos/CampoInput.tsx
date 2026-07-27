@@ -86,10 +86,9 @@ export function CampoInput({ campo, register, error, setValue, watch }: CampoInp
     }
 
     const handleCurrencyBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-      // Leer directamente del DOM, no del closure de watch(), para evitar valores obsoletos
       const soloDigitos = e.target.value.replace(/[^\d]/g, '')
       if (soloDigitos) {
-        setValue(campo.id, `${formatearEntero(soloDigitos)},00`)
+        setValue(campo.id, formatearEntero(soloDigitos))
       }
       rhfOnBlur(e)
     }

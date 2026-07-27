@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { Loader2, CheckCircle2, AlertCircle, ChevronDown, ChevronUp, UserSearch, Home } from 'lucide-react'
+import { Loader2, CheckCircle2, AlertCircle, ChevronDown, ChevronUp, UserSearch, Home, Paperclip, X } from 'lucide-react'
 import { toast } from 'sonner'
 import { getDefinicionDocumento } from '@/lib/documentos/schema'
 import { CampoInput } from './CampoInput'
@@ -62,6 +62,7 @@ export function FormularioDinamico({ tipo, subtipo }: FormularioDinamicoProps) {
   const [nPersonas, setNPersonas] = useState<Record<string, number>>({})
   const [tratamientos, setTratamientos] = useState<Record<string, string>>({})
   const [compartenDomicilio, setCompartenDomicilio] = useState<Record<string, boolean>>({})
+  const [archivoAdjunto, setArchivoAdjunto] = useState<File | null>(null)
 
   const schemaFields: Record<string, z.ZodTypeAny> = {}
   def?.secciones.forEach(seccion => {
@@ -214,12 +215,33 @@ export function FormularioDinamico({ tipo, subtipo }: FormularioDinamicoProps) {
     Object.entries(compartenDomicilio).forEach(([seccion, valor]) => {
       if (valor) datosConTratamientos[`compartendomicilio_${seccion}`] = true
     })
+
+    let archivoPayload: { base64: string; nombre: string; tipo: string } | null = null
+    if (archivoAdjunto) {
+      const base64 = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader()
+        reader.onload = () => resolve((reader.result as string).split(',')[1])
+        reader.onerror = reject
+        reader.readAsDataURL(archivoAdjunto)
+      })
+      archivoPayload = {
+        base64,
+        nombre: archivoAdjunto.name,
+        tipo: archivoAdjunto.type,
+      }
+    }
+
     setLoading(true)
     try {
       const res = await fetch('/api/documentos', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ tipo, subtipo, datos: datosConTratamientos }),
+        body: JSON.stringify({
+          tipo,
+          subtipo,
+          datos: datosConTratamientos,
+          archivo: archivoPayload,
+        }),
       })
       if (!res.ok) throw new Error('Error al guardar')
       setExito(true)
@@ -451,12 +473,35 @@ export function FormularioDinamico({ tipo, subtipo }: FormularioDinamicoProps) {
           )
         })}
 
+        {/* Información adicional IA + Archivo adjunto */}
         <div className="card overflow-hidden">
           <div className="px-5 py-4 border-b border-slate-100">
             <h3 className="text-sm font-semibold text-slate-800">Información adicional IA</h3>
             <p className="text-xs text-slate-400 mt-0.5">Campo opcional para instrucciones o contexto adicional</p>
           </div>
-          <div className="px-5 py-4">
+          <div className="px-5 pt-4 pb-2">
+            <label className="flex items-center gap-2 w-fit cursor-pointer px-3 py-2 border border-slate-200 rounded-lg text-sm text-slate-600 hover:bg-slate-50 transition-colors">
+              <Paperclip className="w-4 h-4 text-slate-400" />
+              {archivoAdjunto ? archivoAdjunto.name : 'Adjuntar archivo (PDF o imagen)'}
+              <input
+                type="file"
+                accept=".pdf,.jpg,.jpeg,.png"
+                className="hidden"
+                onChange={e => setArchivoAdjunto(e.target.files?.[0] ?? null)}
+              />
+            </label>
+            {archivoAdjunto && (
+              <button
+                type="button"
+                onClick={() => setArchivoAdjunto(null)}
+                className="mt-1 flex items-center gap-1 text-xs text-red-500 hover:text-red-700"
+              >
+                <X className="w-3 h-3" />
+                Quitar archivo
+              </button>
+            )}
+          </div>
+          <div className="px-5 pb-4 pt-2">
             <textarea
               {...register('informacion_adicional_ia' as any)}
               rows={4}

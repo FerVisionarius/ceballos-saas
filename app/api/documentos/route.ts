@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
     if (!user) return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
 
     const body = await req.json()
-    const { tipo, subtipo, datos } = body
+    const { tipo, subtipo, datos, archivo } = body
 
     if (!tipo || !subtipo || !datos) {
       return NextResponse.json({ error: 'Faltan datos requeridos' }, { status: 400 })
@@ -62,6 +62,7 @@ export async function POST(req: NextRequest) {
           tipo,
           subtipo: tituloDocumento,
           datos: datosN8n,
+          archivo: archivo ?? null,
           usuario: {
             id: user.id,
             email: user.email,
