@@ -40,3 +40,29 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   return NextResponse.json(data)
 }
+
+export async function DELETE(_req: Request, { params }: { params: { id: string } }) {
+  const supabase = createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
+
+  // Verificar que es superadmin
+  const admin = createAdminClient()
+  const { data: perfil } = await admin
+    .from('usuarios')
+    .select('rol')
+    .eq('id', user.id)
+    .single()
+
+  if (perfil?.rol !== 'superadmin') {
+    return NextResponse.json({ error: 'Sin permisos para eliminar' }, { status: 403 })
+  }
+
+  const { error } = await admin
+    .from('clientes')
+    .delete()
+    .eq('id', params.id)
+
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  return NextResponse.json({ ok: true })
+}

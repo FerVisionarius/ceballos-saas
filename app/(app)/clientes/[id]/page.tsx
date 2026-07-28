@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { ArrowLeft, Phone, Mail, MapPin, CreditCard, User, Pencil, Loader2, X, Check } from 'lucide-react'
+import { ArrowLeft, Phone, Mail, MapPin, CreditCard, User, Pencil, Loader2, X, Check, Trash2 } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -41,6 +41,7 @@ export default function ClienteDetallePage({ params }: { params: { id: string } 
   const [loading, setLoading] = useState(true)
   const [editando, setEditando] = useState(false)
   const [guardando, setGuardando] = useState(false)
+  const [eliminando, setEliminando] = useState(false)
 
   const {
     register,
@@ -104,6 +105,22 @@ export default function ClienteDetallePage({ params }: { params: { id: string } 
     }
   }
 
+  async function handleEliminar() {
+    if (!cliente) return
+    if (!confirm(`¿Eliminar a ${cliente.nombre} ${cliente.apellidos}? Esta acción no se puede deshacer.`)) return
+    setEliminando(true)
+    try {
+      const res = await fetch(`/api/clientes/${params.id}`, { method: 'DELETE' })
+      if (!res.ok) throw new Error()
+      toast.success('Cliente eliminado correctamente')
+      router.push('/clientes')
+      router.refresh()
+    } catch {
+      toast.error('Error al eliminar el cliente')
+      setEliminando(false)
+    }
+  }
+
   if (loading) {
     return (
       <div className="flex justify-center py-20">
@@ -137,13 +154,23 @@ export default function ClienteDetallePage({ params }: { params: { id: string } 
             </div>
           </div>
           {!editando && (
-            <button
-              onClick={abrirEdicion}
-              className="flex items-center gap-2 px-4 py-2 border border-slate-200 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors"
-            >
-              <Pencil className="w-4 h-4" />
-              Editar
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={abrirEdicion}
+                className="flex items-center gap-2 px-4 py-2 border border-slate-200 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors"
+              >
+                <Pencil className="w-4 h-4" />
+                Editar
+              </button>
+              <button
+                onClick={handleEliminar}
+                disabled={eliminando}
+                className="flex items-center gap-2 px-4 py-2 border border-red-200 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50"
+              >
+                {eliminando ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
+                Eliminar
+              </button>
+            </div>
           )}
         </div>
       </div>
