@@ -257,12 +257,38 @@ if (subtipo === 'senal_compraventa_confirmatoria') {
   if (trastero) anexos.push(`TRASTERO Nº ${trastero}`)
   if (anexos.length) inmueble += `, ${anexos.join(' Y ')}`
 
+  // Propietario/s: DON/DOÑA y EL PROPIETARIO / LA PROPIETARIA (plural incluido) según tratamiento
+  const nProp = contarPersonasPorCampo('nombrepropietario')
+  const props: { trat: string; nombre: string }[] = []
+  for (let n = 1; n <= nProp; n++) {
+    const trat = (
+      resultado[`tratamiento_nombrepropietario${n}`] ??
+      (n === 1 ? resultado['tratamiento_nombrepropietario'] : '') ??
+      ''
+    ) as string
+    const nombre = (resultado[`nombrepropietario${n}`] ?? (n === 1 ? resultado['nombrepropietario'] : '') ?? '') as string
+    if (nombre) props.push({ trat, nombre })
+  }
+
+  let fraseProp = ''
+  if (props.length > 0) {
+    const todasMujeres = props.every(p => p.trat === 'Doña')
+    const nombresProp = props
+      .map(p => `${p.trat ? p.trat.toUpperCase() + ' ' : ''}${p.nombre}`)
+      .reduce((acc, cur, i, arr) =>
+        i === 0 ? cur : i === arr.length - 1 ? `${acc} Y ${cur}` : `${acc}, ${cur}`, '')
+    const etiqueta = props.length === 1
+      ? (props[0].trat === 'Doña' ? 'LA PROPIETARIA' : 'EL PROPIETARIO')
+      : (todasMujeres ? 'LAS PROPIETARIAS' : 'LOS PROPIETARIOS')
+    fraseProp = ` Y ${etiqueta} DE LA MISMA ${nombresProp}`
+  }
+
   resultado['clienteslargo'] =
     `${resultado['clientes'] ?? ''}, LA CANTIDAD DE ${resultado['precioseñalletra'] ?? ''} ` +
     `(${resultado['precioseñalnumero'] ?? ''}.- €) EN CONCEPTO DE SEÑAL DE ARRAS CONFIRMATORIAS ` +
     `POR LA RESERVA DE ${inmueble}, SIENDO EL PRECIO DE LA COMPRAVENTA EL DE ` +
     `${resultado['precioventaletra'] ?? ''} EUROS (${resultado['precioventanumero'] ?? ''}.- €), ` +
-    `SIN INCLUIR IMPUESTOS Y GASTOS Y LA PROPIETARIA DE LA MISMA DON ${resultado['nombrepropietario'] ?? ''}. ` +
+    `SIN INCLUIR IMPUESTOS Y GASTOS${fraseProp}. ` +
     `LA CANTIDAD ENTREGADA EN CONCEPTO DE SEÑAL SE DESCONTARÁ DEL PRECIO FINAL DE LA COMPRAVENTA.`
 }
 
