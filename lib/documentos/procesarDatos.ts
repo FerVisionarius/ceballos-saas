@@ -283,11 +283,14 @@ if (subtipo === 'senal_compraventa_confirmatoria') {
     fraseProp = ` Y ${etiqueta} DE LA MISMA ${nombresProp}`
   }
 
+  // Evita "... MIL EUROS EUROS" si el usuario ya escribió EUROS en el campo en letra
+  const ventaLetra = String(resultado['precioventaletra'] ?? '').replace(/\s*EUROS\s*$/i, '').trim()
+
   resultado['clienteslargo'] =
     `${resultado['clientes'] ?? ''}, LA CANTIDAD DE ${resultado['precioseñalletra'] ?? ''} ` +
     `(${resultado['precioseñalnumero'] ?? ''}.- €) EN CONCEPTO DE SEÑAL DE ARRAS CONFIRMATORIAS ` +
     `POR LA RESERVA DE ${inmueble}, SIENDO EL PRECIO DE LA COMPRAVENTA EL DE ` +
-    `${resultado['precioventaletra'] ?? ''} EUROS (${resultado['precioventanumero'] ?? ''}.- €), ` +
+    `${ventaLetra} EUROS (${resultado['precioventanumero'] ?? ''}.- €), ` +
     `SIN INCLUIR IMPUESTOS Y GASTOS${fraseProp}. ` +
     `LA CANTIDAD ENTREGADA EN CONCEPTO DE SEÑAL SE DESCONTARÁ DEL PRECIO FINAL DE LA COMPRAVENTA.`
 }
