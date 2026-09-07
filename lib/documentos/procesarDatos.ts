@@ -243,6 +243,29 @@ if (subtipo && subtiposSenal.includes(subtipo)) {
   }
 }
 
+// ── DocumentoSeñalCompraventaConfirmatoria: párrafo {{clienteslargo}} ──
+if (subtipo === 'senal_compraventa_confirmatoria') {
+  const num = resultado['numeroinmueble'] ?? ''
+  const garaje = resultado['garajeinmueble'] ?? ''
+  const trastero = resultado['trasteroinmueble'] ?? ''
+
+  let inmueble = `LA VIVIENDA SITA EN ${resultado['municipioinmueble'] ?? ''}, CALLE ${resultado['calleinmueble'] ?? ''}`
+  if (num) inmueble += `, Nº ${num}`
+
+  const anexos: string[] = []
+  if (garaje) anexos.push(`PLAZA DE GARAJE Nº ${garaje}`)
+  if (trastero) anexos.push(`TRASTERO Nº ${trastero}`)
+  if (anexos.length) inmueble += `, ${anexos.join(' Y ')}`
+
+  resultado['clienteslargo'] =
+    `${resultado['clientes'] ?? ''}, LA CANTIDAD DE ${resultado['precioseñalletra'] ?? ''} ` +
+    `(${resultado['precioseñalnumero'] ?? ''}.- €) EN CONCEPTO DE SEÑAL DE ARRAS CONFIRMATORIAS ` +
+    `POR LA RESERVA DE ${inmueble}, SIENDO EL PRECIO DE LA COMPRAVENTA EL DE ` +
+    `${resultado['precioventaletra'] ?? ''} EUROS (${resultado['precioventanumero'] ?? ''}.- €), ` +
+    `SIN INCLUIR IMPUESTOS Y GASTOS Y LA PROPIETARIA DE LA MISMA DON ${resultado['nombrepropietario'] ?? ''}. ` +
+    `LA CANTIDAD ENTREGADA EN CONCEPTO DE SEÑAL SE DESCONTARÁ DEL PRECIO FINAL DE LA COMPRAVENTA.`
+}
+
 // ── Contratos de arras ───────────────────────────────────────
 const subtiposArras = ['contrato_arras_penitencial', 'contrato_arras_confirmatoria']
 if (subtipo && subtiposArras.includes(subtipo)) {
